@@ -37,7 +37,7 @@ A aplicação promove o turismo e a educação cultural, incentivando os utiliza
 - Firebase Cloud Messaging : Pode ser usado para enviar notificações push aos utilizadores
 - (Testar) Geoapify? : Alternativa para geocodificação, localização, e criação de rotas. Ideal para calcular distâncias entre o utilizador e um geocache.
 
-# Possí
+# Possíveis Nomes
 - ## GeoCultura Explorer
 - GeoExploradores Culturais
 - Cultura em Movimento
