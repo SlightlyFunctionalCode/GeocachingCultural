@@ -5,15 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.tooling.preview.Preview
-import pt.ipp.estg.geocashing_cultural.ui.components.navigation.MyNavigationDrawer
+import pt.ipp.estg.geocashing_cultural.ui.components.navigation.NavigationDrawer
+import pt.ipp.estg.geocashing_cultural.ui.components.navigation.StartNavBar
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
-import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
 
 class MainActivity : ComponentActivity() {
     @ExperimentalMaterial3Api
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     color = Yellow
                 ) {
-                    MyNavigationDrawer() // Chama o composable principal
+                    StartNavBar() // Chama o composable principal
                 }
             }
         }

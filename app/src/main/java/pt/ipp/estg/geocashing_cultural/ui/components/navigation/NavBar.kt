@@ -66,7 +66,7 @@ import pt.ipp.estg.geocashing_cultural.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyNavigationDrawer() {
+fun NavigationDrawer() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val navController = rememberNavController()
     val drawerItemList = prepareNavigationDrawerItems()
@@ -90,7 +90,7 @@ fun MyNavigationDrawer() {
                             Text(text = "Menu", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                             Spacer(Modifier.height(12.dp))
                             drawerItemList.forEach { item ->
-                                MyDrawerItem(
+                                DrawerItem(
                                     item = item,
                                     selectedItem = selectedItem,
                                     updateSelected = { selectedItem = it },
@@ -105,7 +105,7 @@ fun MyNavigationDrawer() {
             gesturesEnabled = true,
             content = {
                 CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                    MyScaffold(drawerState = drawerState, navController = navController)
+                    Scaffold(drawerState = drawerState, navController = navController)
                 }
             })
     }
@@ -114,7 +114,7 @@ fun MyNavigationDrawer() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyDrawerItem(
+fun DrawerItem(
     item: NavigationDrawerData,
     selectedItem: NavigationDrawerData,
     updateSelected: (i: NavigationDrawerData) -> Unit,
@@ -139,12 +139,12 @@ fun MyDrawerItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyScaffold(drawerState: DrawerState, navController: NavHostController) {
+fun Scaffold(drawerState: DrawerState, navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            MyTopAppBar {
+            TopAppBar {
                 coroutineScope.launch {
                     drawerState.open()
                 }
@@ -160,7 +160,7 @@ fun MyScaffold(drawerState: DrawerState, navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(onNavIconClick: () -> Unit) {
+fun TopAppBar(onNavIconClick: () -> Unit) {
     TopAppBar(
         title = { Text(text = "GeoCultura Explorer", fontWeight = FontWeight.Bold, fontSize = 6.em) },
         actions = {
@@ -227,6 +227,6 @@ data class NavigationDrawerData(val label: String, val icon: ImageVector)
 @Composable
 fun MyNavigationDrawerPreview() {
     Geocashing_CulturalTheme {
-        MyNavigationDrawer()
+        NavigationDrawer()
     }
 }
