@@ -25,6 +25,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +34,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -50,36 +54,44 @@ fun MyNavigationDrawer() {
     val navController = rememberNavController()
     val drawerItemList = prepareNavigationDrawerItems()
     var selectedItem by remember { mutableStateOf(drawerItemList[0]) }
-    ModalNavigationDrawer(
-        drawerState = drawerState,
-        drawerContent = {
-            ModalDrawerSheet(
-                modifier = Modifier
-                    .fillMaxWidth(0.75f) // Ocupa toda a largura da tela
-                    .wrapContentWidth(align = Alignment.Start) // Alinha o conteúdo da gaveta à direita
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
-                ) {
-                    Text(text = "Menu", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Spacer(Modifier.height(12.dp))
-                    drawerItemList.forEach { item ->
-                        MyDrawerItem(
-                            item = item,
-                            selectedItem = selectedItem,
-                            updateSelected = { selectedItem = it },
-                            navController = navController,
-                            drawerState = drawerState
-                        )
+                    ModalDrawerSheet(
+                        modifier = Modifier
+                            .fillMaxWidth(0.75f) // Ocupa toda a largura da tela
+                            .wrapContentWidth(align = Alignment.Start) // Alinha o conteúdo da gaveta à direita
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(16.dp)
+
+                        ) {
+                            Text(text = "Menu", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.height(12.dp))
+                            drawerItemList.forEach { item ->
+                                MyDrawerItem(
+                                    item = item,
+                                    selectedItem = selectedItem,
+                                    updateSelected = { selectedItem = it },
+                                    navController = navController,
+                                    drawerState = drawerState
+                                )
+                            }
+                        }
                     }
                 }
-            }
-        },
-        gesturesEnabled = true,
-        content = { MyScaffold(drawerState = drawerState, navController = navController) }
-    )
+            },
+            gesturesEnabled = true,
+            content = {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    MyScaffold(drawerState = drawerState, navController = navController)
+                }
+            })
+    }
 }
 
 
@@ -133,7 +145,7 @@ fun MyScaffold(drawerState: DrawerState, navController: NavHostController) {
 fun MyTopAppBar(onNavIconClick: () -> Unit) {
     TopAppBar(
         title = { Text(text = "Geocashing Cultural") },
-        navigationIcon = {
+        actions = {
             IconButton(
                 onClick = {
                     onNavIconClick()
@@ -166,4 +178,8 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
 
 data class NavigationDrawerData(val label: String, val icon: ImageVector)
 
-
+@Preview(showBackground = true)
+@Composable
+fun MyNavigationDrawerPreview() {
+    MyNavigationDrawer()
+}
