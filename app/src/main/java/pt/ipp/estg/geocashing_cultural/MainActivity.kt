@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import pt.ipp.estg.geocashing_cultural.ui.components.navigation.MyNavigationDrawer
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
+import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
 
 class MainActivity : ComponentActivity() {
     @ExperimentalMaterial3Api
@@ -22,14 +23,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             Geocashing_CulturalTheme {
                 Surface(
-                    color = MaterialTheme.colorScheme.background
+                    color = Yellow
                 ) {
                     MyNavigationDrawer() // Chama o composable principal
                 }
             }
-            }
         }
     }
+}
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
