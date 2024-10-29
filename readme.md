@@ -30,7 +30,7 @@ A aplicação promove o turismo e a educação cultural, incentivando os utiliza
 - ### Histórico de Geocaches:
     Cada utilizador deve poder ver o histórico de geocaches encontrados e desafios resolvidos.
 
-# API's:
+# APIs:
 - Firebase Authentication : Para autenticação de utilizadores
 - Google Maps API :  Para mostrar mapas e marcar geocaches.
 - Google Places API : Para encontrar locais culturais para os geocaches.
