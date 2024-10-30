@@ -22,10 +22,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Geocashing_CulturalTheme {
-                Surface(
-                    color = Yellow
-                ) {
-                    StartNavBar() // Chama o composable principal
+                Surface() {
+                    NavigationDrawer()
+                    //StartNavBar() // Chama o composable principal
                 }
             }
         }

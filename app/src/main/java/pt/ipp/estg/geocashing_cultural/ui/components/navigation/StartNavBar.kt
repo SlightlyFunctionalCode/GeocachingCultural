@@ -1,6 +1,7 @@
 package pt.ipp.estg.geocashing_cultural.ui.components.navigation
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,6 +42,14 @@ fun StartTopAppBar(onLoginClick: () -> Unit) {
         title = { Text(text = "GeoCultura Explorer", fontWeight = FontWeight.Bold) },
         actions = {
             Button(
+                contentPadding = PaddingValues(2.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    disabledContentColor = MaterialTheme.colorScheme.secondary,
+                    disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer
+                ),
                 onClick = onLoginClick,
                 content = { Text("Login") }
             )

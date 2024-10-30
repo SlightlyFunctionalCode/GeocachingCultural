@@ -123,8 +123,8 @@ fun DrawerItem(
 ) {
     val coroutineScope = rememberCoroutineScope()
     NavigationDrawerItem(
-        icon = { Icon(imageVector = item.icon, contentDescription = null) },
-        label = { Text(text = item.label) },
+        icon = { Icon(imageVector = item.icon, contentDescription = null, tint = White) },
+        label = { Text(text = item.label, color = White) },
         selected = (item == selectedItem),
         onClick = {
             coroutineScope.launch {
@@ -154,6 +154,9 @@ fun Scaffold(drawerState: DrawerState, navController: NavHostController) {
             Column(modifier = Modifier.padding(padding)) {
                 MyScaffoldContent(navController)
             }
+        },
+        bottomBar = {
+            Footer()
         }
     )
 }
@@ -162,7 +165,13 @@ fun Scaffold(drawerState: DrawerState, navController: NavHostController) {
 @Composable
 fun TopAppBar(onNavIconClick: () -> Unit) {
     TopAppBar(
-        title = { Text(text = "GeoCultura Explorer", fontWeight = FontWeight.Bold, fontSize = 6.em) },
+        title = {
+            Text(
+                text = "GeoCultura Explorer",
+                fontWeight = FontWeight.Bold,
+                fontSize = 6.em
+            )
+        },
         actions = {
             Row(
                 modifier = Modifier.align(Alignment.CenterVertically),
