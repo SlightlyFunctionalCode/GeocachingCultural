@@ -12,7 +12,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MyIconButton(icon: ImageVector, onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun MyIconButton(
+    imageVector: ImageVector,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     Button(
         contentPadding = PaddingValues(2.dp),
         shape = RoundedCornerShape(8.dp),
@@ -26,8 +30,8 @@ fun MyIconButton(icon: ImageVector, onClick: () -> Unit = {}, modifier: Modifier
         modifier = modifier
     ) {
         Icon(
-            imageVector = icon,
-            contentDescription = "Open Navigation Items"
+            imageVector = imageVector,
+            contentDescription = "Open Facebook Login"
         )
     }
 }

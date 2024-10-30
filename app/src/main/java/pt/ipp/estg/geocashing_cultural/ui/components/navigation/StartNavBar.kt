@@ -4,8 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,26 +17,47 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.launch
 import pt.ipp.estg.geocashing_cultural.ui.screens.HomeScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.LoginScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.RegisterScreen
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartNavBar() {
     val navController = rememberNavController()
-    Scaffold(
-        topBar = {
-            StartTopAppBar(onLoginClick = {
-                navController.navigate("loginScreen")
-            })
-        },
-        content = { padding ->
-            Column(modifier = Modifier.padding(padding)) {
-                ScaffoldContent(navController)
-            }
+    var currentRoute by remember { mutableStateOf("homeScreen") }
+
+    LaunchedEffect(navController) {
+        navController.currentBackStackEntryFlow.collect { entry ->
+            currentRoute = entry.destination.route?: "homeScreen"
         }
-    )
+    }
+
+    if (currentRoute == "homeScreen") {
+        Scaffold(
+            topBar = {
+                StartTopAppBar(onLoginClick = {
+                    navController.navigate("loginScreen")
+                })
+            },
+            content = { padding ->
+                Column(modifier = Modifier.padding(padding)) {
+                    ScaffoldContent(navController)
+                }
+            },
+            bottomBar = {
+                Footer()
+            }
+        )
+    } else {
+        Scaffold(
+            content = { padding ->
+                Column(modifier = Modifier.padding(padding)) {
+                    ScaffoldContent(navController)
+                }
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,13 +88,10 @@ fun StartTopAppBar(onLoginClick: () -> Unit) {
 @Composable
 fun ScaffoldContent(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "homeScreen") {
-        composable("homeScreen") { HomeScreen() }
-        composable("loginScreen"){LoginScreen()}
+        composable("homeScreen") { HomeScreen(navController) }
+        composable("loginScreen") { LoginScreen(navController) }
+        composable("registerScreen") { RegisterScreen(navController) }
     }
-}
-
-@Composable
-fun LoginScreen() {
 }
 
 @Preview(showBackground = true)

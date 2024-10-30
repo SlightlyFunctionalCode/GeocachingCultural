@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import pt.ipp.estg.geocashing_cultural.R
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextField
@@ -36,7 +37,7 @@ import pt.ipp.estg.geocashing_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocashing_cultural.ui.theme.White
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .padding(10.dp)
@@ -88,9 +89,14 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.width(24.dp))
 
             MyTextButton(
-                "Sign-Up", modifier = Modifier
+                text = "Sign-Up",
+                onClick = {
+                    navController.navigate("registerScreen")
+                },
+                modifier = Modifier
                     .weight(1f)
                     .height(48.dp)
+
             )
         }
     }
