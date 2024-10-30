@@ -4,13 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocashing_cultural.ui.components.navigation.NavigationDrawer
 import pt.ipp.estg.geocashing_cultural.ui.components.navigation.StartNavBar
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
@@ -23,26 +26,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             Geocashing_CulturalTheme {
                 Surface() {
-                    NavigationDrawer()
-                    //StartNavBar() // Chama o composable principal
+                    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+                    val navController = rememberNavController()
+                    //NavigationDrawer(drawerState,navController)
+                    StartNavBar()
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Geocashing_CulturalTheme {
-        Greeting("Android")
-    }
-}
+

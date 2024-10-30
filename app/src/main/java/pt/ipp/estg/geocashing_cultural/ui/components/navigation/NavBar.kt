@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,12 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,15 +56,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocashing_cultural.R
+import pt.ipp.estg.geocashing_cultural.ui.utils.MyIconButton
 import pt.ipp.estg.geocashing_cultural.ui.screens.HomeScreen
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
 import pt.ipp.estg.geocashing_cultural.ui.theme.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationDrawer() {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val navController = rememberNavController()
+fun NavigationDrawer(drawerState: DrawerState, navController: NavHostController) {
     val drawerItemList = prepareNavigationDrawerItems()
     var selectedItem by remember { mutableStateOf(drawerItemList[0]) }
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -191,24 +186,7 @@ fun TopAppBar(onNavIconClick: () -> Unit) {
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                Button(
-                    contentPadding = PaddingValues(2.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.primary,
-                        disabledContentColor = MaterialTheme.colorScheme.secondary,
-                        disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer
-                    ),
-                    onClick = {
-                        onNavIconClick()
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        contentDescription = "Open Navigation Items"
-                    )
-                }
+                MyIconButton(Icons.Default.Menu, { onNavIconClick() }, modifier = Modifier)
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -234,8 +212,20 @@ data class NavigationDrawerData(val label: String, val icon: ImageVector)
 
 @Preview(showBackground = true)
 @Composable
-fun MyNavigationDrawerPreview() {
+fun NavigationDrawerPreview() {
     Geocashing_CulturalTheme {
-        NavigationDrawer()
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+        val navController = rememberNavController()
+        NavigationDrawer(drawerState, navController)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomePreview() {
+    Geocashing_CulturalTheme {
+        val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+        val navController = rememberNavController()
+        NavigationDrawer(drawerState, navController)
     }
 }

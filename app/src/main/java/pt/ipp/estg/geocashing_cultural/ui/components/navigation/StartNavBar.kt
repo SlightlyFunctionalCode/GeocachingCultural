@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
+import pt.ipp.estg.geocashing_cultural.ui.screens.HomeScreen
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,32 +63,14 @@ fun StartTopAppBar(onLoginClick: () -> Unit) {
 
 @Composable
 fun ScaffoldContent(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "startScreen") {
-        composable("startScreen") { StartScreen() }
-        composable("loginScreen") { LoginScreen() } // Aqui define a nova LoginScreen
+    NavHost(navController = navController, startDestination = "homeScreen") {
+        composable("homeScreen") { HomeScreen() }
+        composable("loginScreen"){LoginScreen()}
     }
 }
-@Composable
-fun StartScreen() {
-    // Implementação básica da tela de início
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Start Screen")
-    }
-}
-
 
 @Composable
 fun LoginScreen() {
-    // Implementação básica da tela de login
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Login Screen")
-    }
 }
 
 @Preview(showBackground = true)
