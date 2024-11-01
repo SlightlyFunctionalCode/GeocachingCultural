@@ -201,12 +201,11 @@ fun TopAppBar(onNavIconClick: () -> Unit) {
 
 @Composable
 fun MyScaffoldContent(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "profileScreen") {
+    NavHost(navController = navController, startDestination = "principalScreen") {
         composable("principalScreen") { PrincipalScreen(navController) }
         composable("explorarScreen") { ExplorarScreen(navController) }
         composable("profileScreen") { ProfileScreen(navController) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
-
     }
 }
 

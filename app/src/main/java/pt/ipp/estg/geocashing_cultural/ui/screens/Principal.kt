@@ -29,6 +29,8 @@ import pt.ipp.estg.geocashing_cultural.R
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyGeocachePertoDeMim
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextButton
+import pt.ipp.estg.geocashing_cultural.ui.utils.SmallVerticalSpacer
+import pt.ipp.estg.geocashing_cultural.ui.utils.VerticalSpacer
 
 @Composable
 fun PrincipalScreen(navController: NavHostController) {
@@ -50,7 +52,7 @@ fun PrincipalScreen(navController: NavHostController) {
                 modifier = Modifier.fillMaxWidth()
             )
         }
-        Spacer(modifier = Modifier.height(25.dp))
+        VerticalSpacer()
 
         GeocachesPerto(navController)
     }
@@ -66,7 +68,7 @@ fun GeocachesPerto(navController: NavHostController) {
                 painterResource(id = R.drawable.gastronomia)
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            SmallVerticalSpacer()
         }
         item { // Alterar este número conforme necessário
             MyGeocachePertoDeMim(
@@ -75,7 +77,7 @@ fun GeocachesPerto(navController: NavHostController) {
                 painterResource(id = R.drawable.historico)
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            SmallVerticalSpacer()
         }
         item { // Alterar este número conforme necessário
             MyGeocachePertoDeMim(
@@ -84,7 +86,7 @@ fun GeocachesPerto(navController: NavHostController) {
                 painterResource(id = R.drawable.cultural)
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            SmallVerticalSpacer()
         }
         item { // Alterar este número conforme necessário
             MyGeocachePertoDeMim(
@@ -93,7 +95,7 @@ fun GeocachesPerto(navController: NavHostController) {
                 painterResource(id = R.drawable.gastronomia)
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            SmallVerticalSpacer()
         }
         item {
             MyTextButton("+ Mais Geocaches", onClick = {
