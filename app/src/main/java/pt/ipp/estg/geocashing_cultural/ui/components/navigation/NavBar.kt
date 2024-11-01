@@ -59,6 +59,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocashing_cultural.R
+import pt.ipp.estg.geocashing_cultural.ui.screens.ExplorarScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.PrincipalScreen
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyIconButton
 import pt.ipp.estg.geocashing_cultural.ui.screens.ProfileScreen
 import pt.ipp.estg.geocashing_cultural.ui.theme.DarkGray
@@ -196,8 +198,9 @@ fun TopAppBar(onNavIconClick: () -> Unit) {
 
 @Composable
 fun MyScaffoldContent(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "profileScreen") {
-        composable("profileScreen") { ProfileScreen() }
+    NavHost(navController = navController, startDestination = "principalScreen") {
+        composable("principalScreen") { PrincipalScreen(navController) }
+        composable("explorarScreen") { ExplorarScreen(navController)}
     }
 }
 
