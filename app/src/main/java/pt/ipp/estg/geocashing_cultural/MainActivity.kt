@@ -28,8 +28,8 @@ class MainActivity : ComponentActivity() {
                 Surface() {
                     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                     val navController = rememberNavController()
-                    NavigationDrawer(drawerState,navController)
-                    //StartNavBar()
+                    //NavigationDrawer(drawerState,navController)
+                    StartNavBar()
                 }
             }
         }

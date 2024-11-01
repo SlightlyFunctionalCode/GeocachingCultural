@@ -1,77 +1,66 @@
 package pt.ipp.estg.geocashing_cultural.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pt.ipp.estg.geocashing_cultural.R
+import androidx.navigation.NavHostController
+import pt.ipp.estg.geocashing_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocashing_cultural.ui.theme.Pink
-import pt.ipp.estg.geocashing_cultural.ui.theme.White
+import pt.ipp.estg.geocashing_cultural.ui.utils.HorizontalSpacer
+import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextButton
+import pt.ipp.estg.geocashing_cultural.ui.utils.PointsDisplay
+import pt.ipp.estg.geocashing_cultural.ui.utils.ProfilePicture
+import pt.ipp.estg.geocashing_cultural.ui.utils.SmallHorizontalSpacer
+import pt.ipp.estg.geocashing_cultural.ui.utils.SmallVerticalSpacer
+import pt.ipp.estg.geocashing_cultural.ui.utils.Title
+import pt.ipp.estg.geocashing_cultural.ui.utils.VerticalSpacer
 
 @Composable
-fun ProfileScreen() {
-    LazyColumn(modifier = Modifier.padding(28.dp)) {
+fun ProfileScreen(navController: NavHostController) {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(28.dp)
+    ) {
         item {
             Row(
-                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Perfil",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 56.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1.25f)
-                )
+                Title(text = "Perfil", modifier = Modifier.weight(1.25f))
+                HorizontalSpacer()
+                PointsDisplay(modifier = Modifier.weight(1f))
+            }
+        }
 
-                Spacer(Modifier.width(28.dp))
+        item {
+            VerticalSpacer()
+            ProfilePicture()
+        }
 
-                Box(
-                    Modifier
-                        .background(color = White, shape = RoundedCornerShape(10.dp))
-                        .height(62.dp)
-                        .weight(1f)
-                ){
-                    Column (horizontalAlignment = Alignment.CenterHorizontally){
-                        Text(
-                            text = "Points",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.weight(1.25f)
-                        )
-                        Row {
-                            Text(
-                                text = "62",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 28.sp,
-                                textAlign = TextAlign.Center,
-                                color = Pink,
-                                modifier = Modifier.weight(1.25f)
-                            )
-                            Icon(
-                                painter = painterResource(R.drawable.facebook),
-                                contentDescription = "Coins"
-                            )
-                        }
-                    }
+        item {
+            Column(Modifier.fillMaxWidth()) {
+                VerticalSpacer()
+                Text(text = "Joel Sousa de Carvalho", fontSize = 24.sp)
+                Text(text = "joel@gmail.com", color = LightGray)
+                SmallVerticalSpacer()
+                MyTextButton(text = "Editar Informações de Perfil",{navController.navigate("profileEditingScreen")})
+            }
+        }
+
+        item {
+            Column(Modifier.fillMaxWidth()) {
+                VerticalSpacer()
+                Text(text = "Ações Adicionais", fontSize = 24.sp, color = Pink)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MyTextButton(text = "Eliminar Perfil")
+                    SmallHorizontalSpacer()
+                    Text(text = "*Ação Irreversível", color = Pink, fontSize = 12.sp)
                 }
             }
         }
