@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -61,6 +62,7 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.geocashing_cultural.R
 import pt.ipp.estg.geocashing_cultural.ui.screens.ExplorarScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.PrincipalScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.ProfileEditingScreen
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyIconButton
 import pt.ipp.estg.geocashing_cultural.ui.screens.ProfileScreen
 import pt.ipp.estg.geocashing_cultural.ui.theme.DarkGray
@@ -116,18 +118,19 @@ fun DrawerItem(
     drawerState: DrawerState
 ) {
     val coroutineScope = rememberCoroutineScope()
-    NavigationDrawerItem(icon = {
-        Icon(
-            imageVector = item.icon,
-            contentDescription = null,
-            tint = White
-        )
-    },
+    NavigationDrawerItem(
+        icon = {
+            Icon(
+                imageVector = item.icon,
+                contentDescription = null,
+                tint = White
+            )
+        },
         label = { Text(text = item.label, color = White) },
         selected = (item == selectedItem),
         onClick = {
             coroutineScope.launch {
-                navController.navigate(item.label)
+                navController.navigate(item.route)
                 drawerState.close()
             }
             updateSelected(item)
@@ -198,19 +201,25 @@ fun TopAppBar(onNavIconClick: () -> Unit) {
 
 @Composable
 fun MyScaffoldContent(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "principalScreen") {
+    NavHost(navController = navController, startDestination = "profileScreen") {
         composable("principalScreen") { PrincipalScreen(navController) }
-        composable("explorarScreen") { ExplorarScreen(navController)}
+        composable("explorarScreen") { ExplorarScreen(navController) }
+        composable("profileScreen") { ProfileScreen(navController) }
+        composable("profileEditingScreen") { ProfileEditingScreen(navController) }
+
     }
 }
 
 private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     val drawerItemsList = arrayListOf<NavigationDrawerData>()
-    drawerItemsList.add(NavigationDrawerData(label = "Profile", icon = Icons.Filled.Person))
+    drawerItemsList.add(NavigationDrawerData(label = "Principal", route = "principalScreen", icon = Icons.Filled.Home))
+    drawerItemsList.add(NavigationDrawerData(label = "Explorar",route = "explorarScreen", icon = Icons.Filled.LocationOn))
+    drawerItemsList.add(NavigationDrawerData(label = "Perfil", route = "profileScreen", icon = Icons.Filled.Person))
+
     return drawerItemsList
 }
 
-data class NavigationDrawerData(val label: String, val icon: ImageVector)
+data class NavigationDrawerData(val label: String, val route: String, val icon: ImageVector)
 
 @Preview(showBackground = true)
 @Composable
