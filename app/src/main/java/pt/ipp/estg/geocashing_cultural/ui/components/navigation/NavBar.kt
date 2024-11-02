@@ -63,6 +63,8 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocashing_cultural.R
 import pt.ipp.estg.geocashing_cultural.ui.screens.ExplorarScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.GeocacheNotFoundScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.GeocacheScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.HistoryScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.PrincipalScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.ProfileEditingScreen
@@ -210,6 +212,8 @@ fun MyScaffoldContent(navController: NavHostController) {
         composable("profileScreen") { ProfileScreen(navController) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
         composable("historyScreen") { HistoryScreen(navController) }
+        composable("geocacheScreen") { GeocacheScreen(navController) }
+        composable("geocacheNotFoundScreen") { GeocacheNotFoundScreen(navController) }
     }
 }
 
@@ -219,6 +223,7 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     drawerItemsList.add(NavigationDrawerData(label = "Explorar",route = "explorarScreen", icon = Icons.Filled.LocationOn))
     drawerItemsList.add(NavigationDrawerData(label = "Perfil", route = "profileScreen", icon = Icons.Filled.Person))
     drawerItemsList.add(NavigationDrawerData(label = "Histórico", route = "historyScreen", icon = Icons.AutoMirrored.Filled.List))
+    drawerItemsList.add(NavigationDrawerData(label = "Geocache", route = "geocacheScreen", icon = Icons.AutoMirrored.Filled.List))
 
     return drawerItemsList
 }

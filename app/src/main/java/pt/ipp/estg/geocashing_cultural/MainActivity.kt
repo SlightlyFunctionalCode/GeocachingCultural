@@ -7,12 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color.Companion.Yellow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocashing_cultural.ui.components.navigation.NavigationDrawer
 import pt.ipp.estg.geocashing_cultural.ui.components.navigation.StartNavBar
@@ -30,6 +25,8 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavigationDrawer(drawerState,navController)
                     //StartNavBar()
+
+
                 }
             }
         }
