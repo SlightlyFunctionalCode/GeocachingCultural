@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
@@ -61,6 +63,7 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocashing_cultural.R
 import pt.ipp.estg.geocashing_cultural.ui.screens.ExplorarScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.HistoryScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.PrincipalScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.ProfileEditingScreen
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyIconButton
@@ -206,6 +209,7 @@ fun MyScaffoldContent(navController: NavHostController) {
         composable("explorarScreen") { ExplorarScreen(navController) }
         composable("profileScreen") { ProfileScreen(navController) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
+        composable("historyScreen") { HistoryScreen(navController) }
     }
 }
 
@@ -214,6 +218,7 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     drawerItemsList.add(NavigationDrawerData(label = "Principal", route = "principalScreen", icon = Icons.Filled.Home))
     drawerItemsList.add(NavigationDrawerData(label = "Explorar",route = "explorarScreen", icon = Icons.Filled.LocationOn))
     drawerItemsList.add(NavigationDrawerData(label = "Perfil", route = "profileScreen", icon = Icons.Filled.Person))
+    drawerItemsList.add(NavigationDrawerData(label = "Histórico", route = "historyScreen", icon = Icons.AutoMirrored.Filled.List))
 
     return drawerItemsList
 }
