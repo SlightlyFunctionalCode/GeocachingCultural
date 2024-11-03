@@ -43,12 +43,11 @@ import pt.ipp.estg.geocashing_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocashing_cultural.ui.theme.Purple
 import pt.ipp.estg.geocashing_cultural.ui.theme.White
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextButton
-import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextField
 import pt.ipp.estg.geocashing_cultural.ui.utils.VerticalSpacer
 
 
 @Composable
-fun GeocacheScreen(navController: NavHostController) {
+fun ActiveGeocacheScreen(navController: NavHostController) {
     var walking by remember { mutableStateOf(true) }
 
     Column(modifier = Modifier.padding(28.dp)) {

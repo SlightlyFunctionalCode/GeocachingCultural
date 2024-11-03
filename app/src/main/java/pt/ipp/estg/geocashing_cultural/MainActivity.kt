@@ -25,8 +25,6 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavigationDrawer(drawerState,navController)
                     //StartNavBar()
-
-
                 }
             }
         }

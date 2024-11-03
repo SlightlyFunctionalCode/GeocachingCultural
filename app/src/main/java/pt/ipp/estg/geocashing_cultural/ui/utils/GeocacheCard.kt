@@ -24,25 +24,33 @@ import pt.ipp.estg.geocashing_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocashing_cultural.ui.theme.White
 
 @Composable
-fun GeocacheHistoryCard(title: String, description: String, points: Number, image: Painter) {
+fun GeocacheCard(
+    title: String,
+    description: String,
+    points: Number? = null,
+    image: Painter,
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.TopCenter,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight(0.50f)
             .background(shape = RoundedCornerShape(10.dp), color = White)
     ) {
-        Text(
-            text = "+$points",
-            textAlign = TextAlign.Center,
-            color = LightGray,
-            fontSize = 14.sp,
-            modifier = Modifier
-                .zIndex(1000f)
-                .background(shape = RoundedCornerShape(10.dp), color = White)
-                .padding(horizontal = 10.dp)
+        if (points != null) {
+            Text(
+                text = "+$points",
+                textAlign = TextAlign.Center,
+                color = LightGray,
+                fontSize = 14.sp,
+                modifier = Modifier
+                    .zIndex(1000f)
+                    .background(shape = RoundedCornerShape(10.dp), color = White)
+                    .padding(horizontal = 10.dp)
 
-        )
+            )
+        }
         Column() {
             Image(
                 painter = image,

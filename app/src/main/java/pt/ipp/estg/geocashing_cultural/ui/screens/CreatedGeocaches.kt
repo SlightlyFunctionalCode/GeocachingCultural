@@ -1,5 +1,6 @@
 package pt.ipp.estg.geocashing_cultural.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,9 +15,9 @@ import pt.ipp.estg.geocashing_cultural.ui.utils.Title
 import pt.ipp.estg.geocashing_cultural.ui.utils.VerticalSpacer
 
 @Composable
-fun HistoryScreen(navController: NavHostController) {
+fun CreatedGeocachesScreen(navController: NavHostController) {
     Column(Modifier.padding(top = 28.dp, start = 28.dp, end = 28.dp, bottom = 0.dp)) {
-        Title(text = "Histórico Geocaches")
+        Title(text = "Geocaches Criados")
 
         LazyColumn {
             item {
@@ -27,10 +28,10 @@ fun HistoryScreen(navController: NavHostController) {
                 GeocacheCard(
                     title = "Mercadona",
                     description = "Sítio onde se faz compras",
-                    points = 52,
                     image = painterResource(
                         R.drawable.mercadona
-                    )
+                    ),
+                    modifier = Modifier.clickable { navController.navigate("createdGeocacheDetailsScreen") }
                 )
                 VerticalSpacer()
             }
@@ -39,10 +40,11 @@ fun HistoryScreen(navController: NavHostController) {
                 GeocacheCard(
                     title = "Mercadona",
                     description = "Sítio onde se faz compras",
-                    points = 52,
                     image = painterResource(
                         R.drawable.mercadona
-                    )
+                    ),
+                    modifier = Modifier.clickable { navController.navigate("createdGeocacheDetailsScreen") }
+
                 )
                 VerticalSpacer()
             }
@@ -51,10 +53,10 @@ fun HistoryScreen(navController: NavHostController) {
                 GeocacheCard(
                     title = "Mercadona",
                     description = "Sítio onde se faz compras",
-                    points = 52,
                     image = painterResource(
                         R.drawable.mercadona
-                    )
+                    ),
+                    modifier = Modifier.clickable { navController.navigate("createdGeocacheDetailsScreen") }
                 )
                 VerticalSpacer()
             }

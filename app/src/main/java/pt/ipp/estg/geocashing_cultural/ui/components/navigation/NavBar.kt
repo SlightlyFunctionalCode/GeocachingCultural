@@ -17,10 +17,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DrawerState
@@ -64,10 +64,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocashing_cultural.R
+import pt.ipp.estg.geocashing_cultural.ui.screens.ActiveGeocacheScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.CreateGeocacheScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.CreatedGeocacheDetailsScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.CreatedGeocachesScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.ExplorarScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.GeocacheNotFoundScreen
-import pt.ipp.estg.geocashing_cultural.ui.screens.GeocacheScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.HistoryScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.PrincipalScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.ProfileEditingScreen
@@ -218,8 +220,10 @@ fun MyScaffoldContent(navController: NavHostController) {
         composable("profileScreen") { ProfileScreen(navController) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
         composable("historyScreen") { HistoryScreen(navController) }
-        composable("geocacheScreen") { GeocacheScreen(navController) }
+        composable("activeGeocacheScreen") { ActiveGeocacheScreen(navController) }
         composable("geocacheNotFoundScreen") { GeocacheNotFoundScreen(navController) }
+        composable("createdGeocachesScreen") { CreatedGeocachesScreen(navController) }
+        composable("createdGeocacheDetailsScreen") { CreatedGeocacheDetailsScreen(navController) }
     }
 }
 
@@ -231,7 +235,9 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     drawerItemsList.add(NavigationDrawerData(label = "Scoreboard", route = "scoreboardScreen", icon = Icons.Filled.Star))
     drawerItemsList.add(NavigationDrawerData(label = "Perfil", route = "profileScreen", icon = Icons.Filled.Person))
     drawerItemsList.add(NavigationDrawerData(label = "Histórico", route = "historyScreen", icon = Icons.AutoMirrored.Filled.List))
-    drawerItemsList.add(NavigationDrawerData(label = "Geocache", route = "geocacheScreen", icon = Icons.AutoMirrored.Filled.List))
+    drawerItemsList.add(NavigationDrawerData(label = "Geocache Atual", route = "activeGeocacheScreen", icon = Icons.Filled.PlayArrow))
+    drawerItemsList.add(NavigationDrawerData(label = "Geocaches Criados", route = "createdGeocachesScreen", icon = Icons.Filled.PlayArrow))
+
 
     return drawerItemsList
 }
