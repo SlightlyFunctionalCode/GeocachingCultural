@@ -118,7 +118,7 @@ fun LoginPreview() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Yellow) // Set the background color here
+                .background(color = Yellow)
         ) {
             LoginScreen(navController)
         }

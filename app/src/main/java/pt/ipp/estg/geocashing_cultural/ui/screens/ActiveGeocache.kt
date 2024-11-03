@@ -48,6 +48,7 @@ import pt.ipp.estg.geocashing_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocashing_cultural.ui.theme.Purple
 import pt.ipp.estg.geocashing_cultural.ui.theme.White
 import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
+import pt.ipp.estg.geocashing_cultural.ui.utils.AnswerQuestionDialog
 import pt.ipp.estg.geocashing_cultural.ui.utils.VerticalSpacer
 
 @Composable
@@ -90,6 +91,7 @@ fun IconSection() {
             .fillMaxWidth()
     ) {
         Column() {
+            AnswerQuestionDialog()
             IconButton({}) {
                 Icon(
                     imageVector = Icons.Filled.LocationOn,
@@ -215,7 +217,7 @@ fun ActiveGeocachePreview() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Yellow) // Set the background color here
+                .background(color = Yellow)
         ) {
             item {
                 ActiveGeocacheScreen(navController)

@@ -86,7 +86,7 @@ fun HomePreview() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Yellow) // Set the background color here
+                .background(color = Yellow)
         ) {
             HomeScreen(navController)
         }

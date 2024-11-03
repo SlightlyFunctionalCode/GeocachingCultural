@@ -74,7 +74,7 @@ fun ProfilePreview() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Yellow) // Set the background color here
+                .background(color = Yellow)
         ) {
             item {
                 ProfileScreen(navController)

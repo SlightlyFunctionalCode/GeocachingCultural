@@ -37,7 +37,7 @@ import pt.ipp.estg.geocashing_cultural.ui.utils.VerticalSpacer
 fun PrincipalScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
-            .fillMaxSize() // Ocupa todo o espaço disponível em largura e altura
+            .fillMaxSize()
             .padding(30.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -72,7 +72,7 @@ fun GeocachesPerto(navController: NavHostController) {
         SmallVerticalSpacer()
         // Alterar este número conforme necessário
         MyGeocachePertoDeMim(
-            "\"Sua fachada imponente e suas pedras centenárias contam histórias de fé e tradição.\"",
+            "\"A sua fachada imponente e as suas pedras centenárias contam histórias de fé e tradição.\"",
             "5.5Km",
             painterResource(id = R.drawable.historico)
         )
@@ -115,7 +115,7 @@ fun PrincipalPreview() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Yellow) // Set the background color here
+                .background(color = Yellow)
         ) {
             item {
                 PrincipalScreen(navController)

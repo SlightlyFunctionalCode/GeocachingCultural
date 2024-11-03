@@ -71,7 +71,7 @@ fun CreatedGeocachesPreview() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Yellow) // Set the background color here
+                .background(color = Yellow)
         ) {
             item {
                 CreatedGeocachesScreen(navController)

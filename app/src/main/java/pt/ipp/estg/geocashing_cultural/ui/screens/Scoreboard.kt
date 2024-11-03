@@ -149,7 +149,7 @@ fun ScoreboardPreview() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Yellow) // Set the background color here
+                .background(color = Yellow)
         ) {
             item {
                 ScoreboardScreen(navController)
