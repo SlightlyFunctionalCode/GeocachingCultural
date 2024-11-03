@@ -1,6 +1,7 @@
 package pt.ipp.estg.geocashing_cultural.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,11 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocashing_cultural.R
+import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
 import pt.ipp.estg.geocashing_cultural.ui.theme.LightGray
+import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocashing_cultural.ui.utils.HorizontalSpacer
 import pt.ipp.estg.geocashing_cultural.ui.utils.LargeVerticalSpacer
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextButton
@@ -112,6 +117,22 @@ fun RegisterScreen(navController: NavHostController) {
                 )
                 LargeVerticalSpacer()
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun RegisterPreview() {
+    val navController = rememberNavController()
+
+    Geocashing_CulturalTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Yellow) // Set the background color here
+        ) {
+            RegisterScreen(navController)
         }
     }
 }

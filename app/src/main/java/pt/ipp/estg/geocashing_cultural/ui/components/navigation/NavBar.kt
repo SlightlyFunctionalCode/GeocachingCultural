@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -154,20 +156,24 @@ fun DrawerItem(
 @Composable
 fun Scaffold(drawerState: DrawerState, navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
-    Scaffold(containerColor = MaterialTheme.colorScheme.background, topBar = {
-        TopAppBar {
-            coroutineScope.launch {
-                drawerState.open()
+    Scaffold(containerColor = MaterialTheme.colorScheme.background,
+        topBar = {
+            TopAppBar {
+                coroutineScope.launch {
+                    drawerState.open()
+                }
             }
-        }
-    }, content = { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-            MyScaffoldContent(navController)
-        }
-    }, bottomBar = {
-        Footer()
-    })
+        },
+        content = { padding ->
+            LazyColumn(modifier = Modifier.padding(padding).fillMaxHeight(1f)) {
+                item { MyScaffoldContent(navController) }
+            }
+        },
+        bottomBar = {
+            Footer()
+        })
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -229,14 +235,62 @@ fun MyScaffoldContent(navController: NavHostController) {
 
 private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     val drawerItemsList = arrayListOf<NavigationDrawerData>()
-    drawerItemsList.add(NavigationDrawerData(label = "Principal", route = "principalScreen", icon = Icons.Filled.Home))
-    drawerItemsList.add(NavigationDrawerData(label = "Explorar",route = "explorarScreen", icon = Icons.Filled.LocationOn))
-    drawerItemsList.add(NavigationDrawerData(label = "CreateGeocache", route = "createGeocacheScreen", icon = Icons.Filled.Add))
-    drawerItemsList.add(NavigationDrawerData(label = "Scoreboard", route = "scoreboardScreen", icon = Icons.Filled.Star))
-    drawerItemsList.add(NavigationDrawerData(label = "Perfil", route = "profileScreen", icon = Icons.Filled.Person))
-    drawerItemsList.add(NavigationDrawerData(label = "Histórico", route = "historyScreen", icon = Icons.AutoMirrored.Filled.List))
-    drawerItemsList.add(NavigationDrawerData(label = "Geocache Atual", route = "activeGeocacheScreen", icon = Icons.Filled.PlayArrow))
-    drawerItemsList.add(NavigationDrawerData(label = "Geocaches Criados", route = "createdGeocachesScreen", icon = Icons.Filled.PlayArrow))
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Principal",
+            route = "principalScreen",
+            icon = Icons.Filled.Home
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Explorar",
+            route = "explorarScreen",
+            icon = Icons.Filled.LocationOn
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "CreateGeocache",
+            route = "createGeocacheScreen",
+            icon = Icons.Filled.Add
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Scoreboard",
+            route = "scoreboardScreen",
+            icon = Icons.Filled.Star
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Perfil",
+            route = "profileScreen",
+            icon = Icons.Filled.Person
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Histórico",
+            route = "historyScreen",
+            icon = Icons.AutoMirrored.Filled.List
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Geocache Atual",
+            route = "activeGeocacheScreen",
+            icon = Icons.Filled.PlayArrow
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Geocaches Criados",
+            route = "createdGeocachesScreen",
+            icon = Icons.Filled.PlayArrow
+        )
+    )
 
 
     return drawerItemsList

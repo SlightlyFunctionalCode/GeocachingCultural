@@ -22,8 +22,9 @@ import pt.ipp.estg.geocashing_cultural.R
 import pt.ipp.estg.geocashing_cultural.ui.theme.LightGray
 
 @Composable
-fun Footer() {
+fun Footer(modifier: Modifier = Modifier) {
     BottomAppBar(
+        modifier = modifier,
         content = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

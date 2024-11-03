@@ -28,10 +28,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocashing_cultural.R
+import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
+import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
 
 @Composable
 fun ScoreboardScreen(navController: NavHostController) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Row {
             Icon(
                 painter = painterResource(R.drawable.trofeu), // Substitua pelo seu ícone de troféu
@@ -66,23 +70,22 @@ fun ScoreboardScreen(navController: NavHostController) {
 
 @Composable
 fun Top10Players(players: List<Pair<String, Int>>) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         // Exibe o Top 3 com ícones adicionais
-        item {
-            Top3Players(players.take(3))
+        Top3Players(players.take(3))
 
-            // Exibe o restante dos jogadores, começando do 4º lugar
-            players.drop(3).take(7).forEachIndexed { index, (playerName, points) ->
-                Player(
-                    playerName = playerName,
-                    points = points,
-                    rank = index + 4
-                ) // Começa a contagem a partir do 4º lugar
-                Spacer(modifier = Modifier.height(8.dp))
-            }
+        // Exibe o restante dos jogadores, começando do 4º lugar
+        players.drop(3).take(7).forEachIndexed { index, (playerName, points) ->
+            Player(
+                playerName = playerName,
+                points = points,
+                rank = index + 4
+            ) // Começa a contagem a partir do 4º lugar
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
+
 
 @Composable
 fun Top3Players(players: List<Pair<String, Int>>) {
@@ -140,7 +143,17 @@ fun PlayerWithIcon(playerName: String, points: Int, rank: Int, icon: Painter?) {
 
 @Preview
 @Composable
-fun RankingPontosScreenPreview() {
+fun ScoreboardPreview() {
     val navController = rememberNavController()
-    ScoreboardScreen(navController)
+    Geocashing_CulturalTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Yellow) // Set the background color here
+        ) {
+            item {
+                ScoreboardScreen(navController)
+            }
+        }
+    }
 }

@@ -27,6 +27,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocashing_cultural.R
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
+import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyGeocachePertoDeMim
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocashing_cultural.ui.utils.SmallVerticalSpacer
@@ -60,60 +61,65 @@ fun PrincipalScreen(navController: NavHostController) {
 
 @Composable
 fun GeocachesPerto(navController: NavHostController) {
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        item { // Alterar este número conforme necessário
-            MyGeocachePertoDeMim(
-                "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas.\"",
-                "5.0Km",
-                painterResource(id = R.drawable.gastronomia)
-            )
+    Column(modifier = Modifier.fillMaxWidth()) {
+        // Alterar este número conforme necessário
+        MyGeocachePertoDeMim(
+            "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas.\"",
+            "5.0Km",
+            painterResource(id = R.drawable.gastronomia)
+        )
 
-            SmallVerticalSpacer()
-        }
-        item { // Alterar este número conforme necessário
-            MyGeocachePertoDeMim(
-                "\"Sua fachada imponente e suas pedras centenárias contam histórias de fé e tradição.\"",
-                "5.5Km",
-                painterResource(id = R.drawable.historico)
-            )
+        SmallVerticalSpacer()
+        // Alterar este número conforme necessário
+        MyGeocachePertoDeMim(
+            "\"Sua fachada imponente e suas pedras centenárias contam histórias de fé e tradição.\"",
+            "5.5Km",
+            painterResource(id = R.drawable.historico)
+        )
 
-            SmallVerticalSpacer()
-        }
-        item { // Alterar este número conforme necessário
-            MyGeocachePertoDeMim(
-                "\"Edificício com heróis que lutampelo nosso país.\"",
-                "5.6Km",
-                painterResource(id = R.drawable.cultural)
-            )
+        SmallVerticalSpacer()
+        // Alterar este número conforme necessário
+        MyGeocachePertoDeMim(
+            "\"Edificício com heróis que lutampelo nosso país.\"",
+            "5.6Km",
+            painterResource(id = R.drawable.cultural)
+        )
 
-            SmallVerticalSpacer()
-        }
-        item { // Alterar este número conforme necessário
-            MyGeocachePertoDeMim(
-                "\"Café muito frequentemente visitado por estudantes.\"",
-                "5.7Km",
-                painterResource(id = R.drawable.gastronomia)
-            )
+        SmallVerticalSpacer()
+        // Alterar este número conforme necessário
+        MyGeocachePertoDeMim(
+            "\"Café muito frequentemente visitado por estudantes.\"",
+            "5.7Km",
+            painterResource(id = R.drawable.gastronomia)
+        )
 
-            SmallVerticalSpacer()
-        }
-        item {
-            MyTextButton("+ Mais Geocaches", onClick = {
+        SmallVerticalSpacer()
+
+        MyTextButton(
+            "+ Mais Geocaches", onClick = {
                 navController.navigate("explorarScreen")
             },
-                modifier = Modifier
-                    .height(48.dp))
+            modifier = Modifier
+                .height(48.dp)
+        )
+
+    }
+}
+
+
+@Preview
+@Composable
+fun PrincipalPreview() {
+    val navController = rememberNavController()
+    Geocashing_CulturalTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Yellow) // Set the background color here
+        ) {
+            item {
+                PrincipalScreen(navController)
+            }
         }
     }
 }
-
-
-@Preview(showBackground = true)
-@Composable
-fun PrincipalScreenPreview() {
-    Geocashing_CulturalTheme {
-        val navController = rememberNavController()
-        PrincipalScreen(navController)
-    }
-}
-

@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
@@ -31,82 +33,98 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocashing_cultural.R
 import pt.ipp.estg.geocashing_cultural.ui.theme.Black
+import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
 import pt.ipp.estg.geocashing_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocashing_cultural.ui.theme.Purple
 import pt.ipp.estg.geocashing_cultural.ui.theme.White
-import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextButton
+import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocashing_cultural.ui.utils.VerticalSpacer
-
 
 @Composable
 fun ActiveGeocacheScreen(navController: NavHostController) {
     var walking by remember { mutableStateOf(true) }
 
-    Column(modifier = Modifier.padding(28.dp)) {
-        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            Column() {
-                IconButton({}) {
-                    Icon(
-                        imageVector = Icons.Filled.LocationOn,
-                        contentDescription = "open Map",
-                        tint = Purple,
-                        modifier = Modifier.size(56.dp)
-                    )
-                }
-                Text(text = "Localização", color = LightGray)
-            }
+    Box(
+        modifier = Modifier
+            .fillMaxSize(1f)
+            .padding(28.dp)
 
-            Column() {
-                IconButton({}) {
-                    Image(
-                        painter = painterResource(R.drawable.gastronomia),
-                        contentDescription = "Categoria Selecionada",
-                        modifier = Modifier.size(56.dp)
-                    )
-                }
-                Text(text = "Categoria\nSelecionada", color = LightGray)
-            }
-
-            Column() {
-                IconButton({}) {
-                    Text(text = "?", fontSize = 44.sp, color = Purple)
-                }
-                Text(text = "Dica", color = LightGray)
-            }
-        }
-        MyTextButton(
-            text = if (walking) "Stop Walking" else "Start Walking",
-            onClick = { walking = !walking }
-        )
-
+    ) {
         Column(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .fillMaxWidth(0.75f)
         ) {
-            // Update 'walking' based on activity recognition results (e.g., from a view model)
-            AnimatedDrawable(walking = walking)
-            ProgressBar(3)
+            IconSection()
 
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .fillMaxWidth(0.75f)
+            ) {
+                VerticalSpacer()
+                AnimatedDrawable(walking = walking)
+                ProgressBar(3)
+            }
+
+            ShowTip(
+                1,
+                "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas\""
+            )
         }
-
-        ShowTip(
-            1,
-            "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas\""
-        )
     }
 }
 
 @Composable
+fun IconSection() {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Column() {
+            IconButton({}) {
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = "open Map",
+                    tint = Purple,
+                    modifier = Modifier.size(56.dp)
+                )
+            }
+            Text(text = "Localização", color = LightGray)
+        }
+
+        Column() {
+            IconButton({}) {
+                Image(
+                    painter = painterResource(R.drawable.gastronomia),
+                    contentDescription = "Categoria Selecionada",
+                    modifier = Modifier.size(56.dp)
+                )
+            }
+            Text(text = "Categoria\nSelecionada", color = LightGray)
+        }
+
+        Column() {
+            IconButton({}) {
+                Text(text = "?", fontSize = 44.sp, color = Purple)
+            }
+            Text(text = "Dica", color = LightGray)
+        }
+    }
+}
+
+
+@Composable
 fun AnimatedDrawable(walking: Boolean) {
+
     var isAnimating by remember { mutableStateOf(false) }
 
     // Observe changes to `walking` and update `isAnimating`
@@ -115,9 +133,7 @@ fun AnimatedDrawable(walking: Boolean) {
     }
 
     AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.5f),
+        modifier = Modifier.size(250.dp),
         factory = { context ->
             val imageView = ImageView(context).apply {
                 val animation = ContextCompat.getDrawable(
@@ -175,15 +191,35 @@ fun ProgressBar(tipNumber: Number) {
 }
 
 @Composable
-fun ShowTip(tipNumber: Number, tip: String) {
-    VerticalSpacer()
-    Text("Dica $tipNumber", color = LightGray, fontSize = 14.sp)
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(shape = RoundedCornerShape(10.dp), color = White)
-            .padding(10.dp)
-    ) {
-        Text(tip, fontSize = 14.sp, lineHeight = 14.sp)
+fun ShowTip(tipNumber: Number, tip: String, modifier: Modifier = Modifier) {
+    Column() {
+        VerticalSpacer()
+        Text("Dica $tipNumber", color = LightGray, fontSize = 14.sp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(shape = RoundedCornerShape(10.dp), color = White)
+                .padding(10.dp)
+        ) {
+            Text(tip, fontSize = 14.sp, lineHeight = 14.sp)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ActiveGeocachePreview() {
+    val navController = rememberNavController()
+
+    Geocashing_CulturalTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Yellow) // Set the background color here
+        ) {
+            item {
+                ActiveGeocacheScreen(navController)
+            }
+        }
     }
 }

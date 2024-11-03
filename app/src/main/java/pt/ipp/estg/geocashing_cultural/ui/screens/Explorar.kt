@@ -40,13 +40,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocashing_cultural.R
+import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
+import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocashing_cultural.ui.utils.LargeVerticalSpacer
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyGeocachePertoDeMim
 import pt.ipp.estg.geocashing_cultural.ui.utils.SmallVerticalSpacer
 
 @Composable
 fun ExplorarScreen(navController: NavHostController) {
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         Text(text = "Explorar Geocaches", fontSize = 22.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -129,66 +133,60 @@ fun CategoriaScreen() {
 
 @Composable
 fun GastronomiaContent() {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .background(Color.White, RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .padding(16.dp)
-    ){
-        item {
-            MyGeocache(
-                "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas.\"",
-                "5.0Km")
-            SmallVerticalSpacer()
-        }
+    ) {
+        MyGeocache(
+            "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas.\"",
+            "5.0Km"
+        )
+        SmallVerticalSpacer()
+        // Alterar este número conforme necessário
+        MyGeocache(
+            "\"Café muito frequentemente visitado por estudantes.\"",
+            "5.7Km"
+        )
 
-
-        item { // Alterar este número conforme necessário
-            MyGeocache(
-                "\"Café muito frequentemente visitado por estudantes.\"",
-                "5.7Km"
-            )
-
-            SmallVerticalSpacer()
-        }
+        SmallVerticalSpacer()
     }
 }
 
 @Composable
 fun CulturaContent() {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .background(Color.White, RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .padding(16.dp)
-    ){
-        item { // Alterar este número conforme necessário
-            MyGeocache(
-                "\"Edificício com heróis que lutampelo nosso país.\"",
-                "5.6Km"
-            )
+    ) {
+// Alterar este número conforme necessário
+        MyGeocache(
+            "\"Edificício com heróis que lutampelo nosso país.\"",
+            "5.6Km"
+        )
 
-            SmallVerticalSpacer()
-        }
+        SmallVerticalSpacer()
     }
 }
 
 @Composable
 fun HistoricoContent() {
-    LazyColumn(
+    Column(
         modifier = Modifier
             .background(Color.White, RoundedCornerShape(8.dp))
             .fillMaxWidth()
             .padding(16.dp)
-    ){
-        item { // Alterar este número conforme necessário
-            MyGeocache(
-                "\"Sua fachada imponente e suas pedras centenárias contam histórias de fé e tradição.\"",
-                "5.5Km"
-            )
+    ) {
+        // Alterar este número conforme necessário
+        MyGeocache(
+            "\"Sua fachada imponente e suas pedras centenárias contam histórias de fé e tradição.\"",
+            "5.5Km"
+        )
 
-            SmallVerticalSpacer()
-        }
+        SmallVerticalSpacer()
     }
 }
 
@@ -213,17 +211,34 @@ fun CategoriaButton(nome: String, icon: Painter, isSelected: Boolean, onClick: (
 }
 
 @Composable
-fun MyGeocache(titulo : String, distancia : String){
-        // Conteúdo principal
-        Column(modifier = Modifier.clickable(onClick = {}).border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp))) { // Adiciona um padding para o espaço do ícone
-            Text(titulo, modifier = Modifier.padding(15.dp))
-            Text(distancia, modifier = Modifier.align(Alignment.End).padding(3.dp))
-        }
+fun MyGeocache(titulo: String, distancia: String) {
+    // Conteúdo principal
+    Column(
+        modifier = Modifier
+            .clickable(onClick = {})
+            .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+    ) { // Adiciona um padding para o espaço do ícone
+        Text(titulo, modifier = Modifier.padding(15.dp))
+        Text(distancia, modifier = Modifier
+            .align(Alignment.End)
+            .padding(3.dp))
+    }
 }
 
 @Preview
 @Composable
-fun ExplorarScreenPreview() {
+fun ExplorarPreview() {
     val navController = rememberNavController()
-    ExplorarScreen(navController)
+
+    Geocashing_CulturalTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Yellow) // Set the background color here
+        ) {
+            item {
+                ExplorarScreen(navController)
+            }
+        }
+    }
 }
