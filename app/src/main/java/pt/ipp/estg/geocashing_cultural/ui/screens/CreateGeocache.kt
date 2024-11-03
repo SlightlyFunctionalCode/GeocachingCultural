@@ -37,6 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
+import pt.ipp.estg.geocashing_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyTextField
 
 @Composable
@@ -192,5 +194,15 @@ fun LocalizacaoField(localizacao: String, onLocalizacaoChange: (String) -> Unit)
 @Composable
 fun CreateGeocacheScreenPreview() {
     val navController = rememberNavController()
-    CreateGeocacheScreen(navController)
+    Geocashing_CulturalTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Yellow) // Set the background color here
+        ) {
+            item {
+                CreateGeocacheScreen(navController)
+            }
+        }
+    }
 }
