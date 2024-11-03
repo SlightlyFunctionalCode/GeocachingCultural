@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -62,6 +64,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocashing_cultural.R
+import pt.ipp.estg.geocashing_cultural.ui.screens.CreateGeocacheScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.ExplorarScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.GeocacheNotFoundScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.GeocacheScreen
@@ -70,6 +73,7 @@ import pt.ipp.estg.geocashing_cultural.ui.screens.PrincipalScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.ProfileEditingScreen
 import pt.ipp.estg.geocashing_cultural.ui.utils.MyIconButton
 import pt.ipp.estg.geocashing_cultural.ui.screens.ProfileScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.ScoreboardScreen
 import pt.ipp.estg.geocashing_cultural.ui.theme.DarkGray
 import pt.ipp.estg.geocashing_cultural.ui.theme.Geocashing_CulturalTheme
 import pt.ipp.estg.geocashing_cultural.ui.theme.White
@@ -209,6 +213,8 @@ fun MyScaffoldContent(navController: NavHostController) {
     NavHost(navController = navController, startDestination = "principalScreen") {
         composable("principalScreen") { PrincipalScreen(navController) }
         composable("explorarScreen") { ExplorarScreen(navController) }
+        composable("createGeocacheScreen") { CreateGeocacheScreen(navController) }
+        composable("scoreboardScreen") { ScoreboardScreen(navController) }
         composable("profileScreen") { ProfileScreen(navController) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
         composable("historyScreen") { HistoryScreen(navController) }
@@ -221,6 +227,8 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     val drawerItemsList = arrayListOf<NavigationDrawerData>()
     drawerItemsList.add(NavigationDrawerData(label = "Principal", route = "principalScreen", icon = Icons.Filled.Home))
     drawerItemsList.add(NavigationDrawerData(label = "Explorar",route = "explorarScreen", icon = Icons.Filled.LocationOn))
+    drawerItemsList.add(NavigationDrawerData(label = "CreateGeocache", route = "createGeocacheScreen", icon = Icons.Filled.Add))
+    drawerItemsList.add(NavigationDrawerData(label = "Scoreboard", route = "scoreboardScreen", icon = Icons.Filled.Star))
     drawerItemsList.add(NavigationDrawerData(label = "Perfil", route = "profileScreen", icon = Icons.Filled.Person))
     drawerItemsList.add(NavigationDrawerData(label = "Histórico", route = "historyScreen", icon = Icons.AutoMirrored.Filled.List))
     drawerItemsList.add(NavigationDrawerData(label = "Geocache", route = "geocacheScreen", icon = Icons.AutoMirrored.Filled.List))
