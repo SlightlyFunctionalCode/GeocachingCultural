@@ -1,6 +1,7 @@
 package pt.ipp.estg.geocashing_cultural.ui.classes
 
 import androidx.room.*
+import pt.ipp.estg.geocashing_cultural.ui.classes.typeConverters.GeocacheConverter
 
 @Entity
 data class GeocacheHistory(
