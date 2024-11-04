@@ -15,6 +15,7 @@ drawerlayout = "1.2.0"
 playServicesLocation = "21.3.0"
 navigationComposeVersion = "2.8.3"
 playServicesMapsVersion = "18.1.0"
+roomRuntimeVersion = "2.6.1"
 secretsGradlePlugin = "2.0.1"
 uiTestAndroid = "1.7.2"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
@@ -25,6 +26,7 @@ constraintlayout = "2.1.4"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntimeVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

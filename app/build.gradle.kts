@@ -68,6 +68,7 @@ android {
 }
 
 dependencies {
+    implementation (libs.androidx.room.runtime)
     implementation (libs.maps.compose)
     implementation(libs.play.services.maps)
     implementation(libs.secrets.gradle.plugin)
