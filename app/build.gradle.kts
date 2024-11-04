@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "pt.ipp.estg.geocashing_cultural"
+    namespace = "pt.ipp.estg.geocaching_cultural"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "pt.ipp.estg.geocashing_cultural"
+        applicationId = "pt.ipp.estg.geocaching_cultural"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

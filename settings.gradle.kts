@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Geocashing_Cultural"
+rootProject.name = "Geocaching_Cultural"
 include(":app")
  
