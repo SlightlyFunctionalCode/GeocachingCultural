@@ -71,6 +71,7 @@ import pt.ipp.estg.geocashing_cultural.ui.screens.CreateGeocacheScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.CreatedGeocacheDetailsScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.CreatedGeocachesScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.ExplorarScreen
+import pt.ipp.estg.geocashing_cultural.ui.screens.GeocacheFoundScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.GeocacheNotFoundScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.HistoryScreen
 import pt.ipp.estg.geocashing_cultural.ui.screens.PrincipalScreen
@@ -230,6 +231,7 @@ fun MyScaffoldContent(navController: NavHostController) {
         composable("geocacheNotFoundScreen") { GeocacheNotFoundScreen(navController) }
         composable("createdGeocachesScreen") { CreatedGeocachesScreen(navController) }
         composable("createdGeocacheDetailsScreen") { CreatedGeocacheDetailsScreen(navController) }
+        composable("geocacheFoundScreen") { GeocacheFoundScreen(navController) }
     }
 }
 
@@ -288,6 +290,13 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
         NavigationDrawerData(
             label = "Geocaches Criados",
             route = "createdGeocachesScreen",
+            icon = Icons.Filled.PlayArrow
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Geocache Found",
+            route = "geocacheFoundScreen",
             icon = Icons.Filled.PlayArrow
         )
     )

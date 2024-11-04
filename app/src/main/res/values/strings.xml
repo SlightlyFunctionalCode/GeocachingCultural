@@ -3,4 +3,5 @@
     <string name="avatar_description">Avatar Pic</string>
     <string name="facebook_link">Facebook Icon Link</string>
     <string name="instagram_link">Instagram Icon Link</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
