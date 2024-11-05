@@ -6,18 +6,6 @@ import pt.ipp.estg.geocaching_cultural.data.classes.typeConverters.ChallengeConv
 import pt.ipp.estg.geocaching_cultural.data.classes.typeConverters.HintConverter
 import java.time.LocalDateTime
 
-@Entity(
-    foreignKeys = [ // Correct placement inside @Entity
-        ForeignKey(
-            entity = User::class,
-            parentColumns = ["userId"],
-            childColumns = ["createdBy"],
-            onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.CASCADE,
-            deferred = false
-        )
-    ]
-)
 data class Geocache(
     @PrimaryKey val geocacheId: Int,
     @Embedded val location: Location,
