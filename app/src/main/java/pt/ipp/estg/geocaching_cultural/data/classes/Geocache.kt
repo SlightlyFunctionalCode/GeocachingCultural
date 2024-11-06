@@ -13,10 +13,5 @@ data class Geocache(
     val name: String,
     val createdAt: LocalDateTime,
     val createdBy: Int,
-
-    @TypeConverters(HintConverter::class)
-    val hint: List<String>, // converter needed
-
-    @TypeConverters(ChallengeConverter::class)
-    val challenge: List<Challenge>
 )
+

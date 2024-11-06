@@ -5,7 +5,8 @@ import androidx.room.*
 @Entity
 data class Challenge(
     @PrimaryKey val challengeId: String,
+    val geocacheId: Int,
     val question: String,
     val correctAnswer: String,
-    val pointsAwarded: Int,
+    val pointsAwarded: Int
 )

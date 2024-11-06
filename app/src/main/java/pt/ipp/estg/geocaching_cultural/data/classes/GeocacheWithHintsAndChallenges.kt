@@ -6,10 +6,10 @@ class GeocacheWithHintsAndChallenges(
     @Embedded val geocache: Geocache,
     @Relation(
         parentColumn = "geocacheId",
-        entityColumn = "hintId"
+        entityColumn = "geocacheId"
     ) val hint: List<Hint>,
     @Relation(
         parentColumn = "geocacheId",
-        entityColumn = "challengeId"
+        entityColumn = "geocacheId"
     ) val challenges: List<Challenge>
 )
