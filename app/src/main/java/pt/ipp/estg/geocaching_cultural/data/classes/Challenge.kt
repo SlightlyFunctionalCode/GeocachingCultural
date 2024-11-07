@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Entity
 data class Challenge(
-    @PrimaryKey val challengeId: String,
+    @PrimaryKey(autoGenerate = true) val challengeId: Int,
     val geocacheId: Int,
     val question: String,
     val correctAnswer: String,

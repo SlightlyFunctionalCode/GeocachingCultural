@@ -18,7 +18,7 @@ interface GeocacheDao {
     fun deleteGeocache(geocache: Geocache)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addChallenge(challenge: Challenge)
+    fun insertChallenge(challenge: Challenge)
 
     @Update
     fun updateChallenge(challenge: Challenge)
@@ -27,7 +27,7 @@ interface GeocacheDao {
     fun deleteGeocache(challenge: Challenge)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addHint(hint: Hint)
+    fun insertHint(hint: Hint)
 
     @Update
     fun updateHint(hint: Hint)
@@ -35,10 +35,12 @@ interface GeocacheDao {
     @Delete
     fun deleteHint(hint: Hint)
 
-    @Query("SELECT * FROM Geocache WHERE geocacheId = :geocacheId")
+    @Query("SELECT * FROM Geocache G " +
+            "WHERE G.geocacheId = :geocacheId")
     fun getGeocache(geocacheId: Int): Geocache
 
-    @Query("SELECT * FROM Geocache WHERE geocacheId = :geocacheId")
+    @Query("SELECT * FROM Geocache G " +
+            "WHERE G.geocacheId = :geocacheId")
     fun getGeocacheWithHintsAndChallenges(geocacheId: Int): GeocacheWithHintsAndChallenges
 
 }

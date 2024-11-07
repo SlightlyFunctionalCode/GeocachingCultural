@@ -25,9 +25,11 @@ interface UserDao {
             "WHERE U.userId = :userId")
     fun getUser(userId: Int): User
 
-    @Query("SELECT * FROM User WHERE userId = :userId")
+    @Query("SELECT * FROM User " +
+            "WHERE userId = :userId")
     fun getUserWithGeocachesCreated(userId: Int): UserWithGeocachesCreated
 
-    @Query("SELECT * FROM User WHERE userId = :userId")
+    @Query("SELECT * FROM User " +
+            "WHERE userId = :userId")
     fun getUserWithGeocachesFound(userId: Int): UserWithGeocachesFound
 }

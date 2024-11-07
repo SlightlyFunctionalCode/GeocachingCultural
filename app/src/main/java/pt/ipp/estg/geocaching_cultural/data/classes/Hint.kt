@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Entity
 data class  Hint(
-    val hintId: Int,
+    @PrimaryKey(autoGenerate = true) val hintId: Int,
     val geocacheId: Int,
     val hint: String
 )

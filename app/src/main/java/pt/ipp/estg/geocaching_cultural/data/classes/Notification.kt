@@ -4,7 +4,7 @@ import androidx.room.*
 
 @Entity
 data class Notification(
-    @PrimaryKey val notificationId: Int,
+    @PrimaryKey(autoGenerate = true) val notificationId: Int,
     val message: String,
     val title: String,
     val isRead: Boolean

@@ -7,7 +7,7 @@ class GeocacheWithHintsAndChallenges(
     @Relation(
         parentColumn = "geocacheId",
         entityColumn = "geocacheId"
-    ) val hint: List<Hint>,
+    ) val hints: List<Hint>,
     @Relation(
         parentColumn = "geocacheId",
         entityColumn = "geocacheId"

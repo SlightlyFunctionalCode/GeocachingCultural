@@ -2,12 +2,11 @@ package pt.ipp.estg.geocaching_cultural.data.classes
 
 import androidx.room.*
 import pt.ipp.estg.geocaching_cultural.data.classes.Enum.GeocacheType
-import pt.ipp.estg.geocaching_cultural.data.classes.typeConverters.ChallengeConverter
-import pt.ipp.estg.geocaching_cultural.data.classes.typeConverters.HintConverter
 import java.time.LocalDateTime
 
+@Entity
 data class Geocache(
-    @PrimaryKey val geocacheId: Int,
+    @PrimaryKey(autoGenerate = true) val geocacheId: Int,
     @Embedded val location: Location,
     val type: GeocacheType,
     val name: String,
