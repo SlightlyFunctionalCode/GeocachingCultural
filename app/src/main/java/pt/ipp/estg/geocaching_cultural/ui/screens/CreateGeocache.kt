@@ -89,7 +89,6 @@ fun CreateGeocacheScreen(navController: NavHostController) {
 
             Spacer(Modifier.height(16.dp))
 
-
             Button(onClick = { /*TODO: Ação de envio*/ }) {
                 Text(text = "Enviar")
             }
