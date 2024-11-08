@@ -39,11 +39,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             Geocaching_CulturalTheme {
                 Surface() {
+                    val usersViewsModels: UsersViewsModels = viewModel()
+
                     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                     val navController = rememberNavController()
-                    //NavigationDrawer(drawerState, navController)
+                    NavigationDrawer(drawerState, navController, usersViewsModels)
                     //StartNavBar()
-                    RoomDemoWithViewModel()
+                    //RoomDemoWithViewModel()
                 }
             }
         }
@@ -124,7 +126,7 @@ fun RoomDemoWithViewModel() {
         Text("Get User 5")
         user.value?.let { DisplayUser(it) }
 
-        Text("Get CurrentUser: -->"+currentUserId.value)
+        Text("Get CurrentUser: -->" + currentUserId.value)
 
         currentUser.value?.let { DisplayUser(it) }
     }

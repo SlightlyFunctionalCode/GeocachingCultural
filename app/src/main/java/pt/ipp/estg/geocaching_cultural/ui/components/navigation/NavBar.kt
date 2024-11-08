@@ -60,12 +60,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.screens.ActiveGeocacheScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.CreateGeocacheScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.CreatedGeocacheDetailsScreen
@@ -87,11 +89,15 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.White
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 
 @Composable
-fun NavigationDrawer(drawerState: DrawerState, navController: NavHostController) {
+fun NavigationDrawer(
+    drawerState: DrawerState,
+    navController: NavHostController,
+    usersViewsModels: UsersViewsModels
+) {
     val drawerItemList = prepareNavigationDrawerItems()
     var selectedItem by remember { mutableStateOf(drawerItemList[0]) }
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        ModalNavigationDrawer(drawerState = drawerState,drawerContent = {
+        ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 ModalDrawerSheet(
                     drawerContainerColor = DarkBlue,
@@ -119,7 +125,7 @@ fun NavigationDrawer(drawerState: DrawerState, navController: NavHostController)
             }
         }, gesturesEnabled = true, content = {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                Scaffold(drawerState = drawerState, navController = navController)
+                Scaffold(drawerState = drawerState, navController = navController, usersViewsModels)
             }
         })
     }
@@ -159,7 +165,11 @@ fun DrawerItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Scaffold(drawerState: DrawerState, navController: NavHostController) {
+fun Scaffold(
+    drawerState: DrawerState,
+    navController: NavHostController,
+    usersViewsModels: UsersViewsModels
+) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(containerColor = Yellow,
         topBar = {
@@ -170,10 +180,12 @@ fun Scaffold(drawerState: DrawerState, navController: NavHostController) {
             }
         },
         content = { padding ->
-            LazyColumn(modifier = Modifier
-                .padding(padding)
-                .fillMaxHeight(1f)) {
-                item { MyScaffoldContent(navController) }
+            LazyColumn(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxHeight(1f)
+            ) {
+                item { MyScaffoldContent(navController, usersViewsModels) }
             }
         },
         bottomBar = {
@@ -224,12 +236,12 @@ fun TopAppBar(onNavIconClick: () -> Unit) {
 }
 
 @Composable
-fun MyScaffoldContent(navController: NavHostController) {
+fun MyScaffoldContent(navController: NavHostController, usersViewsModels: UsersViewsModels) {
     NavHost(navController = navController, startDestination = "principalScreen") {
         composable("principalScreen") { PrincipalScreen(navController) }
         composable("explorarScreen") { ExplorarScreen(navController) }
         composable("createGeocacheScreen") { CreateGeocacheScreen(navController) }
-        composable("scoreboardScreen") { ScoreboardScreen(navController) }
+        composable("scoreboardScreen") { ScoreboardScreen(navController, usersViewsModels) }
         composable("profileScreen") { ProfileScreen(navController) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
         composable("historyScreen") { HistoryScreen(navController) }
@@ -316,9 +328,11 @@ data class NavigationDrawerData(val label: String, val route: String, val icon: 
 @Composable
 fun NavigationDrawerPreview() {
     Geocaching_CulturalTheme {
+        val usersViewsModels: UsersViewsModels = viewModel()
+
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
         val navController = rememberNavController()
-        NavigationDrawer(drawerState, navController)
+        NavigationDrawer(drawerState, navController, usersViewsModels)
     }
 }
 
@@ -326,8 +340,10 @@ fun NavigationDrawerPreview() {
 @Composable
 fun HomePreview() {
     Geocaching_CulturalTheme {
+        val usersViewsModels: UsersViewsModels = viewModel()
+
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val navController = rememberNavController()
-        NavigationDrawer(drawerState, navController)
+        NavigationDrawer(drawerState, navController, usersViewsModels)
     }
 }
