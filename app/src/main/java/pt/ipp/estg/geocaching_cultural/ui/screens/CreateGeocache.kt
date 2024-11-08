@@ -35,48 +35,71 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
+import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
+import pt.ipp.estg.geocaching_cultural.database.classes.Hint
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
+import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
+import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
+import java.time.LocalDateTime
 
 @Composable
-fun CreateGeocacheScreen(navController: NavHostController) {
+fun CreateGeocacheScreen(navController: NavHostController, viewModel: GeocacheViewsModels = viewModel()) {
+    val geocacheViewsModels: GeocacheViewsModels = viewModel()
     // Lista de dicas inicializada com três caixas de dica
     val dicas = remember { mutableStateListOf("Dica 1", "Dica 2", "Dica 3") }
     val perguntas = remember {mutableStateListOf("Pergunta para 5km", "Pergunta para 1km", "Pergunta para 500m", "Pergunta Final")}
     // Estado para a categoria selecionada e localização
     val categorias = listOf("Histórico", "Cultural", "Gastronômico") // Lista de categorias
-    var categoriaSelecionada by remember { mutableStateOf(categorias[0]) }
-    var localizacao by remember { mutableStateOf("") }
+    var categoriaSelecionada = GeocacheType.HISTORICO
+    var localizacao by remember { mutableStateOf(Location(0.0, 0.0, "")) }
+    val hints by remember { mutableStateOf(mutableListOf<Hint>()) }
+    val challenges by remember { mutableStateOf(mutableListOf<Challenge>()) }
 
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
 
-            dicas.forEachIndexed { index, dica ->
-                LabelDica(label = dica, isRemovable = index>=3,
-                    onRemoveClick = {dicas.removeAt(index)})
-                Spacer(Modifier.padding(5.dp))
-            }
+        dicas.forEachIndexed { index, dica ->
+            LabelDica(
+                label = dica, isRemovable = index >= 3,
+                onRemoveClick = { dicas.removeAt(index); hints.removeAt(index) }
+            )
+            Spacer(Modifier.padding(5.dp))
+        }
             // Botão para adicionar uma nova dica
-            Button(onClick = { dicas.add("Dica ${dicas.size + 1}") }) {
-                Text(text = "Adicionar Dica")
-            }
+        Button(onClick = { dicas.add("Dica ${dicas.size + 1}"); hints.add(Hint(0, 0, "")) }) {
+            Text(text = "Adicionar Dica")
+        }
 
-
-            perguntas.forEachIndexed { index, pergunta ->
-                LabelPergunta(label = pergunta)
-                Spacer(Modifier.padding(5.dp))
-            }
+        perguntas.forEachIndexed { index, pergunta ->
+            LabelPergunta(label = pergunta, onLabelChange = { challenges[index].question = it },
+                onAnswerChange = { challenges[index].correctAnswer = it })
+            Spacer(Modifier.padding(5.dp))
+        }
 
 
             // Caixa de seleção para categoria
             CategoriaDropdown(
                 categorias = categorias,
-                categoriaSelecionada = categoriaSelecionada,
-                onCategoriaSelecionada = { categoriaSelecionada = it }
+                categoriaSelecionada = categoriaSelecionada.toString(),
+                onCategoriaSelecionada = {
+                    if(it == categorias[0])
+                        categoriaSelecionada = GeocacheType.HISTORICO
+                    else if( it == categorias[1]) {
+                        categoriaSelecionada = GeocacheType.CULTURAL
+                    }
+                    else {
+                        categoriaSelecionada = GeocacheType.GASTRONOMIA
+                    }
+
+                }
             )
 
             Spacer(Modifier.height(16.dp))
@@ -89,14 +112,36 @@ fun CreateGeocacheScreen(navController: NavHostController) {
 
             Spacer(Modifier.height(16.dp))
 
-            Button(onClick = { /*TODO: Ação de envio*/ }) {
-                Text(text = "Enviar")
+        Button(onClick = { // Criar um novo Geocache
+            val geocache = Geocache(
+                geocacheId = 0,
+                location = localizacao,
+                type = categoriaSelecionada,
+                name = "", // você precisa adicionar um campo para o nome do geocache
+                createdAt = LocalDateTime.now(),
+                createdBy = 0 // você precisa adicionar um campo para o criador do geocache
+            )
+            viewModel.insertGeocache(geocache)
+
+            // associar as hints com o geocacheId
+            hints.forEach { hint ->
+                hint.geocacheId = geocache.geocacheId
+                viewModel.insertHint(hint)
             }
+
+            // associar as challenges com o geocacheId
+            challenges.forEach { challenge ->
+                challenge.geocacheId = geocache.geocacheId
+                viewModel.insertChallenge(challenge)
+            }
+        }) {
+            Text(text = "Enviar")
         }
     }
+}
 
 @Composable
-fun LabelDica(label: String, isRemovable: Boolean, onRemoveClick: () -> Unit) {
+fun LabelDica(label: String, isRemovable: Boolean, onRemoveClick: () -> Unit, onLabelChange: (String) -> Unit = {}) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = "$label:")
@@ -105,7 +150,7 @@ fun LabelDica(label: String, isRemovable: Boolean, onRemoveClick: () -> Unit) {
         Spacer(Modifier.padding(5.dp))
         // Exibe o botão de remoção apenas se a dica for removível
         Row(verticalAlignment = Alignment.CenterVertically) {
-            MyTextField(label)
+            MyTextField(label, onValueChange = onLabelChange)
             if (isRemovable) {
                 Spacer(Modifier.width(8.dp))
                 IconButton(onClick = onRemoveClick) {
@@ -122,16 +167,15 @@ fun LabelDica(label: String, isRemovable: Boolean, onRemoveClick: () -> Unit) {
 }
 
 @Composable
-fun LabelPergunta(label: String) {
+fun LabelPergunta(label: String, onLabelChange: (String) -> Unit = {}, onAnswerChange: (String)  -> Unit = {}) {
     Column {
         Text(text = "$label:")
         Spacer(Modifier.padding(5.dp))
-        MyTextField(label)
+        MyTextField(label, onValueChange = onLabelChange)
         Spacer(Modifier.padding(5.dp))
         Text("Atribua uma Resposta:")
         Spacer(Modifier.padding(5.dp))
-        MyTextField("Resposta")
-
+        MyTextField("Resposta", onValueChange = onAnswerChange)
     }
 }
 
@@ -176,15 +220,33 @@ fun CategoriaDropdown(
 }
 
 @Composable
-fun LocalizacaoField(localizacao: String, onLocalizacaoChange: (String) -> Unit) {
+fun LocalizacaoField(localizacao: Location, onLocalizacaoChange: (Location) -> Unit) {
     Column {
-        Text(text = "Localização:")
+        Text(text = "Latitude:")
         Spacer(Modifier.height(5.dp))
         TextField(
-            value = localizacao,
-            onValueChange = onLocalizacaoChange,
+            value = localizacao.latitude.toString(),
+            onValueChange = { onLocalizacaoChange(localizacao.copy(latitude = it.toDouble())) },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Digite a localização") }
+            placeholder = { Text("Digite a latitude") }
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(text = "Longitude:")
+        Spacer(Modifier.height(5.dp))
+        TextField(
+            value = localizacao.longitude.toString(),
+            onValueChange = { onLocalizacaoChange(localizacao.copy(longitude = it.toDouble())) },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Digite a longitude") }
+        )
+        Spacer(Modifier.height(10.dp))
+        Text(text = "Endereço:")
+        Spacer(Modifier.height(5.dp))
+        TextField(
+            value = localizacao.address?: "",
+            onValueChange = { onLocalizacaoChange(localizacao.copy(address = it)) },
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Digite o endereço") }
         )
     }
 }
@@ -193,6 +255,7 @@ fun LocalizacaoField(localizacao: String, onLocalizacaoChange: (String) -> Unit)
 @Composable
 fun CreateGeocacheScreenPreview() {
     val navController = rememberNavController()
+    val viewModel: GeocacheViewsModels = viewModel()
     Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
@@ -200,7 +263,7 @@ fun CreateGeocacheScreenPreview() {
                 .background(color = Yellow)
         ) {
             item {
-                CreateGeocacheScreen(navController)
+                CreateGeocacheScreen(navController, viewModel)
             }
         }
     }

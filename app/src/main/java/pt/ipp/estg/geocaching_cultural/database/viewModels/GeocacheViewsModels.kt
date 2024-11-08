@@ -78,14 +78,12 @@ class GeocacheViewsModels (application : Application) : AndroidViewModel(applica
     }
 
     fun getGeocache(geocacheId : Int) {
-        repository.getGeocache(geocacheId)
+        return repository.getGeocache(geocacheId)
     }
 
     fun getGeocacheWithHintsAndChallenges(geocacheId : Int) {
-        repository.getGeocacheWithHintsAndChallenges(geocacheId)
+        return repository.getGeocacheWithHintsAndChallenges(geocacheId)
     }
-
-
 
 
 

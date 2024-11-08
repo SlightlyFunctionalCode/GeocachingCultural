@@ -5,6 +5,6 @@ import androidx.room.*
 @Entity
 data class  Hint(
     @PrimaryKey(autoGenerate = true) val hintId: Int,
-    val geocacheId: Int,
+    var geocacheId: Int,
     val hint: String
 )
