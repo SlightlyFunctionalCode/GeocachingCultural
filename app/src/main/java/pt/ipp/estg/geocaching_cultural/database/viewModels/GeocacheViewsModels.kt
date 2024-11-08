@@ -1,7 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.database.viewModels
 
 import android.app.Application
-import androidx.compose.ui.window.application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers

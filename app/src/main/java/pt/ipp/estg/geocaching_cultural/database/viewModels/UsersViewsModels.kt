@@ -79,7 +79,7 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
     fun getUser(id: Int): LiveData<User> {
         return repository.getUser(id)
     }
-
+    
     // Save and update the current user ID in both LiveData and SharedPreferences
     fun saveCurrentUserId(userId: Int) {
         _currentUserId.value = userId  // Update LiveData

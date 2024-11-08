@@ -82,7 +82,6 @@ dependencies {
     implementation(libs.androidx.storage)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.runtime.livedata)
-    implementation(libs.androidx.ui.desktop)
     implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

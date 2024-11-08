@@ -108,11 +108,9 @@ fun RoomDemoWithViewModel() {
 
         Button(onClick = {
             try {
-                val userIdInt = userIdString.toInt()
-                val userToBeDeleted = usersViewsModels.getUser(userIdInt).value
-                if (userToBeDeleted != null) {
-                    usersViewsModels.deleteUser(userToBeDeleted)
-                }
+                val index = userIdString.toInt()
+
+                users.value?.get(index)?.let { usersViewsModels.deleteUser(it) }
             } catch (e: NumberFormatException) {
                 println("Error converting to Int: ${e.message}")
                 // Consider showing an error message to the user here
@@ -120,6 +118,7 @@ fun RoomDemoWithViewModel() {
         }) {
             Text(text = "Delete user")
         }
+
 
 
         Text("Get User 5")
