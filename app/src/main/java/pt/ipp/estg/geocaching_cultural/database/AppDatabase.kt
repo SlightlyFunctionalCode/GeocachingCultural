@@ -1,16 +1,16 @@
-package pt.ipp.estg.geocaching_cultural.data
+package pt.ipp.estg.geocaching_cultural.database
 
 import android.content.Context
 import androidx.room.*
-import pt.ipp.estg.geocaching_cultural.data.classes.Challenge
-import pt.ipp.estg.geocaching_cultural.data.classes.Geocache
-import pt.ipp.estg.geocaching_cultural.data.classes.Hint
-import pt.ipp.estg.geocaching_cultural.data.classes.Notification
-import pt.ipp.estg.geocaching_cultural.data.classes.User
-import pt.ipp.estg.geocaching_cultural.data.classes.UserGeocacheFoundCrossRef
-import pt.ipp.estg.geocaching_cultural.data.classes.converters.LocalDateTimeConverter
-import pt.ipp.estg.geocaching_cultural.data.dao.GeocacheDao
-import pt.ipp.estg.geocaching_cultural.data.dao.UserDao
+import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
+import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
+import pt.ipp.estg.geocaching_cultural.database.classes.Hint
+import pt.ipp.estg.geocaching_cultural.database.classes.Notification
+import pt.ipp.estg.geocaching_cultural.database.classes.User
+import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.classes.converters.LocalDateTimeConverter
+import pt.ipp.estg.geocaching_cultural.database.dao.GeocacheDao
+import pt.ipp.estg.geocaching_cultural.database.dao.UserDao
 
 @Database(
     entities = [

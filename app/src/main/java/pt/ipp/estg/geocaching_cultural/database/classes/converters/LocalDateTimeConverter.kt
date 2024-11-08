@@ -1,4 +1,4 @@
-package pt.ipp.estg.geocaching_cultural.data.classes.converters
+package pt.ipp.estg.geocaching_cultural.database.classes.converters
 
 import androidx.room.TypeConverter
 import java.time.LocalDateTime

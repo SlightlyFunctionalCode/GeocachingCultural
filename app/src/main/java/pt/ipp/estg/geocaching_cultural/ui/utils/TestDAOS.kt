@@ -10,14 +10,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import pt.ipp.estg.geocaching_cultural.data.AppDatabase
-import pt.ipp.estg.geocaching_cultural.data.AppDatabaseTest
-import pt.ipp.estg.geocaching_cultural.data.classes.Challenge
-import pt.ipp.estg.geocaching_cultural.data.classes.Enum.GeocacheType
-import pt.ipp.estg.geocaching_cultural.data.classes.Geocache
-import pt.ipp.estg.geocaching_cultural.data.classes.GeocacheWithHintsAndChallenges
-import pt.ipp.estg.geocaching_cultural.data.classes.Hint
-import pt.ipp.estg.geocaching_cultural.data.classes.Location
+import pt.ipp.estg.geocaching_cultural.database.AppDatabaseTest
+import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
+import pt.ipp.estg.geocaching_cultural.database.classes.Enum.GeocacheType
+import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
+import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
+import pt.ipp.estg.geocaching_cultural.database.classes.Hint
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import java.time.LocalDateTime
 
 @Composable

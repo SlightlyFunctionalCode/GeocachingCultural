@@ -1,7 +1,7 @@
-package pt.ipp.estg.geocaching_cultural.data.classes
+package pt.ipp.estg.geocaching_cultural.database.classes
 
 import androidx.room.*
-import pt.ipp.estg.geocaching_cultural.data.classes.Enum.GeocacheType
+import pt.ipp.estg.geocaching_cultural.database.classes.Enum.GeocacheType
 import java.time.LocalDateTime
 
 @Entity

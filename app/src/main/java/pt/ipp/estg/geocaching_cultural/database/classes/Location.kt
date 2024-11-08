@@ -1,4 +1,4 @@
-package pt.ipp.estg.geocaching_cultural.data.classes
+package pt.ipp.estg.geocaching_cultural.database.classes
 
 data class Location(
     val latitude: Double,
