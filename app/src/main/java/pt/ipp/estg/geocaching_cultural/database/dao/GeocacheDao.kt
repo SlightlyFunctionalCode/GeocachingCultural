@@ -25,7 +25,7 @@ interface GeocacheDao {
     suspend fun updateChallenge(challenge: Challenge)
 
     @Delete
-    suspend fun deleteGeocache(challenge: Challenge)
+    suspend fun deleteChallenge(challenge: Challenge)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertHint(hint: Hint)
