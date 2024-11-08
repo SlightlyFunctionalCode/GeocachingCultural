@@ -23,7 +23,7 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
 import pt.ipp.estg.geocaching_cultural.ui.theme.White
 
 @Composable
-fun PointsDisplay(modifier: Modifier=Modifier){
+fun PointsDisplay(points: Int, modifier: Modifier = Modifier) {
     Box(
         modifier
             .background(color = White, shape = RoundedCornerShape(10.dp))
@@ -41,7 +41,7 @@ fun PointsDisplay(modifier: Modifier=Modifier){
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "62",
+                    text = points.toString(),
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     textAlign = TextAlign.Center,

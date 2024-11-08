@@ -13,11 +13,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.glide.GlideImage
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.ui.theme.White
 
 @Composable
-fun ProfilePicture(modifier: Modifier = Modifier) {
+fun ProfilePicture(imageUrl: String?, modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -25,12 +27,23 @@ fun ProfilePicture(modifier: Modifier = Modifier) {
             .background(shape = RoundedCornerShape(10.dp), color = White)
             .padding(15.dp)
     ) {
-        Image(
-            contentScale = ContentScale.Crop,
-            painter = painterResource(R.drawable.avatar),
-            contentDescription = "Profile Picture",
-            modifier = Modifier
-                .clip(RoundedCornerShape(5.dp))
-        )
+        if (imageUrl == null) {
+            Image(
+                contentScale = ContentScale.Crop,
+                painter = painterResource(R.drawable.avatar),
+                contentDescription = "Profile Picture",
+                modifier = Modifier.clip(RoundedCornerShape(5.dp))
+            )
+        } else {
+            GlideImage(
+                imageModel = { imageUrl }, // loading a network image using an URL.
+                imageOptions = ImageOptions(
+                    contentScale = ContentScale.Crop, alignment = Alignment.Center
+                ),
+                modifier = Modifier.clip(RoundedCornerShape(5.dp))
+            )
+        }
     }
 }
+
+

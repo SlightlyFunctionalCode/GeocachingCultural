@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 import pt.ipp.estg.geocaching_cultural.database.AppDatabase
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
+import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesCreated
+import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesFound
 import pt.ipp.estg.geocaching_cultural.database.repositories.UserRepository
 
 class UsersViewsModels(application: Application) : AndroidViewModel(application) {
@@ -78,6 +80,14 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
 
     fun getUser(id: Int): LiveData<User> {
         return repository.getUser(id)
+    }
+
+    fun getUserWithGeocachesCreated(id: Int): LiveData<UserWithGeocachesCreated> {
+        return repository.getUserWithGeocachesCreated(id)
+    }
+
+    fun getUserWithGeocachesFound(id: Int): LiveData<UserWithGeocachesFound> {
+        return repository.getUserWithGeocachesFound(id)
     }
 
     // Save and update the current user ID in both LiveData and SharedPreferences

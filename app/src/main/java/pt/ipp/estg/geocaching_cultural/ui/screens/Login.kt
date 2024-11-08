@@ -100,7 +100,7 @@ fun LoginScreen(navController: NavHostController) {
                 VerticalSpacer()
                 MyTextButton(
                     text = "Submit",
-                    onClick = { navController.navigate("") },
+                    onClick = { navController.navigate("principalScreen") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 LargeVerticalSpacer()

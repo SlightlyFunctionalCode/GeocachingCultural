@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
@@ -30,37 +32,52 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.Title
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 
 @Composable
-fun ProfileScreen(navController: NavHostController) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(28.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+fun ProfileScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
+    var userState = usersViewsModels.currentUser.observeAsState()
+
+    userState.value?.let { user ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(28.dp)
         ) {
-            Title(text = "Perfil", modifier = Modifier.weight(1.25f))
-            HorizontalSpacer()
-            PointsDisplay(modifier = Modifier.weight(1f))
-        }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Title(text = "Perfil", modifier = Modifier.weight(1.25f))
+                HorizontalSpacer()
+                PointsDisplay(points = user.points, modifier = Modifier.weight(1f))
+            }
 
-        VerticalSpacer()
-        ProfilePicture()
-
-        Column(Modifier.fillMaxWidth()) {
             VerticalSpacer()
-            Text(text = "Joel Sousa de Carvalho", fontSize = 24.sp)
-            Text(text = "joel@gmail.com", color = LightGray)
-            SmallVerticalSpacer()
-            MyTextButton(text = "Editar Informações de Perfil",
-                { navController.navigate("profileEditingScreen") })
-        }
+            ProfilePicture(user.profileImageUrl)
 
-        Column(Modifier.fillMaxWidth()) {
-            VerticalSpacer()
-            Text(text = "Ações Adicionais", fontSize = 24.sp, color = Pink)
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                MyTextButton(text = "Eliminar Perfil")
-                SmallHorizontalSpacer()
-                Text(text = "*Ação Irreversível", color = Pink, fontSize = 12.sp)
+
+            Column(Modifier.fillMaxWidth()) {
+                VerticalSpacer()
+                Text(text = user.name, fontSize = 24.sp)
+
+                Text(text = user.email, color = LightGray)
+                SmallVerticalSpacer()
+                MyTextButton(text = "Editar Informações de Perfil",
+                    { navController.navigate("profileEditingScreen") })
+            }
+
+
+            Column(Modifier.fillMaxWidth()) {
+                VerticalSpacer()
+                Text(text = "Ações Adicionais", fontSize = 24.sp, color = Pink)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MyTextButton(
+                        text = "Eliminar Perfil",
+                        onClick = {
+                            /*TODO: Fix deleteUser */
+                            //usersViewsModels.deleteUser(user)
+                            //usersViewsModels.saveCurrentUserId(-1)
+                            navController.navigate("homeScreen")
+                        }
+                    )
+                    SmallHorizontalSpacer()
+                    Text(text = "*Ação Irreversível", color = Pink, fontSize = 12.sp)
+                }
             }
         }
     }
@@ -77,7 +94,7 @@ fun ProfilePreview() {
                 .background(color = Yellow)
         ) {
             item {
-                ProfileScreen(navController)
+                //  ProfileScreen(navController)
             }
         }
     }

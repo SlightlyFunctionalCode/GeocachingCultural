@@ -30,7 +30,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
@@ -43,6 +42,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,6 +66,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
@@ -76,10 +79,13 @@ import pt.ipp.estg.geocaching_cultural.ui.screens.ExplorarScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.GeocacheFoundScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.GeocacheNotFoundScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.HistoryScreen
+import pt.ipp.estg.geocaching_cultural.ui.screens.HomeScreen
+import pt.ipp.estg.geocaching_cultural.ui.screens.LoginScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.PrincipalScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.ProfileEditingScreen
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyIconButton
 import pt.ipp.estg.geocaching_cultural.ui.screens.ProfileScreen
+import pt.ipp.estg.geocaching_cultural.ui.screens.RegisterScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.ScoreboardScreen
 import pt.ipp.estg.geocaching_cultural.ui.theme.Blue
 import pt.ipp.estg.geocaching_cultural.ui.theme.DarkBlue
@@ -173,11 +179,13 @@ fun Scaffold(
     val coroutineScope = rememberCoroutineScope()
     Scaffold(containerColor = Yellow,
         topBar = {
-            TopAppBar {
-                coroutineScope.launch {
-                    drawerState.open()
-                }
-            }
+            MyTopAppBar(
+                onNavIconClick = {
+                    coroutineScope.launch {
+                        drawerState.open()
+                    }
+                }, usersViewsModels = usersViewsModels
+            )
         },
         content = { padding ->
             LazyColumn(
@@ -196,7 +204,7 @@ fun Scaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(onNavIconClick: () -> Unit) {
+fun MyTopAppBar(onNavIconClick: () -> Unit, usersViewsModels: UsersViewsModels) {
     TopAppBar(title = {
         Text(
             text = "GeoCultura Explorer", fontWeight = FontWeight.Bold, fontSize = 6.em
@@ -221,10 +229,24 @@ fun TopAppBar(onNavIconClick: () -> Unit) {
                     .size(45.dp)
                     .clip(CircleShape)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.avatar),
-                    contentDescription = stringResource(id = R.string.avatar_description)
-                )
+                var userState = usersViewsModels.currentUser.observeAsState()
+
+                userState.value?.let { user ->
+
+                    if (user.profileImageUrl == null) {
+                        Image(
+                            painter = painterResource(id = R.drawable.avatar),
+                            contentDescription = stringResource(id = R.string.avatar_description)
+                        )
+                    } else {
+                        GlideImage(
+                            imageModel = { user.profileImageUrl }, // loading a network image using an URL.
+                            imageOptions = ImageOptions(
+                                contentScale = ContentScale.Crop, alignment = Alignment.Center
+                            ),
+                        )
+                    }
+                }
             }
             Spacer(modifier = Modifier.width(8.dp))
             MyIconButton(Icons.Default.Menu, { onNavIconClick() }, modifier = Modifier)
@@ -237,12 +259,15 @@ fun TopAppBar(onNavIconClick: () -> Unit) {
 
 @Composable
 fun MyScaffoldContent(navController: NavHostController, usersViewsModels: UsersViewsModels) {
-    NavHost(navController = navController, startDestination = "principalScreen") {
+    NavHost(navController = navController, startDestination = "homeScreen") {
+        composable("homeScreen") { HomeScreen(navController) }
+        composable("loginScreen") { LoginScreen(navController) }
+        composable("registerScreen") { RegisterScreen(navController) }
         composable("principalScreen") { PrincipalScreen(navController) }
         composable("explorarScreen") { ExplorarScreen(navController) }
         composable("createGeocacheScreen") { CreateGeocacheScreen(navController) }
         composable("scoreboardScreen") { ScoreboardScreen(navController, usersViewsModels) }
-        composable("profileScreen") { ProfileScreen(navController) }
+        composable("profileScreen") { ProfileScreen(navController, usersViewsModels) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
         composable("historyScreen") { HistoryScreen(navController) }
         composable("activeGeocacheScreen") { ActiveGeocacheScreen(navController) }

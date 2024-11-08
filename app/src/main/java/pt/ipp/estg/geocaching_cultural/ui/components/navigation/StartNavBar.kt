@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.screens.HomeScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.LoginScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.RegisterScreen
@@ -24,8 +25,7 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 
 @Composable
-fun StartNavBar() {
-    val navController = rememberNavController()
+fun StartNavBar(navController: NavHostController, usersViewsModels: UsersViewsModels) {
     var currentRoute by remember { mutableStateOf("homeScreen") }
 
     LaunchedEffect(navController) {
@@ -43,7 +43,7 @@ fun StartNavBar() {
             },
             content = { padding ->
                 Column(modifier = Modifier.padding(padding)) {
-                    ScaffoldContent(navController)
+                    MyScaffoldContent(navController, usersViewsModels)
                 }
             },
             bottomBar = {
@@ -54,7 +54,7 @@ fun StartNavBar() {
         Scaffold(
             content = { padding ->
                 Column(modifier = Modifier.padding(padding)) {
-                    ScaffoldContent(navController)
+                    MyScaffoldContent(navController, usersViewsModels)
                 }
             },
         )
@@ -75,20 +75,11 @@ fun StartTopAppBar(onLoginClick: () -> Unit) {
     )
 }
 
-@Composable
-fun ScaffoldContent(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "homeScreen") {
-        composable("homeScreen") { HomeScreen(navController) }
-        composable("loginScreen") { LoginScreen(navController) }
-        composable("registerScreen") { RegisterScreen(navController) }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun SimpleNavigationBarPreview() {
     Geocaching_CulturalTheme {
-        StartNavBar()
+       // StartNavBar(rememberNavController())
     }
 }
 

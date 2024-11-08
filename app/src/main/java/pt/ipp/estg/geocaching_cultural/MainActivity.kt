@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -28,8 +29,10 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.components.navigation.NavigationDrawer
+import pt.ipp.estg.geocaching_cultural.ui.components.navigation.StartNavBar
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     @ExperimentalMaterial3Api
@@ -40,18 +43,28 @@ class MainActivity : ComponentActivity() {
             Geocaching_CulturalTheme {
                 Surface() {
                     val usersViewsModels: UsersViewsModels = viewModel()
-
                     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                     val navController = rememberNavController()
-                    NavigationDrawer(drawerState, navController, usersViewsModels)
-                    //StartNavBar()
+
+                    var currentRoute by remember { mutableStateOf("homeScreen") }
+
+                    LaunchedEffect(navController) {
+                        navController.currentBackStackEntryFlow.collect { entry ->
+                            currentRoute = entry.destination.route ?: "homeScreen"
+                        }
+                    }
+
                     //RoomDemoWithViewModel()
+
+                    if (currentRoute == "homeScreen" || currentRoute == "loginScreen" || currentRoute == "registerScreen") {
+                        StartNavBar(navController, usersViewsModels)
+                    } else {
+                        NavigationDrawer(drawerState, navController, usersViewsModels)
+                    }
                 }
             }
         }
     }
-
-
 }
 
 @Composable
@@ -78,11 +91,11 @@ fun RoomDemoWithViewModel() {
             usersViewsModels.insertUser(
                 User(
                     0,
-                    "Missing",
+                    "User",
                     "test@mail.com",
                     "12345678",
-                    0,
-                    "",
+                    Random.nextInt(100000),
+                    "https://media.istockphoto.com/id/1388253782/photo/positive-successful-millennial-business-professional-man-head-shot-portrait.jpg?s=612x612&w=0&k=20&c=uS4knmZ88zNA_OjNaE_JCRuq9qn3ycgtHKDKdJSnGdY=",
                     location
                 )
             )
@@ -143,6 +156,7 @@ fun DisplayUser(user: User) {
         Text(text = "Password: ${user.password}")
     }
 }
+
 
 
 

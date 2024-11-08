@@ -33,7 +33,7 @@ fun ProfileEditingScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             VerticalSpacer()
-            ProfilePicture()
+           // ProfilePicture(user.image)
             MyTextButton(text = "Alterar Imagem")
 
             Column(Modifier.fillMaxWidth()) {

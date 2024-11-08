@@ -91,6 +91,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // images
+    implementation("com.github.skydoves:landscapist-glide:2.1.7")
     //maps
     implementation(libs.play.services.maps)
     implementation (libs.maps.compose)
