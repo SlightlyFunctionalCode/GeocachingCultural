@@ -2,7 +2,7 @@ package pt.ipp.estg.geocaching_cultural.database.classes
 
 import androidx.room.*
 
-class GeocacheWithHintsAndChallenges(
+data class GeocacheWithHintsAndChallenges(
     @Embedded val geocache: Geocache,
     @Relation(
         parentColumn = "geocacheId",

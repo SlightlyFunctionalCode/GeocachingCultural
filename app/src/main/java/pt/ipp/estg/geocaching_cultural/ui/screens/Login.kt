@@ -1,23 +1,18 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -29,22 +24,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import pt.ipp.estg.geocaching_cultural.R
-import pt.ipp.estg.geocaching_cultural.database.classes.Location
-import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
-import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.LargeVerticalSpacer
@@ -62,12 +51,12 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
     var isEmailValid by remember { mutableStateOf(true) }
     var isPasswordValid by remember { mutableStateOf(true) }
 
-    var suportingTextEmail by remember { mutableStateOf("") }
-    var suportingTextPassword by remember { mutableStateOf("") }
+    var supportingTextEmail by remember { mutableStateOf("") }
+    var supportingTextPassword by remember { mutableStateOf("") }
 
     val snackbarHostState = remember { SnackbarHostState() }
     var loginError by remember { mutableStateOf(false) }
-    var loginSucessfull by remember { mutableStateOf(false) }
+    var loginSuccessful by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -103,11 +92,11 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                         )
                     },
                     isError = !isEmailValid,
-                    supportingText = { Text(text = suportingTextEmail, color = Pink) },
+                    supportingText = { Text(text = supportingTextEmail, color = Pink) },
                     modifier = Modifier
                 )
 
-                suportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
+                supportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
             }
 
             item {
@@ -128,10 +117,10 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     isError = !isPasswordValid,
-                    supportingText = { Text(text = suportingTextPassword, color = Pink) },
+                    supportingText = { Text(text = supportingTextPassword, color = Pink) },
                     modifier = Modifier
                 )
-                suportingTextPassword =
+                supportingTextPassword =
                     if (!isPasswordValid) "Senha deve ter pelo menos 6 caracteres" else ""
             }
 
@@ -151,7 +140,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                             answerPassword,
                             usersViewsModels,
                             onLoginOutcome = { outcome ->
-                                if (!outcome) loginError = true else loginSucessfull = true
+                                if (!outcome) loginError = true else loginSuccessful = true
                             },
                         )
                     },
@@ -165,9 +154,9 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                     }
                 }
 
-                LaunchedEffect(loginSucessfull) {
-                    if (loginSucessfull) {
-                        navController.navigate("principalScreen")
+                LaunchedEffect(loginSuccessful) {
+                    if (loginSuccessful) {
+                        navController.navigate("homeScreen")
                     }
                 }
 

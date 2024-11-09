@@ -69,10 +69,9 @@ fun ProfileScreen(navController: NavHostController, usersViewsModels: UsersViews
                     MyTextButton(
                         text = "Eliminar Perfil",
                         onClick = {
-                            /*TODO: Fix deleteUser */
-                            //usersViewsModels.deleteUser(user)
-                            //usersViewsModels.saveCurrentUserId(-1)
-                            navController.navigate("homeScreen")
+                            usersViewsModels.deleteUser(user)
+                            usersViewsModels.saveCurrentUserId(-1)
+                            navController.navigate("aboutUsScreen")
                         }
                     )
                     SmallHorizontalSpacer()

@@ -67,9 +67,9 @@ fun RegisterScreen(
     var isNameValid by remember { mutableStateOf(true) }
     var isPasswordValid by remember { mutableStateOf(true) }
 
-    var suportingTextName by remember { mutableStateOf("") }
-    var suportingTextEmail by remember { mutableStateOf("") }
-    var suportingTextPassword by remember { mutableStateOf("") }
+    var supportingTextName by remember { mutableStateOf("") }
+    var supportingTextEmail by remember { mutableStateOf("") }
+    var supportingTextPassword by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
         val snackbarHostState = remember { SnackbarHostState() }
@@ -110,10 +110,10 @@ fun RegisterScreen(
                         )
                     },
                     isError = !isNameValid,
-                    supportingText = { Text(text = suportingTextName, color = Pink) },
+                    supportingText = { Text(text = supportingTextName, color = Pink) },
                     modifier = Modifier
                 )
-                suportingTextName = if (!isNameValid) "Nome é obrigatório" else ""
+                supportingTextName = if (!isNameValid) "Nome é obrigatório" else ""
             }
 
             item {
@@ -133,11 +133,11 @@ fun RegisterScreen(
                         )
                     },
                     isError = !isEmailValid,
-                    supportingText = { Text(text = suportingTextEmail, color = Pink) },
+                    supportingText = { Text(text = supportingTextEmail, color = Pink) },
                     modifier = Modifier
                 )
 
-                suportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
+                supportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
             }
 
             item {
@@ -159,10 +159,10 @@ fun RegisterScreen(
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     isError = !isPasswordValid,
-                    supportingText = { Text(text = suportingTextPassword, color = Pink) },
+                    supportingText = { Text(text = supportingTextPassword, color = Pink) },
                     modifier = Modifier
                 )
-                suportingTextPassword =
+                supportingTextPassword =
                     if (!isPasswordValid) "Senha deve ter pelo menos 6 caracteres" else ""
             }
 

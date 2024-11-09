@@ -1,7 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.ui.components.navigation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,16 +11,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
-import pt.ipp.estg.geocaching_cultural.ui.screens.HomeScreen
-import pt.ipp.estg.geocaching_cultural.ui.screens.LoginScreen
-import pt.ipp.estg.geocaching_cultural.ui.screens.RegisterScreen
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 
@@ -31,15 +23,15 @@ fun StartNavBar(
     usersViewsModels: UsersViewsModels,
     geocacheViewsModels: GeocacheViewsModels
 ) {
-    var currentRoute by remember { mutableStateOf("homeScreen") }
+    var currentRoute by remember { mutableStateOf("aboutUsScreen") }
 
     LaunchedEffect(navController) {
         navController.currentBackStackEntryFlow.collect { entry ->
-            currentRoute = entry.destination.route ?: "homeScreen"
+            currentRoute = entry.destination.route ?: "aboutUsScreen"
         }
     }
 
-    if (currentRoute == "homeScreen") {
+    if (currentRoute == "aboutUsScreen") {
         Scaffold(
             topBar = {
                 StartTopAppBar(onLoginClick = {

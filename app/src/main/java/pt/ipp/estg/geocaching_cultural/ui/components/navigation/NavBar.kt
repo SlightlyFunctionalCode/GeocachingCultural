@@ -80,9 +80,9 @@ import pt.ipp.estg.geocaching_cultural.ui.screens.ExplorarScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.GeocacheFoundScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.GeocacheNotFoundScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.HistoryScreen
-import pt.ipp.estg.geocaching_cultural.ui.screens.HomeScreen
+import pt.ipp.estg.geocaching_cultural.ui.screens.AboutUsScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.LoginScreen
-import pt.ipp.estg.geocaching_cultural.ui.screens.PrincipalScreen
+import pt.ipp.estg.geocaching_cultural.ui.screens.HomeScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.ProfileEditingScreen
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyIconButton
 import pt.ipp.estg.geocaching_cultural.ui.screens.ProfileScreen
@@ -275,14 +275,14 @@ fun MyScaffoldContent(
     usersViewsModels: UsersViewsModels,
     geocacheViewsModels: GeocacheViewsModels
 ) {
-    NavHost(navController = navController, startDestination = "homeScreen") {
-        composable("homeScreen") { HomeScreen(navController) }
+    NavHost(navController = navController, startDestination = "aboutUsScreen") {
+        composable("aboutUsScreen") { AboutUsScreen(navController) }
         composable("loginScreen") { LoginScreen(navController, usersViewsModels) }
         composable("registerScreen/{parameter}") { backStackEntry ->
             val parameter = backStackEntry.arguments?.getString("parameter")
             RegisterScreen(navController, usersViewsModels, parameter)
         }
-        composable("principalScreen") { PrincipalScreen(navController) }
+        composable("homeScreen") { HomeScreen(navController, geocacheViewsModels) }
         composable("explorarScreen") { ExplorarScreen(navController, geocacheViewsModels) }
         composable("createGeocacheScreen") {
             CreateGeocacheScreen(
@@ -307,8 +307,8 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     val drawerItemsList = arrayListOf<NavigationDrawerData>()
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Principal",
-            route = "principalScreen",
+            label = "Home",
+            route = "homeScreen",
             icon = Icons.Filled.Home
         )
     )

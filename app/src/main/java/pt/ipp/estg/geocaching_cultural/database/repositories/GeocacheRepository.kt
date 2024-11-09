@@ -55,6 +55,10 @@ class GeocacheRepository(val geocacheDao : GeocacheDao)  {
         geocacheDao.getGeocacheWithHintsAndChallenges(geocacheId)
     }
 
+    fun getClosest5GeocacheWithHintsAndChallenges(): LiveData<List<GeocacheWithHintsAndChallenges>> {
+        return geocacheDao.getClosest5GeocacheWithHintsAndChallenges()
+    }
+
     fun getGeocachesByCategory(category: GeocacheType): LiveData<List<GeocacheWithHintsAndChallenges>> {
         return geocacheDao.getGeocachesByCategory(category)
     }

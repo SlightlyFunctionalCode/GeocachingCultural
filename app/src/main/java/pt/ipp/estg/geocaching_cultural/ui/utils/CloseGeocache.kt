@@ -18,26 +18,24 @@ import androidx.compose.ui.unit.dp
 import pt.ipp.estg.geocaching_cultural.ui.theme.Green
 
 @Composable
-fun MyGeocachePertoDeMim(titulo : String, distancia : String, icone: Painter){
-    Box(modifier = Modifier
-        .background(color = Green, shape = RoundedCornerShape(10.dp))
-        .fillMaxWidth()) {
-
-        // Conteúdo principal
-        Column(modifier = Modifier.padding(end = 40.dp)) { // Adiciona um padding para o espaço do ícone
-            Text(titulo, modifier = Modifier.padding(15.dp))
-            Text(distancia, modifier = Modifier.align(Alignment.CenterHorizontally))
+fun CloseGeocache(hint: String, distance: String, icon: Painter, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .background(color = Green, shape = RoundedCornerShape(10.dp))
+            .fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(end = 40.dp)) {
+            Text(hint, modifier = Modifier.padding(15.dp))
+            Text(distance, modifier = Modifier.align(Alignment.CenterHorizontally))
         }
-
-        // Ícone no canto superior direito
         Icon(
-            painter = icone, // Substitua pelo seu ícone
+            painter = icon,
             contentDescription = "Ícone",
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(16.dp) // Ajuste o padding conforme necessário
-                .size(24.dp) // Ajuste o tamanho do ícone conforme necessário
-                .clickable { /* Ação ao clicar no ícone */ }
+                .padding(16.dp)
+                .size(24.dp)
+                .clickable { onClick() }
         )
     }
 }

@@ -1,128 +1,127 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
+import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
+import pt.ipp.estg.geocaching_cultural.database.classes.Hint
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
+import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
+import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
-import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
-import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
-import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
-import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
-import pt.ipp.estg.geocaching_cultural.ui.utils.HomePicture
-import pt.ipp.estg.geocaching_cultural.ui.utils.HorizontalSpacer
-import pt.ipp.estg.geocaching_cultural.ui.utils.SmallHorizontalSpacer
+import pt.ipp.estg.geocaching_cultural.ui.utils.CloseGeocache
+import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
+import pt.ipp.estg.geocaching_cultural.ui.utils.SmallVerticalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
+import java.time.LocalDateTime
 
 @Composable
-fun HomeScreen(navController: NavHostController) {
-    var answerEmail by remember { mutableStateOf("") }
-    var isEmailValid by remember { mutableStateOf(true) }
-    var suportingTextEmail by remember { mutableStateOf("") }
-
+fun HomeScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels) {
+    val closeGeocachesWithHints =
+        geocacheViewsModels.getClosest5GeocacheWithHintsAndChallenges().observeAsState()
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(10.dp)
+            .fillMaxSize()
+            .padding(30.dp)
     ) {
-        HomePicture(
-            modifier = Modifier
-        )
-
-        VerticalSpacer()
-        Text(
-            text = "Desafie-se a explorar, a aprender e a criar!",
-            fontWeight = FontWeight.Bold,
-            fontSize = 28.sp,
-            textAlign = TextAlign.Center
-        )
-
-        VerticalSpacer()
-        Text(
-            text = "Junte-se à aventura do Geocaching Cultural e descubra os tesouros escondidos " +
-                    "em locais históricos e culturais próximos a você!",
-            textAlign = TextAlign.Center,
-            color = LightGray
-        )
-
-        VerticalSpacer()
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxHeight()
-        ) {
-            MyTextField(
-                label = { Text("Email*") },
-                value = answerEmail,
-                onValueChange = {
-                    answerEmail = it
-                    isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
-                },
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Email,
-                        contentDescription = "Email Icon"
-                    )
-                },
-                isError = !isEmailValid,
-                supportingText = { Text(text = suportingTextEmail, color = Pink) },
-                modifier = Modifier
-                    .weight(2f)
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                /* TODO: Corrigir Localização Atual */
+                text = "Felgueiras, Porto",
+                fontSize = 14.sp, // Define o tamanho da fonte
+                modifier = Modifier.fillMaxWidth()
             )
-
-            suportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
-
-            SmallHorizontalSpacer()
-
-            MyTextButton(
-                text = "Sign-Up",
-                onClick = {
-                    navController.navigate("registerScreen/$answerEmail")
-                },
-                modifier = Modifier
-                    .weight(1f)
+            Text(
+                text = "Geocaches Perto de Mim",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,// Define o tamanho da fonte para o texto maior
+                modifier = Modifier.fillMaxWidth()
             )
         }
+        VerticalSpacer()
+
+        Closest5Geocaches(closeGeocachesWithHints.value, navController, geocacheViewsModels)
+    }
+}
+
+@Composable
+fun Closest5Geocaches(
+    closest5Geocaches: List<GeocacheWithHintsAndChallenges>?,
+    navController: NavHostController,
+    geocacheViewsModels: GeocacheViewsModels
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+
+        if (closest5Geocaches.isNullOrEmpty()) {
+            Text("Pedimos desculpa, não existem Geocaches numa àrea de 10 Km!")
+            SmallVerticalSpacer()
+        } else {
+            /* TODO: calcular distância */
+            for (geocache in closest5Geocaches) {
+
+                CloseGeocache(
+                    hint = geocache.hints[0].hint,
+                    distance = "5.0Km",
+                    icon = when (geocache.geocache.type) {
+                        GeocacheType.GASTRONOMIA -> painterResource(R.drawable.gastronomia)
+                        GeocacheType.CULTURAL -> painterResource(R.drawable.cultural)
+                        GeocacheType.HISTORICO -> painterResource(R.drawable.historico)
+                    },
+                    onClick = {} /* TODO: redirecionar para iniciar geocache */
+                )
+
+                SmallVerticalSpacer()
+            }
+        }
+
+        MyTextButton(
+            "+ Mais Geocaches", onClick = {
+                navController.navigate("explorarScreen")
+            },
+            modifier = Modifier
+                .height(48.dp)
+        )
+
     }
 }
 
 @Preview
 @Composable
-fun HomePreview() {
+fun PrincipalPreview() {
     val navController = rememberNavController()
-
     Geocaching_CulturalTheme {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Yellow)
         ) {
-            HomeScreen(navController)
+            item {
+                //  HomeScreen(navController)
+            }
         }
     }
 }

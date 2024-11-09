@@ -39,17 +39,17 @@ class MainActivity : ComponentActivity() {
                     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                     val navController = rememberNavController()
 
-                    var currentRoute by remember { mutableStateOf("homeScreen") }
+                    var currentRoute by remember { mutableStateOf("aboutUsScreen") }
 
                     val registerScreenPattern = Regex("registerScreen/.+")
 
                     LaunchedEffect(navController) {
                         navController.currentBackStackEntryFlow.collect { entry ->
-                            currentRoute = entry.destination.route ?: "homeScreen"
+                            currentRoute = entry.destination.route ?: "aboutUsScreen"
                         }
                     }
 
-                    if (currentRoute == "homeScreen" || currentRoute == "loginScreen" || registerScreenPattern.matches(
+                    if (currentRoute == "aboutUsScreen" || currentRoute == "loginScreen" || registerScreenPattern.matches(
                             currentRoute
                         )
                     ) {

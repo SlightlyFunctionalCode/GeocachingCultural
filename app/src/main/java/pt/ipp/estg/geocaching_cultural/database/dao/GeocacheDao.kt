@@ -41,10 +41,17 @@ interface GeocacheDao {
             "WHERE G.geocacheId = :geocacheId")
     fun getGeocache(geocacheId: Int): LiveData<Geocache>
 
+    @Transaction
     @Query("SELECT * FROM Geocache G " +
             "WHERE G.geocacheId = :geocacheId")
     fun getGeocacheWithHintsAndChallenges(geocacheId: Int): LiveData<GeocacheWithHintsAndChallenges>
 
+    @Transaction
+    @Query("SELECT * FROM Geocache G " +
+            "LIMIT 5")
+    fun getClosest5GeocacheWithHintsAndChallenges(): LiveData<List<GeocacheWithHintsAndChallenges>>
+
+    @Transaction
     @Query("SELECT * FROM Geocache G " +
             "WHERE G.type = :category")
     fun getGeocachesByCategory(category: GeocacheType): LiveData<List<GeocacheWithHintsAndChallenges>>

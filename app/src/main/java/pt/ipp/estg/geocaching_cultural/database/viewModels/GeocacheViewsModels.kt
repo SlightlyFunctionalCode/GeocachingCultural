@@ -88,6 +88,10 @@ class GeocacheViewsModels (application : Application) : AndroidViewModel(applica
         return repository.getGeocacheWithHintsAndChallenges(geocacheId)
     }
 
+    fun getClosest5GeocacheWithHintsAndChallenges(): LiveData<List<GeocacheWithHintsAndChallenges>> {
+        return repository.getClosest5GeocacheWithHintsAndChallenges()
+    }
+
     fun getGeocachesByCategory(category: GeocacheType): LiveData<List<GeocacheWithHintsAndChallenges>> {
         return repository.getGeocachesByCategory(category)
     }
