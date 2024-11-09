@@ -6,6 +6,7 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
+import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 
 @Dao
 interface GeocacheDao {
@@ -43,5 +44,9 @@ interface GeocacheDao {
     @Query("SELECT * FROM Geocache G " +
             "WHERE G.geocacheId = :geocacheId")
     fun getGeocacheWithHintsAndChallenges(geocacheId: Int): LiveData<GeocacheWithHintsAndChallenges>
+
+    @Query("SELECT * FROM Geocache G " +
+            "WHERE G.type = :category")
+    fun getGeocachesByCategory(category: GeocacheType): LiveData<List<GeocacheWithHintsAndChallenges>>
 
 }

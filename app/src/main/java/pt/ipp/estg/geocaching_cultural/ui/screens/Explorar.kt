@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -22,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,15 +35,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
+import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
+import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
-import pt.ipp.estg.geocaching_cultural.ui.utils.SmallVerticalSpacer
 
 @Composable
-fun ExplorarScreen(navController: NavHostController) {
+fun ExplorarScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels) {
+    var categoriaSelecionada by remember { mutableStateOf(GeocacheType.HISTORICO) }
+
+    // Observa os geocaches da categoria selecionada
+    val geocaches by geocacheViewsModels.getGeocachesByCategory(categoriaSelecionada).observeAsState(emptyList())
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
@@ -49,21 +58,36 @@ fun ExplorarScreen(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CategoriaScreen()
+        CategoriaScreen(
+            categoriaSelecionada = categoriaSelecionada,
+            onCategoriaSelecionadaChange = { novaCategoria ->
+                categoriaSelecionada = novaCategoria
+            }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Exibe a lista de geocaches da categoria selecionada
+        LazyColumn {
+            items(geocaches) { geocache ->
+                MyGeocache(geocache)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
     }
 }
 
 @Composable
-fun CategoriaScreen() {
-    // Lista de categorias e ícones
+fun CategoriaScreen(
+    categoriaSelecionada: GeocacheType,
+    onCategoriaSelecionadaChange: (GeocacheType) -> Unit
+) {
     val categorias = listOf(
         "Gastronomia" to R.drawable.gastronomia,
         "Cultura" to R.drawable.cultural,
-        "Histórico" to R.drawable.historico,
+        "Histórico" to R.drawable.historico
     )
 
-    // Categoria selecionada e estado de expansão
-    var categoriaSelecionada by remember { mutableStateOf(categorias[0].first) }
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -76,24 +100,21 @@ fun CategoriaScreen() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Exibe apenas a categoria selecionada
             CategoriaButton(
-                nome = categoriaSelecionada,
-                icon = painterResource(id = categorias.find { it.first == categoriaSelecionada }!!.second),
+                nome = categoriaSelecionada.name,
+                icon = painterResource(id = categorias.find { it.first == categoriaSelecionada.name }!!.second),
                 isSelected = true,
-                onClick = { /* Não faz nada, já está selecionada */ }
+                onClick = {}
             )
 
-            // Botão para expandir/contrair a lista de categorias
             IconButton(onClick = { isExpanded = !isExpanded }) {
                 Icon(
-                    imageVector = if (isExpanded) Icons.Default.ArrowDropDown else Icons.Default.ArrowDropDown,
-                    contentDescription = if (isExpanded) "Fechar categorias" else "Mostrar categorias"
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Mostrar categorias"
                 )
             }
         }
 
-        // Lista de categorias (exibida apenas se isExpanded for true)
         if (isExpanded) {
             Column(
                 modifier = Modifier
@@ -105,82 +126,15 @@ fun CategoriaScreen() {
                     CategoriaButton(
                         nome = categoria,
                         icon = painterResource(id = icon),
-                        isSelected = categoria == categoriaSelecionada,
+                        isSelected = categoria == categoriaSelecionada.name,
                         onClick = {
-                            categoriaSelecionada = categoria
-                            isExpanded = false // Fecha a lista após a seleção
+                            onCategoriaSelecionadaChange(categoriaSelecionada)
+                            isExpanded = false
                         }
                     )
                 }
             }
         }
-
-        // Conteúdo que muda com a categoria selecionada
-        Spacer(modifier = Modifier.height(16.dp))
-        when (categoriaSelecionada) {
-            "Gastronomia" -> GastronomiaContent()
-            "Cultura" -> CulturaContent()
-            "Histórico" -> HistoricoContent()
-        }
-    }
-}
-
-@Composable
-fun GastronomiaContent() {
-    Column(
-        modifier = Modifier
-            .background(Color.White, RoundedCornerShape(8.dp))
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        MyGeocache(
-            "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas.\"",
-            "5.0Km"
-        )
-        SmallVerticalSpacer()
-        // Alterar este número conforme necessário
-        MyGeocache(
-            "\"Café muito frequentemente visitado por estudantes.\"",
-            "5.7Km"
-        )
-
-        SmallVerticalSpacer()
-    }
-}
-
-@Composable
-fun CulturaContent() {
-    Column(
-        modifier = Modifier
-            .background(Color.White, RoundedCornerShape(8.dp))
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-// Alterar este número conforme necessário
-        MyGeocache(
-            "\"Edificício com heróis que lutampelo nosso país.\"",
-            "5.6Km"
-        )
-
-        SmallVerticalSpacer()
-    }
-}
-
-@Composable
-fun HistoricoContent() {
-    Column(
-        modifier = Modifier
-            .background(Color.White, RoundedCornerShape(8.dp))
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        // Alterar este número conforme necessário
-        MyGeocache(
-            "\"Sua fachada imponente e suas pedras centenárias contam histórias de fé e tradição.\"",
-            "5.5Km"
-        )
-
-        SmallVerticalSpacer()
     }
 }
 
@@ -205,25 +159,26 @@ fun CategoriaButton(nome: String, icon: Painter, isSelected: Boolean, onClick: (
 }
 
 @Composable
-fun MyGeocache(titulo: String, distancia: String) {
+fun MyGeocache(geocache: GeocacheWithHintsAndChallenges) {
     // Conteúdo principal
     Column(
         modifier = Modifier
             .clickable(onClick = {})
             .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp))
     ) { // Adiciona um padding para o espaço do ícone
-        Text(titulo, modifier = Modifier.padding(15.dp))
-        Text(distancia, modifier = Modifier
+        Text(geocache.hints[0].hint, modifier = Modifier.padding(15.dp))
+        Text(geocache.geocache.name, modifier = Modifier
             .align(Alignment.End)
             .padding(3.dp))
     }
 }
 
+
 @Preview
 @Composable
 fun ExplorarPreview() {
     val navController = rememberNavController()
-
+    val geocacheViewsModels: GeocacheViewsModels = viewModel()
     Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
@@ -231,7 +186,7 @@ fun ExplorarPreview() {
                 .background(color = Yellow)
         ) {
             item {
-                ExplorarScreen(navController)
+                ExplorarScreen(navController, geocacheViewsModels)
             }
         }
     }
