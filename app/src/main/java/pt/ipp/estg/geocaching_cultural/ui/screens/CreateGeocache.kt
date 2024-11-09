@@ -44,14 +44,14 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Hint
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import java.time.LocalDateTime
 
 @Composable
-fun CreateGeocacheScreen(navController: NavHostController, viewModel: GeocacheViewsModels = viewModel()) {
-    val geocacheViewsModels: GeocacheViewsModels = viewModel()
+fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels, usersViewModel: UsersViewsModels) {
     // Lista de dicas inicializada com três caixas de dica
     val dicas = remember { mutableStateListOf("Dica 1", "Dica 2", "Dica 3") }
     val perguntas = remember {mutableStateListOf("Pergunta para 5km", "Pergunta para 1km", "Pergunta para 500m", "Pergunta Final")}
@@ -119,20 +119,20 @@ fun CreateGeocacheScreen(navController: NavHostController, viewModel: GeocacheVi
                 type = categoriaSelecionada,
                 name = "", // você precisa adicionar um campo para o nome do geocache
                 createdAt = LocalDateTime.now(),
-                createdBy = 0 // você precisa adicionar um campo para o criador do geocache
+                createdBy = usersViewModel.currentUser.value?.userId ?: 0 // você precisa adicionar um campo para o criador do geocache
             )
-            viewModel.insertGeocache(geocache)
+            geocacheViewsModels.insertGeocache(geocache)
 
             // associar as hints com o geocacheId
             hints.forEach { hint ->
                 hint.geocacheId = geocache.geocacheId
-                viewModel.insertHint(hint)
+                geocacheViewsModels.insertHint(hint)
             }
 
             // associar as challenges com o geocacheId
             challenges.forEach { challenge ->
                 challenge.geocacheId = geocache.geocacheId
-                viewModel.insertChallenge(challenge)
+                geocacheViewsModels.insertChallenge(challenge)
             }
         }) {
             Text(text = "Enviar")
@@ -255,7 +255,8 @@ fun LocalizacaoField(localizacao: Location, onLocalizacaoChange: (Location) -> U
 @Composable
 fun CreateGeocacheScreenPreview() {
     val navController = rememberNavController()
-    val viewModel: GeocacheViewsModels = viewModel()
+    val geocacheViewModel: GeocacheViewsModels = viewModel()
+    val usersViewModel: UsersViewsModels = viewModel()
     Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
@@ -263,7 +264,7 @@ fun CreateGeocacheScreenPreview() {
                 .background(color = Yellow)
         ) {
             item {
-                CreateGeocacheScreen(navController, viewModel)
+                CreateGeocacheScreen(navController, geocacheViewModel, usersViewModel)
             }
         }
     }

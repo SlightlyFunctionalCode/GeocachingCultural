@@ -70,6 +70,7 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.screens.ActiveGeocacheScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.CreateGeocacheScreen
@@ -98,7 +99,8 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 fun NavigationDrawer(
     drawerState: DrawerState,
     navController: NavHostController,
-    usersViewsModels: UsersViewsModels
+    usersViewsModels: UsersViewsModels,
+    geocacheViewsModels: GeocacheViewsModels
 ) {
     val drawerItemList = prepareNavigationDrawerItems()
     var selectedItem by remember { mutableStateOf(drawerItemList[0]) }
@@ -131,7 +133,7 @@ fun NavigationDrawer(
             }
         }, gesturesEnabled = true, content = {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                Scaffold(drawerState = drawerState, navController = navController, usersViewsModels)
+                Scaffold(drawerState = drawerState, navController = navController, usersViewsModels, geocacheViewsModels)
             }
         })
     }
@@ -174,7 +176,8 @@ fun DrawerItem(
 fun Scaffold(
     drawerState: DrawerState,
     navController: NavHostController,
-    usersViewsModels: UsersViewsModels
+    usersViewsModels: UsersViewsModels,
+    geocacheViewsModels: GeocacheViewsModels
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(containerColor = Yellow,
@@ -184,7 +187,7 @@ fun Scaffold(
                     coroutineScope.launch {
                         drawerState.open()
                     }
-                }, usersViewsModels = usersViewsModels
+                }, usersViewsModels = usersViewsModels, geocacheViewsModels = geocacheViewsModels
             )
         },
         content = { padding ->
@@ -193,7 +196,7 @@ fun Scaffold(
                     .padding(padding)
                     .fillMaxHeight(1f)
             ) {
-                item { MyScaffoldContent(navController, usersViewsModels) }
+                item { MyScaffoldContent(navController, usersViewsModels, geocacheViewsModels) }
             }
         },
         bottomBar = {
@@ -204,7 +207,7 @@ fun Scaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(onNavIconClick: () -> Unit, usersViewsModels: UsersViewsModels) {
+fun MyTopAppBar(onNavIconClick: () -> Unit, usersViewsModels: UsersViewsModels, geocacheViewsModels: GeocacheViewsModels) {
     TopAppBar(title = {
         Text(
             text = "GeoCultura Explorer", fontWeight = FontWeight.Bold, fontSize = 6.em
@@ -258,14 +261,14 @@ fun MyTopAppBar(onNavIconClick: () -> Unit, usersViewsModels: UsersViewsModels) 
 }
 
 @Composable
-fun MyScaffoldContent(navController: NavHostController, usersViewsModels: UsersViewsModels) {
+fun MyScaffoldContent(navController: NavHostController, usersViewsModels: UsersViewsModels, geocacheViewsModels: GeocacheViewsModels) {
     NavHost(navController = navController, startDestination = "homeScreen") {
         composable("homeScreen") { HomeScreen(navController) }
         composable("loginScreen") { LoginScreen(navController) }
         composable("registerScreen") { RegisterScreen(navController, usersViewsModels) }
         composable("principalScreen") { PrincipalScreen(navController) }
-        composable("explorarScreen") { ExplorarScreen(navController) }
-        composable("createGeocacheScreen") { CreateGeocacheScreen(navController) }
+        composable("explorarScreen") { ExplorarScreen(navController, geocacheViewsModels) }
+        composable("createGeocacheScreen") { CreateGeocacheScreen(navController, geocacheViewsModels, usersViewsModels) }
         composable("scoreboardScreen") { ScoreboardScreen(navController, usersViewsModels) }
         composable("profileScreen") { ProfileScreen(navController, usersViewsModels) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
@@ -354,10 +357,10 @@ data class NavigationDrawerData(val label: String, val route: String, val icon: 
 fun NavigationDrawerPreview() {
     Geocaching_CulturalTheme {
         val usersViewsModels: UsersViewsModels = viewModel()
-
+        val geocacheViewsModels: GeocacheViewsModels = viewModel()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
         val navController = rememberNavController()
-        NavigationDrawer(drawerState, navController, usersViewsModels)
+        NavigationDrawer(drawerState, navController, usersViewsModels, geocacheViewsModels)
     }
 }
 
@@ -366,9 +369,9 @@ fun NavigationDrawerPreview() {
 fun HomePreview() {
     Geocaching_CulturalTheme {
         val usersViewsModels: UsersViewsModels = viewModel()
-
+        val geocacheViewsModels: GeocacheViewsModels = viewModel()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val navController = rememberNavController()
-        NavigationDrawer(drawerState, navController, usersViewsModels)
+        NavigationDrawer(drawerState, navController, usersViewsModels, geocacheViewsModels)
     }
 }
