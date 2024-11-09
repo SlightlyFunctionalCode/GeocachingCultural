@@ -109,11 +109,7 @@ fun RegisterScreen(navController: NavHostController, usersViewsModels: UsersView
                     supportingText = { Text(text = suportingTextName, color = Pink) },
                     modifier = Modifier
                 )
-                suportingTextName = if (!isNameValid) {
-                    "Nome é obrigatório"
-                }else{
-                    ""
-                }
+                suportingTextName = if (!isNameValid) "Nome é obrigatório" else ""
             }
 
             item {
@@ -137,16 +133,14 @@ fun RegisterScreen(navController: NavHostController, usersViewsModels: UsersView
                     modifier = Modifier
                 )
 
-                suportingTextEmail = if (!isEmailValid) {
-                    "Insira um email válido"
-                }else ""
+                suportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
             }
 
             item {
                 VerticalSpacer()
 
                 MyTextField(
-                    label = { Text("Password") },
+                    label = { Text("Password*") },
                     value = answerPassword,
                     onValueChange = {
                         answerPassword = it
@@ -164,11 +158,8 @@ fun RegisterScreen(navController: NavHostController, usersViewsModels: UsersView
                     supportingText = { Text(text = suportingTextPassword, color = Pink) },
                     modifier = Modifier
                 )
-                suportingTextPassword = if (!isPasswordValid) {
-                    "Senha deve ter pelo menos 6 caracteres"
-                } else {
-                    ""
-                }
+                suportingTextPassword =
+                    if (!isPasswordValid) "Senha deve ter pelo menos 6 caracteres" else ""
             }
 
             /* TODO: add firebase autentication */
@@ -200,11 +191,11 @@ fun RegisterScreen(navController: NavHostController, usersViewsModels: UsersView
             }
 
             buttonState = isNameValid &&
-                isPasswordValid &&
-                isEmailValid &&
-                answerName != "" &&
-                answerEmail != "" &&
-                answerPassword != ""
+                    isPasswordValid &&
+                    isEmailValid &&
+                    answerName != "" &&
+                    answerEmail != "" &&
+                    answerPassword != ""
 
             item {
                 VerticalSpacer()

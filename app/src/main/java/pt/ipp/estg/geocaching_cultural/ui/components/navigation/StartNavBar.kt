@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.screens.HomeScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.LoginScreen
@@ -25,7 +26,11 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 
 @Composable
-fun StartNavBar(navController: NavHostController, usersViewsModels: UsersViewsModels) {
+fun StartNavBar(
+    navController: NavHostController,
+    usersViewsModels: UsersViewsModels,
+    geocacheViewsModels: GeocacheViewsModels
+) {
     var currentRoute by remember { mutableStateOf("homeScreen") }
 
     LaunchedEffect(navController) {
@@ -43,7 +48,7 @@ fun StartNavBar(navController: NavHostController, usersViewsModels: UsersViewsMo
             },
             content = { padding ->
                 Column(modifier = Modifier.padding(padding)) {
-                    MyScaffoldContent(navController, usersViewsModels)
+                    MyScaffoldContent(navController, usersViewsModels, geocacheViewsModels)
                 }
             },
             bottomBar = {
@@ -54,7 +59,7 @@ fun StartNavBar(navController: NavHostController, usersViewsModels: UsersViewsMo
         Scaffold(
             content = { padding ->
                 Column(modifier = Modifier.padding(padding)) {
-                    MyScaffoldContent(navController, usersViewsModels)
+                    MyScaffoldContent(navController, usersViewsModels, geocacheViewsModels)
                 }
             },
         )
@@ -79,7 +84,7 @@ fun StartTopAppBar(onLoginClick: () -> Unit) {
 @Composable
 fun SimpleNavigationBarPreview() {
     Geocaching_CulturalTheme {
-       // StartNavBar(rememberNavController())
+        // StartNavBar(rememberNavController())
     }
 }
 

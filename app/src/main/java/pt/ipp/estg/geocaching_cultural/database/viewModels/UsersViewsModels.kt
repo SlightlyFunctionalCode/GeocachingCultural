@@ -47,7 +47,8 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
 
                 // Add source to _currentUser and observe the user data
                 _currentUser.addSource(userLiveData) { user ->
-                    _currentUser.value = user ?: User(userId, "Unknown", "", "", 0, null, Location(0.0, 0.0,""))
+                    _currentUser.value =
+                        user ?: User(userId, "Unknown", "", "", 0, null, Location(0.0, 0.0, ""))
                 }
             }
         }
@@ -78,6 +79,13 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun getUserWithLogin(email: String, password: String, callback: (User?) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val user = repository.getUserWithLogin(email, password)
+            callback(user)
+        }
+    }
+
     fun getUser(id: Int): LiveData<User> {
         return repository.getUser(id)
     }
@@ -92,7 +100,7 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
 
     // Save and update the current user ID in both LiveData and SharedPreferences
     fun saveCurrentUserId(userId: Int) {
-        _currentUserId.value = userId  // Update LiveData
+        _currentUserId.postValue(userId)  // Use postValue for thread-safety
         saveCurrentUserIdToPreferences(userId) // Save to SharedPreferences
 
         viewModelScope.launch(Dispatchers.IO) {

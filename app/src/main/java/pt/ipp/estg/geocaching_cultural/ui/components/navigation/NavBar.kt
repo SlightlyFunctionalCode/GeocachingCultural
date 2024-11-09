@@ -264,7 +264,7 @@ fun MyTopAppBar(onNavIconClick: () -> Unit, usersViewsModels: UsersViewsModels, 
 fun MyScaffoldContent(navController: NavHostController, usersViewsModels: UsersViewsModels, geocacheViewsModels: GeocacheViewsModels) {
     NavHost(navController = navController, startDestination = "homeScreen") {
         composable("homeScreen") { HomeScreen(navController) }
-        composable("loginScreen") { LoginScreen(navController) }
+        composable("loginScreen") { LoginScreen(navController, usersViewsModels) }
         composable("registerScreen") { RegisterScreen(navController, usersViewsModels) }
         composable("principalScreen") { PrincipalScreen(navController) }
         composable("explorarScreen") { ExplorarScreen(navController, geocacheViewsModels) }

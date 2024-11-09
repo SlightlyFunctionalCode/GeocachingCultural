@@ -30,6 +30,10 @@ class UserRepository(val userDao: UserDao /*val restAPI: BookAPI*/) {
         return userDao.getUserWithGeocachesFound(id)
     }
 
+    suspend fun getUserWithLogin(email: String, password: String): User? {
+        return userDao.getUserWithLogin(email, password)
+    }
+
     suspend fun insert(user: User) {
         userDao.insertUser(user)
     }

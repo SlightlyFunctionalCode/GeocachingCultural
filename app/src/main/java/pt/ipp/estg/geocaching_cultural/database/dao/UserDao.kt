@@ -17,20 +17,34 @@ interface UserDao {
     @Delete
     suspend fun deleteUser(user: User)
 
-    @Query("SELECT * FROM User U " +
-            "ORDER BY U.points DESC " +
-            "LIMIT 10")
-    fun getTop10Users():LiveData<List<User>>
+    @Query(
+        "SELECT * FROM User U " +
+                "ORDER BY U.points DESC " +
+                "LIMIT 10"
+    )
+    fun getTop10Users(): LiveData<List<User>>
 
-    @Query("SELECT * FROM User U " +
-            "WHERE U.userId = :userId")
+    @Query(
+        "SELECT * FROM User U " +
+                "WHERE U.userId = :userId"
+    )
     fun getUser(userId: Int): LiveData<User>
 
-    @Query("SELECT * FROM User " +
-            "WHERE userId = :userId")
+    @Query(
+        "SELECT * FROM User U " +
+                "WHERE U.userId = :userId"
+    )
     fun getUserWithGeocachesCreated(userId: Int): LiveData<UserWithGeocachesCreated>
 
-    @Query("SELECT * FROM User " +
-            "WHERE userId = :userId")
+    @Query(
+        "SELECT * FROM User U " +
+                "WHERE U.userId = :userId"
+    )
     fun getUserWithGeocachesFound(userId: Int): LiveData<UserWithGeocachesFound>
+
+    @Query(
+        "SELECT * FROM User U " +
+                "WHERE U.email= :email AND U.password= :password"
+    )
+    suspend fun getUserWithLogin(email: String, password: String): User?
 }
