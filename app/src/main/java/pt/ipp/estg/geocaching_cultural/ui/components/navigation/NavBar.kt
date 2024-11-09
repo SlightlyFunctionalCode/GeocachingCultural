@@ -133,7 +133,12 @@ fun NavigationDrawer(
             }
         }, gesturesEnabled = true, content = {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                Scaffold(drawerState = drawerState, navController = navController, usersViewsModels, geocacheViewsModels)
+                Scaffold(
+                    drawerState = drawerState,
+                    navController = navController,
+                    usersViewsModels,
+                    geocacheViewsModels
+                )
             }
         })
     }
@@ -207,7 +212,11 @@ fun Scaffold(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(onNavIconClick: () -> Unit, usersViewsModels: UsersViewsModels, geocacheViewsModels: GeocacheViewsModels) {
+fun MyTopAppBar(
+    onNavIconClick: () -> Unit,
+    usersViewsModels: UsersViewsModels,
+    geocacheViewsModels: GeocacheViewsModels
+) {
     TopAppBar(title = {
         Text(
             text = "GeoCultura Explorer", fontWeight = FontWeight.Bold, fontSize = 6.em
@@ -261,14 +270,27 @@ fun MyTopAppBar(onNavIconClick: () -> Unit, usersViewsModels: UsersViewsModels, 
 }
 
 @Composable
-fun MyScaffoldContent(navController: NavHostController, usersViewsModels: UsersViewsModels, geocacheViewsModels: GeocacheViewsModels) {
+fun MyScaffoldContent(
+    navController: NavHostController,
+    usersViewsModels: UsersViewsModels,
+    geocacheViewsModels: GeocacheViewsModels
+) {
     NavHost(navController = navController, startDestination = "homeScreen") {
         composable("homeScreen") { HomeScreen(navController) }
         composable("loginScreen") { LoginScreen(navController, usersViewsModels) }
-        composable("registerScreen") { RegisterScreen(navController, usersViewsModels) }
+        composable("registerScreen/{parameter}") { backStackEntry ->
+            val parameter = backStackEntry.arguments?.getString("parameter")
+            RegisterScreen(navController, usersViewsModels, parameter)
+        }
         composable("principalScreen") { PrincipalScreen(navController) }
         composable("explorarScreen") { ExplorarScreen(navController, geocacheViewsModels) }
-        composable("createGeocacheScreen") { CreateGeocacheScreen(navController, geocacheViewsModels, usersViewsModels) }
+        composable("createGeocacheScreen") {
+            CreateGeocacheScreen(
+                navController,
+                geocacheViewsModels,
+                usersViewsModels
+            )
+        }
         composable("scoreboardScreen") { ScoreboardScreen(navController, usersViewsModels) }
         composable("profileScreen") { ProfileScreen(navController, usersViewsModels) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }

@@ -41,13 +41,18 @@ class MainActivity : ComponentActivity() {
 
                     var currentRoute by remember { mutableStateOf("homeScreen") }
 
+                    val registerScreenPattern = Regex("registerScreen/.+")
+
                     LaunchedEffect(navController) {
                         navController.currentBackStackEntryFlow.collect { entry ->
                             currentRoute = entry.destination.route ?: "homeScreen"
                         }
                     }
 
-                    if (currentRoute == "homeScreen" || currentRoute == "loginScreen" || currentRoute == "registerScreen") {
+                    if (currentRoute == "homeScreen" || currentRoute == "loginScreen" || registerScreenPattern.matches(
+                            currentRoute
+                        )
+                    ) {
                         StartNavBar(navController, usersViewsModels, geocachesViewsModels)
                     } else {
                         NavigationDrawer(

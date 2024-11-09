@@ -23,8 +23,8 @@ fun HomePicture(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
-            .fillMaxWidth(0.5f)
-            .fillMaxHeight(0.5f)
+            .fillMaxWidth(0.40f)
+            .fillMaxHeight(0.40f)
             .rotate(-3f)
             .background(
                 color = White,

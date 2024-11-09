@@ -52,9 +52,13 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 
 @Composable
-fun RegisterScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
+fun RegisterScreen(
+    navController: NavHostController,
+    usersViewsModels: UsersViewsModels,
+    parameter: String?
+) {
     var answerName by remember { mutableStateOf("") }
-    var answerEmail by remember { mutableStateOf("") }
+    var answerEmail by remember { mutableStateOf(parameter ?: "") }
     var answerPassword by remember { mutableStateOf("") }
 
     var buttonState by remember { mutableStateOf(false) }
