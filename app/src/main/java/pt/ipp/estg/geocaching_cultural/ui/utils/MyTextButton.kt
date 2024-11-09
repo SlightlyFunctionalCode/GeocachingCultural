@@ -10,8 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun MyTextButton(text: String, onClick: () -> Unit = {}, modifier: Modifier = Modifier) {
+fun MyTextButton(
+    text: String,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
     Button(
+        enabled = enabled,
         shape = RoundedCornerShape(8.dp),
         colors = ButtonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,

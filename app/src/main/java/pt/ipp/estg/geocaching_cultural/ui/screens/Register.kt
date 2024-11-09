@@ -11,13 +11,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,18 +40,37 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
+import pt.ipp.estg.geocaching_cultural.database.classes.User
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
-import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
+import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
-import pt.ipp.estg.geocaching_cultural.ui.utils.HorizontalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.LargeVerticalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 
 @Composable
-fun RegisterScreen(navController: NavHostController) {
+fun RegisterScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
+    var answerName by remember { mutableStateOf("") }
+    var answerEmail by remember { mutableStateOf("") }
+    var answerPassword by remember { mutableStateOf("") }
+
+    var buttonState by remember { mutableStateOf(false) }
+
+    var isEmailValid by remember { mutableStateOf(true) }
+    var isNameValid by remember { mutableStateOf(true) }
+    var isPasswordValid by remember { mutableStateOf(true) }
+
+    var suportingTextName by remember { mutableStateOf("") }
+    var suportingTextEmail by remember { mutableStateOf("") }
+    var suportingTextPassword by remember { mutableStateOf("") }
+
     Box(modifier = Modifier.fillMaxSize()) {
+        val snackbarHostState = remember { SnackbarHostState() }
+        var registrationSuccessful by remember { mutableStateOf(false) }
+
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -56,31 +90,88 @@ fun RegisterScreen(navController: NavHostController) {
 
             item {
                 VerticalSpacer()
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Name", color = LightGray)
-                        MyTextField(
-                            value = "Joni Smith"
+
+
+                MyTextField(
+                    label = { Text("Nome*") },
+                    value = answerName,
+                    onValueChange = {
+                        answerName = it
+                        isNameValid = it.isNotBlank()
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Person,
+                            contentDescription = "Person Icon"
                         )
-                    }
-                    HorizontalSpacer()
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Email", color = LightGray)
-                        MyTextField(
-                            value = "joni@gmail.com"
-                        )
-                    }
+                    },
+                    isError = !isNameValid,
+                    supportingText = { Text(text = suportingTextName, color = Pink) },
+                    modifier = Modifier
+                )
+                suportingTextName = if (!isNameValid) {
+                    "Nome é obrigatório"
+                }else{
+                    ""
                 }
             }
 
             item {
                 VerticalSpacer()
-                Column() {
-                    Text(text = "Password", color = LightGray)
-                    MyTextField(value = "*********", modifier = Modifier.fillMaxWidth())
+
+                MyTextField(
+                    label = { Text("Email*") },
+                    value = answerEmail,
+                    onValueChange = {
+                        answerEmail = it
+                        isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Email,
+                            contentDescription = "Email Icon"
+                        )
+                    },
+                    isError = !isEmailValid,
+                    supportingText = { Text(text = suportingTextEmail, color = Pink) },
+                    modifier = Modifier
+                )
+
+                suportingTextEmail = if (!isEmailValid) {
+                    "Insira um email válido"
+                }else ""
+            }
+
+            item {
+                VerticalSpacer()
+
+                MyTextField(
+                    label = { Text("Password") },
+                    value = answerPassword,
+                    onValueChange = {
+                        answerPassword = it
+                        isPasswordValid = it.length >= 6  // Password must be at least 6 characters
+                    },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Lock,
+                            contentDescription = "Lock Icon"
+                        )
+                    },
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = !isPasswordValid,
+                    supportingText = { Text(text = suportingTextPassword, color = Pink) },
+                    modifier = Modifier
+                )
+                suportingTextPassword = if (!isPasswordValid) {
+                    "Senha deve ter pelo menos 6 caracteres"
+                } else {
+                    ""
                 }
             }
 
+            /* TODO: add firebase autentication */
             item {
                 VerticalSpacer()
                 Row {
@@ -108,17 +199,70 @@ fun RegisterScreen(navController: NavHostController) {
                 }
             }
 
+            buttonState = isNameValid &&
+                isPasswordValid &&
+                isEmailValid &&
+                answerName != "" &&
+                answerEmail != "" &&
+                answerPassword != ""
+
             item {
                 VerticalSpacer()
                 MyTextButton(
                     text = "Submit",
-                    onClick = { navController.navigate("loginScreen") },
+                    enabled = buttonState && !registrationSuccessful,
+                    onClick = {
+                        register(
+                            answerName,
+                            answerEmail,
+                            answerPassword,
+                            usersViewsModels,
+                            onRegistrationOutcome = { outcome ->
+                                if (outcome) {
+                                    registrationSuccessful = true
+                                }
+                            }
+                        )
+                    },
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                LaunchedEffect(registrationSuccessful) {
+                    if (registrationSuccessful) {
+                        snackbarHostState.showSnackbar("Registo Concluído!")
+                        navController.navigate("loginScreen")
+                        registrationSuccessful = false
+                    }
+                }
+
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                )
+
                 LargeVerticalSpacer()
             }
         }
     }
+}
+
+fun register(
+    name: String,
+    email: String,
+    password: String,
+    usersViewsModels: UsersViewsModels,
+    onRegistrationOutcome: (Boolean) -> Unit
+) {
+    val user = User(
+        userId = 0,
+        name = name,
+        email = email,
+        password = password,
+        points = 0,
+        profileImageUrl = null,
+        location = Location(0.0, 0.0, "")
+    )
+    usersViewsModels.insertUser(user)
+    onRegistrationOutcome(true)
 }
 
 @Preview
@@ -132,7 +276,7 @@ fun RegisterPreview() {
                 .fillMaxSize()
                 .background(color = Yellow)
         ) {
-            RegisterScreen(navController)
+            // RegisterScreen(navController)
         }
     }
 }

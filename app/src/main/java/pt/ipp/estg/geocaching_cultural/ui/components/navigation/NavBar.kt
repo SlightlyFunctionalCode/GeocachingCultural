@@ -262,7 +262,7 @@ fun MyScaffoldContent(navController: NavHostController, usersViewsModels: UsersV
     NavHost(navController = navController, startDestination = "homeScreen") {
         composable("homeScreen") { HomeScreen(navController) }
         composable("loginScreen") { LoginScreen(navController) }
-        composable("registerScreen") { RegisterScreen(navController) }
+        composable("registerScreen") { RegisterScreen(navController, usersViewsModels) }
         composable("principalScreen") { PrincipalScreen(navController) }
         composable("explorarScreen") { ExplorarScreen(navController) }
         composable("createGeocacheScreen") { CreateGeocacheScreen(navController) }

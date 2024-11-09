@@ -11,4 +11,5 @@ data class User(
     val points: Int,
     val profileImageUrl: String?,
     @Embedded val location: Location,
+    /* TODO: adicionar um campo para imagens default */
 )
