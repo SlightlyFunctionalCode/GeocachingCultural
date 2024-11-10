@@ -76,11 +76,11 @@ import pt.ipp.estg.geocaching_cultural.ui.screens.ActiveGeocacheScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.CreateGeocacheScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.CreatedGeocacheDetailsScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.CreatedGeocachesScreen
-import pt.ipp.estg.geocaching_cultural.ui.screens.ExplorarScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.GeocacheFoundScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.GeocacheNotFoundScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.HistoryScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.AboutUsScreen
+import pt.ipp.estg.geocaching_cultural.ui.screens.ExplorerScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.LoginScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.HomeScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.ProfileEditingScreen
@@ -283,7 +283,7 @@ fun MyScaffoldContent(
             RegisterScreen(navController, usersViewsModels, parameter)
         }
         composable("homeScreen") { HomeScreen(navController, geocacheViewsModels) }
-        composable("explorarScreen") { ExplorarScreen(navController, geocacheViewsModels) }
+        composable("explorarScreen") { ExplorerScreen(navController, geocacheViewsModels) }
         composable("createGeocacheScreen") {
             CreateGeocacheScreen(
                 navController,
@@ -314,7 +314,7 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     )
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Explorar",
+            label = "Explorer",
             route = "explorarScreen",
             icon = Icons.Filled.LocationOn
         )

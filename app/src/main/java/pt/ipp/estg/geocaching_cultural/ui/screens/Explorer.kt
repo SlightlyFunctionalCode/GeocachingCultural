@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -42,16 +45,23 @@ import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
-import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 
 @Composable
-fun ExplorarScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels) {
-    var categoriaSelecionada by remember { mutableStateOf(GeocacheType.HISTORICO) }
+fun ExplorerScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels? = null) {
+    var categorySelected by remember { mutableStateOf(GeocacheType.HISTORICO) }
 
     // Observa os geocaches da categoria selecionada
-    val geocaches by geocacheViewsModels.getGeocachesByCategory(categoriaSelecionada).observeAsState(emptyList())
+    var geocaches by remember { mutableStateOf(emptyList<GeocacheWithHintsAndChallenges>()) }
+
+    LaunchedEffect(categorySelected) {
+        geocacheViewsModels?.getGeocachesByCategory(categorySelected)
+            ?.observeForever { geocachesList ->
+                geocaches = geocachesList
+            }
+    }
+
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
@@ -59,34 +69,47 @@ fun ExplorarScreen(navController: NavHostController, geocacheViewsModels: Geocac
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CategoriaScreen(
-            categoriaSelecionada = categoriaSelecionada,
-            onCategoriaSelecionadaChange = { novaCategoria ->
-                categoriaSelecionada = novaCategoria
+        CategoryLabel(
+            categorySelected = categorySelected,
+            onCategorySelectedChange = { newCategory ->
+                categorySelected = newCategory
             }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Exibe a lista de geocaches da categoria selecionada
-        LazyColumn {
-            items(geocaches) { geocache ->
-                MyGeocache(geocache)
-                Spacer(modifier = Modifier.height(8.dp))
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp) // Defina uma altura máxima para o LazyColumn
+        ) {
+            if (geocaches.isEmpty()) {
+                item {
+                    Text(
+                        "Nenhuma geocache encontrada", modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+            } else {
+                items(geocaches) { geocache ->
+                    MyGeocache(geocache)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-fun CategoriaScreen(
-    categoriaSelecionada: GeocacheType,
-    onCategoriaSelecionadaChange: (GeocacheType) -> Unit
+fun CategoryLabel(
+    categorySelected: GeocacheType,
+    onCategorySelectedChange: (GeocacheType) -> Unit
 ) {
-    val categorias = listOf(
-        "Gastronomia" to R.drawable.gastronomia,
-        "Cultura" to R.drawable.cultural,
-        "Histórico" to R.drawable.historico
+    val categories = listOf(
+        "GASTRONOMIA" to R.drawable.gastronomia,
+        "CULTURAL" to R.drawable.cultural,
+        "HISTORICO" to R.drawable.historico
     )
 
     var isExpanded by remember { mutableStateOf(false) }
@@ -101,9 +124,9 @@ fun CategoriaScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            CategoriaButton(
-                nome = categoriaSelecionada.name,
-                icon = painterResource(id = categorias.find { it.first == categoriaSelecionada.name }!!.second),
+            CategoryButton(
+                name = categorySelected.name,
+                icon = painterResource(id = categories.find { it.first == categorySelected.name }!!.second),
                 isSelected = true,
                 onClick = {}
             )
@@ -123,13 +146,13 @@ fun CategoriaScreen(
                     .background(Color.White, shape = RoundedCornerShape(10.dp))
                     .padding(8.dp)
             ) {
-                categorias.forEach { (categoria, icon) ->
-                    CategoriaButton(
-                        nome = categoria,
+                categories.forEach { (category, icon) ->
+                    CategoryButton(
+                        name = category,
                         icon = painterResource(id = icon),
-                        isSelected = categoria == categoriaSelecionada.name,
+                        isSelected = category == categorySelected.name,
                         onClick = {
-                            onCategoriaSelecionadaChange(categoriaSelecionada)
+                            onCategorySelectedChange(GeocacheType.valueOf(category.toUpperCase()))
                             isExpanded = false
                         }
                     )
@@ -140,7 +163,7 @@ fun CategoriaScreen(
 }
 
 @Composable
-fun CategoriaButton(nome: String, icon: Painter, isSelected: Boolean, onClick: () -> Unit) {
+fun CategoryButton(name: String, icon: Painter, isSelected: Boolean, onClick: () -> Unit) {
 
     Row(
         modifier = Modifier
@@ -151,11 +174,11 @@ fun CategoriaButton(nome: String, icon: Painter, isSelected: Boolean, onClick: (
     ) {
         Icon(
             painter = icon,
-            contentDescription = nome,
+            contentDescription = name,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Text(nome)
+        Text(name)
     }
 }
 
@@ -164,11 +187,12 @@ fun MyGeocache(geocache: GeocacheWithHintsAndChallenges) {
     // Conteúdo principal
     Column(
         modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, shape = RoundedCornerShape(8.dp))
             .clickable(onClick = {})
-            .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp))
     ) { // Adiciona um padding para o espaço do ícone
-        Text(geocache.hints[0].hint, modifier = Modifier.padding(15.dp))
-        Text(geocache.geocache.name, modifier = Modifier
+        Text(if (geocache.hints.isNotEmpty()) geocache.hints[0].hint else "Sem dicas", modifier = Modifier.padding(15.dp))
+        Text("5.0km", modifier = Modifier
             .align(Alignment.End)
             .padding(3.dp))
     }
@@ -179,7 +203,6 @@ fun MyGeocache(geocache: GeocacheWithHintsAndChallenges) {
 @Composable
 fun ExplorarPreview() {
     val navController = rememberNavController()
-    val geocacheViewsModels: GeocacheViewsModels = viewModel()
     Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
@@ -187,7 +210,7 @@ fun ExplorarPreview() {
                 .background(color = Yellow)
         ) {
             item {
-                ExplorarScreen(navController, geocacheViewsModels)
+                ExplorerScreen(navController)
             }
         }
     }

@@ -11,8 +11,9 @@ import pt.ipp.estg.geocaching_cultural.database.dao.GeocacheDao
 
 class GeocacheRepository(val geocacheDao : GeocacheDao)  {
 
-    suspend fun insert(geocache: Geocache){
-        geocacheDao.insertGeocache(geocache)
+    suspend fun insert(geocache: Geocache): Long {
+        return geocacheDao.insertGeocache(geocache)
+
     }
 
     suspend fun update(geocache: Geocache){
@@ -47,12 +48,12 @@ class GeocacheRepository(val geocacheDao : GeocacheDao)  {
         geocacheDao.deleteHint(hint)
     }
 
-    fun getGeocache(geocacheId : Int) {
-        geocacheDao.getGeocache(geocacheId)
+    fun getGeocache(geocacheId : Int): LiveData<Geocache> {
+        return geocacheDao.getGeocache(geocacheId)
     }
 
-    fun getGeocacheWithHintsAndChallenges(geocacheId : Int) {
-        geocacheDao.getGeocacheWithHintsAndChallenges(geocacheId)
+    fun getGeocacheWithHintsAndChallenges(geocacheId : Int):  LiveData<GeocacheWithHintsAndChallenges> {
+        return geocacheDao.getGeocacheWithHintsAndChallenges(geocacheId)
     }
 
     fun getClosest5GeocacheWithHintsAndChallenges(): LiveData<List<GeocacheWithHintsAndChallenges>> {

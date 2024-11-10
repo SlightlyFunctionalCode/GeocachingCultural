@@ -84,7 +84,7 @@ fun Closest5Geocaches(
             for (geocache in closest5Geocaches) {
 
                 CloseGeocache(
-                    hint = geocache.hints[0].hint,
+                    hint = if (geocache.hints.isNotEmpty()) geocache.hints[0].hint else "Sem dicas",
                     distance = "5.0Km",
                     icon = when (geocache.geocache.type) {
                         GeocacheType.GASTRONOMIA -> painterResource(R.drawable.gastronomia)

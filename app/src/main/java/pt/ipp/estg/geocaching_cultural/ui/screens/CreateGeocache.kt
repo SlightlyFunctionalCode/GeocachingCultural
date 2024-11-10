@@ -1,5 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,88 +54,103 @@ import java.time.LocalDateTime
 
 @Composable
 fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels, usersViewModel: UsersViewsModels) {
-    // Lista de dicas inicializada com três caixas de dica
-    val dicas = remember { mutableStateListOf("Dica 1", "Dica 2", "Dica 3") }
-    val perguntas = remember {mutableStateListOf("Pergunta para 5km", "Pergunta para 1km", "Pergunta para 500m", "Pergunta Final")}
+    val labelQuestions = remember {mutableStateListOf("Pergunta para 5km", "Pergunta para 1km", "Pergunta para 500m", "Pergunta Final")}
     // Estado para a categoria selecionada e localização
-    val categorias = listOf("Histórico", "Cultural", "Gastronômico") // Lista de categorias
-    var categoriaSelecionada = GeocacheType.HISTORICO
-    var localizacao by remember { mutableStateOf(Location(0.0, 0.0, "")) }
-    val hints by remember { mutableStateOf(mutableListOf<Hint>()) }
-    val challenges by remember { mutableStateOf(mutableListOf<Challenge>()) }
+    var categorySelected by remember { mutableStateOf(GeocacheType.HISTORICO) }
+    var location by remember { mutableStateOf(Location(0.0, 0.0, "")) }
+    val hints = remember { mutableStateListOf("", "", "") }
+    val questions = remember { mutableStateListOf("", "", "", "") }
+    val answers = remember { mutableStateListOf("", "", "", "") }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)) {
 
-        dicas.forEachIndexed { index, dica ->
-            LabelDica(
-                label = dica, isRemovable = index >= 3,
-                onRemoveClick = { dicas.removeAt(index); hints.removeAt(index) }
+        hints.forEachIndexed { index, hint ->
+            LabelHint(text = "Dica ${index + 1}",
+                hint = hint, isRemovable = index >= 3,
+                onRemoveClick = { hints.removeAt(index) },
+                onValueChange = { hints[index] = it }
             )
             Spacer(Modifier.padding(5.dp))
         }
-            // Botão para adicionar uma nova dica
-        Button(onClick = { dicas.add("Dica ${dicas.size + 1}"); hints.add(Hint(0, 0, "")) }) {
+        // Botão para adicionar uma nova dica
+        Button(onClick = { hints.add("Dica ${hints.size + 1}");}) {
             Text(text = "Adicionar Dica")
         }
 
-        perguntas.forEachIndexed { index, pergunta ->
-            LabelPergunta(label = pergunta, onLabelChange = { challenges[index].question = it },
-                onAnswerChange = { challenges[index].correctAnswer = it })
+        labelQuestions.forEachIndexed { index, question ->
+            LabelQuestion(
+                text = question,
+                quest = questions[index],
+                onQuestChange = { questions[index] = it },
+                answer = answers.getOrElse(index) { "" },
+                onAnswerChange = { answers[index] = it }
+            )
             Spacer(Modifier.padding(5.dp))
         }
+        Text("Categoria:")
+        Spacer(Modifier.padding(5.dp))
+        // Caixa de seleção para categoria
+        CategoryLabel(
+            categorySelected = categorySelected,
+            onCategorySelectedChange = { newCategory->
+                categorySelected = newCategory
+            })
 
+        Spacer(Modifier.height(16.dp))
 
-            // Caixa de seleção para categoria
-            CategoriaDropdown(
-                categorias = categorias,
-                categoriaSelecionada = categoriaSelecionada.toString(),
-                onCategoriaSelecionada = {
-                    if(it == categorias[0])
-                        categoriaSelecionada = GeocacheType.HISTORICO
-                    else if( it == categorias[1]) {
-                        categoriaSelecionada = GeocacheType.CULTURAL
-                    }
-                    else {
-                        categoriaSelecionada = GeocacheType.GASTRONOMIA
-                    }
+        // Campo para Localização
+        LocationField(
+            localizacao = location,
+            onLocalizacaoChange = { location = it }
+        )
 
-                }
-            )
-
-            Spacer(Modifier.height(16.dp))
-
-            // Campo para Localização
-            LocalizacaoField(
-                localizacao = localizacao,
-                onLocalizacaoChange = { localizacao = it }
-            )
-
-            Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(16.dp))
 
         Button(onClick = { // Criar um novo Geocache
             val geocache = Geocache(
                 geocacheId = 0,
-                location = localizacao,
-                type = categoriaSelecionada,
+                location = location,
+                type = categorySelected,
                 name = "", // você precisa adicionar um campo para o nome do geocache
                 createdAt = LocalDateTime.now(),
-                createdBy = usersViewModel.currentUser.value?.userId ?: 0 // você precisa adicionar um campo para o criador do geocache
+                createdBy = usersViewModel.currentUser.value?.userId?: 0 // você precisa adicionar um campo para o criador do geocache
             )
-            geocacheViewsModels.insertGeocache(geocache)
+            Log.d("Debug", "Geocache criada: $geocache")
+            var geocacheId = 0
+            geocacheViewsModels.insertGeocache(geocache).observeForever { id ->
+                geocacheId = id.toInt()
 
-            // associar as hints com o geocacheId
-            hints.forEach { hint ->
-                hint.geocacheId = geocache.geocacheId
-                geocacheViewsModels.insertHint(hint)
-            }
+                // associar as hints com o geocacheId
+                hints.forEach { hint ->
+                    if (hints.isNotEmpty()) {
+                        val newHint = Hint(0, geocacheId, hint)
+                        Log.d("Debug", "Hint criada: $newHint")
+                        geocacheViewsModels.insertHint(newHint)
+                    }
+                }
 
-            // associar as challenges com o geocacheId
-            challenges.forEach { challenge ->
-                challenge.geocacheId = geocache.geocacheId
-                geocacheViewsModels.insertChallenge(challenge)
+                // associar as challenges com o geocacheId
+                questions.forEachIndexed { index, quest ->
+                    if (questions.isNotEmpty()) {
+                        val newChallenge = Challenge(
+                            challengeId = 0,
+                            geocacheId = geocacheId,
+                            question = quest,
+                            correctAnswer = answers[index],
+                            pointsAwarded = 0 // você precisa adicionar um campo para os pontos da challenge
+                        )
+                        Log.d("Debug", "Challenge criado: $newChallenge")
+                        geocacheViewsModels.insertChallenge(newChallenge)
+                    }
+                }
             }
+            geocacheViewsModels.getGeocacheWithHintsAndChallenges(1).observeForever { geocache ->
+                Log.d("Debug", "Geocache data: ${geocache.toString()}") // Imprimir dados após observação
+            }
+            navController.navigate("homeScreen")
         }) {
             Text(text = "Enviar")
         }
@@ -141,16 +158,16 @@ fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: 
 }
 
 @Composable
-fun LabelDica(label: String, isRemovable: Boolean, onRemoveClick: () -> Unit, onLabelChange: (String) -> Unit = {}) {
+fun LabelHint(text: String, hint: String, isRemovable: Boolean, onRemoveClick: () -> Unit, onValueChange: (String) -> Unit = {}) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "$label:")
+            Text(text = "$text:")
             Spacer(Modifier.padding(5.dp))
         }
         Spacer(Modifier.padding(5.dp))
         // Exibe o botão de remoção apenas se a dica for removível
         Row(verticalAlignment = Alignment.CenterVertically) {
-            MyTextField(label, onValueChange = onLabelChange)
+            MyTextField(value = hint, onValueChange = onValueChange)
             if (isRemovable) {
                 Spacer(Modifier.width(8.dp))
                 IconButton(onClick = onRemoveClick) {
@@ -167,60 +184,20 @@ fun LabelDica(label: String, isRemovable: Boolean, onRemoveClick: () -> Unit, on
 }
 
 @Composable
-fun LabelPergunta(label: String, onLabelChange: (String) -> Unit = {}, onAnswerChange: (String)  -> Unit = {}) {
+fun LabelQuestion(text: String, quest: (String), onQuestChange: (String) -> Unit, answer: String, onAnswerChange: (String)  -> Unit) {
     Column {
-        Text(text = "$label:")
+        Text(text = "$text:")
         Spacer(Modifier.padding(5.dp))
-        MyTextField(label, onValueChange = onLabelChange)
+        MyTextField(value= quest , onValueChange = onQuestChange)
         Spacer(Modifier.padding(5.dp))
         Text("Atribua uma Resposta:")
         Spacer(Modifier.padding(5.dp))
-        MyTextField("Resposta", onValueChange = onAnswerChange)
+        MyTextField(label = { Text("Resposta")}, value = answer, onValueChange = onAnswerChange)
     }
 }
 
 @Composable
-fun CategoriaDropdown(
-    categorias: List<String>,
-    categoriaSelecionada: String,
-    onCategoriaSelecionada: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    Column {
-        Text(text = "Categoria:")
-        Spacer(Modifier.height(5.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White, shape = RoundedCornerShape(8.dp))
-                .clickable(
-                    onClick = { expanded = true },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                )
-        ) {
-            Text(
-                text = categoriaSelecionada,
-                modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.bodyMedium
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                categorias.forEach { categoria ->
-                    DropdownMenuItem(onClick = {
-                        onCategoriaSelecionada(categoria)
-                        expanded = false
-                    }, text = { Text(text = categoria) })
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun LocalizacaoField(localizacao: Location, onLocalizacaoChange: (Location) -> Unit) {
+fun LocationField(localizacao: Location, onLocalizacaoChange: (Location) -> Unit) {
     Column {
         Text(text = "Latitude:")
         Spacer(Modifier.height(5.dp))

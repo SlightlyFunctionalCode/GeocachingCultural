@@ -11,7 +11,7 @@ import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 @Dao
 interface GeocacheDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertGeocache(geocache: Geocache)
+    suspend fun insertGeocache(geocache: Geocache): Long
 
     @Update
     suspend fun updateGeocache(geocache: Geocache)

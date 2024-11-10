@@ -3,6 +3,7 @@ package pt.ipp.estg.geocaching_cultural.database.viewModels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,10 +27,13 @@ class GeocacheViewsModels (application : Application) : AndroidViewModel(applica
         //this.updateBooksOnline()
     }
 
-    fun insertGeocache(geocache : Geocache){
-        viewModelScope.launch(Dispatchers.IO){
-            repository.insert(geocache)
+    fun insertGeocache(geocache : Geocache): LiveData<Long> {
+        val result = MutableLiveData<Long>()
+        viewModelScope.launch(Dispatchers.IO) {
+            val geocacheId = repository.insert(geocache)
+            result.postValue(geocacheId)
         }
+        return result
     }
 
     fun updateGeocache(geocache : Geocache){
@@ -80,11 +84,11 @@ class GeocacheViewsModels (application : Application) : AndroidViewModel(applica
         }
     }
 
-    fun getGeocache(geocacheId : Int) {
+    fun getGeocache(geocacheId : Int): LiveData<Geocache> {
         return repository.getGeocache(geocacheId)
     }
 
-    fun getGeocacheWithHintsAndChallenges(geocacheId : Int) {
+    fun getGeocacheWithHintsAndChallenges(geocacheId : Int):  LiveData<GeocacheWithHintsAndChallenges> {
         return repository.getGeocacheWithHintsAndChallenges(geocacheId)
     }
 
