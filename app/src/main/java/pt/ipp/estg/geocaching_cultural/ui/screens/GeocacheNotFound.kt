@@ -74,7 +74,7 @@ fun GeocacheNotFoundScreen(navController: NavHostController) {
                 LargeVerticalSpacer()
                 Text(text = "Infelizmente, não acertou a pergunta desafio. \nNão ganhou pontos desta vez, mas pode tentar de novo!")
                 VerticalSpacer()
-                MyTextButton(text = "Voltar atrás")
+                MyTextButton(text = "Voltar", onClick = { navController.navigate("homeScreen") })
             }
         }
     }

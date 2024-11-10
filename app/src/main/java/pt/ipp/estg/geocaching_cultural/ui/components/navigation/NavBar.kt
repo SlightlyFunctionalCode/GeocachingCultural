@@ -299,7 +299,7 @@ fun MyScaffoldContent(
         composable("geocacheNotFoundScreen") { GeocacheNotFoundScreen(navController) }
         composable("createdGeocachesScreen") { CreatedGeocachesScreen(navController, usersViewsModels) }
         composable("createdGeocacheDetailsScreen") { CreatedGeocacheDetailsScreen(navController, geocacheViewsModels) }
-        composable("geocacheFoundScreen") { GeocacheFoundScreen(navController) }
+        composable("geocacheFoundScreen") { GeocacheFoundScreen(navController, usersViewsModels) }
     }
 }
 
@@ -365,6 +365,14 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
         NavigationDrawerData(
             label = "Geocache Found",
             route = "geocacheFoundScreen",
+            icon = Icons.Filled.PlayArrow
+        )
+    )
+
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = "Geocache Not Found",
+            route = "geocacheNotFoundScreen",
             icon = Icons.Filled.PlayArrow
         )
     )

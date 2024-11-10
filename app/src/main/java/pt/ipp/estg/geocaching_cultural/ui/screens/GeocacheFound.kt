@@ -16,6 +16,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,9 +36,15 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 
 @Composable
-fun GeocacheFoundScreen(navController: NavHostController) {
+fun GeocacheFoundScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
+    val user by usersViewsModels.currentUserId.observeAsState()
+
+    val geocacheFound = UserGeocacheFoundCrossRef(user!!, 2) /* TODO: este geocache id deve de se ir buscar a outro lado n deve ser estático  */
+    /* TODO: ainda é preciso nesta screen alterar os daodos estáticos para ir buscar os corretos a partir de uma api*/
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -106,7 +114,10 @@ fun GeocacheFoundScreen(navController: NavHostController) {
 
                 // Botão de Direções
                 Button(
-                    onClick = {  navController.navigate("principalScreen") },
+                    onClick = {
+                        usersViewsModels.insertUserGeocacheFound(geocacheFound)
+                        navController.navigate("homeScreen")
+                              },
                     colors = ButtonDefaults.buttonColors(Color.Blue)
                 ) {
                     Text(
@@ -148,5 +159,5 @@ fun GeocacheMap() {
 @Composable
 fun GeocacheFoundScreenPreview() {
     val navController = rememberNavController()
-    GeocacheFoundScreen(navController)
+    //GeocacheFoundScreen(navController)
 }
