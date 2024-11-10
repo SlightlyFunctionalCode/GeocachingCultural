@@ -265,7 +265,7 @@ fun MyScaffoldContent(
             val parameter = backStackEntry.arguments?.getString("parameter")
             RegisterScreen(navController, usersViewsModels, parameter)
         }
-        composable("homeScreen") { HomeScreen(navController, geocacheViewsModels) }
+        composable("homeScreen") { HomeScreen(navController, geocacheViewsModels, usersViewsModels) }
         composable("explorarScreen") { ExplorerScreen(navController, geocacheViewsModels) }
         composable("createGeocacheScreen") {
             CreateGeocacheScreen(
@@ -278,7 +278,13 @@ fun MyScaffoldContent(
         composable("profileScreen") { ProfileScreen(navController, usersViewsModels) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController, usersViewsModels) }
         composable("historyScreen") { HistoryScreen(navController, usersViewsModels) }
-        composable("activeGeocacheScreen") { ActiveGeocacheScreen(navController) }
+        composable("activeGeocacheScreen") {
+            ActiveGeocacheScreen(
+                navController,
+                usersViewsModels,
+                geocacheViewsModels
+            )
+        }
         composable("geocacheNotFoundScreen") { GeocacheNotFoundScreen(navController) }
         composable("createdGeocachesScreen") {
             CreatedGeocachesScreen(

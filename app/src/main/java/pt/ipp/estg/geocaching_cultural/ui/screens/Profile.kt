@@ -33,7 +33,7 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 
 @Composable
 fun ProfileScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
-    var userState = usersViewsModels.currentUser.observeAsState()
+    val userState = usersViewsModels.currentUser.observeAsState()
 
     userState.value?.let { user ->
         Column(

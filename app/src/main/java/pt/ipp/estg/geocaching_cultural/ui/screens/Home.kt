@@ -30,6 +30,7 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Hint
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.CloseGeocache
@@ -39,9 +40,17 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 import java.time.LocalDateTime
 
 @Composable
-fun HomeScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels) {
+fun HomeScreen(
+    navController: NavHostController,
+    geocacheViewsModels: GeocacheViewsModels,
+    usersViewsModels: UsersViewsModels
+) {
+    val currentUser = usersViewsModels.currentUser.observeAsState()
+
     val closeGeocachesWithHints =
-        geocacheViewsModels.getClosest5GeocacheWithHintsAndChallenges().observeAsState()
+        currentUser.value?.let {
+            geocacheViewsModels.getClosestGeocaches(it.location).observeAsState()
+        }
 
     Column(
         modifier = Modifier
@@ -64,15 +73,14 @@ fun HomeScreen(navController: NavHostController, geocacheViewsModels: GeocacheVi
         }
         VerticalSpacer()
 
-        Closest5Geocaches(closeGeocachesWithHints.value, navController, geocacheViewsModels)
+        Closest5Geocaches(closeGeocachesWithHints?.value, navController)
     }
 }
 
 @Composable
 fun Closest5Geocaches(
-    closest5Geocaches: List<GeocacheWithHintsAndChallenges>?,
+    closest5Geocaches: List<Pair<GeocacheWithHintsAndChallenges, Double>>?,
     navController: NavHostController,
-    geocacheViewsModels: GeocacheViewsModels
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
 
@@ -81,12 +89,12 @@ fun Closest5Geocaches(
             SmallVerticalSpacer()
         } else {
             /* TODO: calcular distância */
-            for (geocache in closest5Geocaches) {
+            for (geocacheAndDistance in closest5Geocaches) {
 
                 CloseGeocache(
-                    hint = if (geocache.hints.isNotEmpty()) geocache.hints[0].hint else "Sem dicas",
-                    distance = "5.0Km",
-                    icon = when (geocache.geocache.type) {
+                    hint = if (geocacheAndDistance.first.hints.isNotEmpty()) geocacheAndDistance.first.hints[0].hint else "Sem dicas",
+                    distance = "${geocacheAndDistance.second/1000} Km",
+                    icon = when (geocacheAndDistance.first.geocache.type) {
                         GeocacheType.GASTRONOMIA -> painterResource(R.drawable.gastronomia)
                         GeocacheType.CULTURAL -> painterResource(R.drawable.cultural)
                         GeocacheType.HISTORICO -> painterResource(R.drawable.historico)

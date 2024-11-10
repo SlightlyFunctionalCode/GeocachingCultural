@@ -133,9 +133,9 @@ fun GeocacheFoundScreen(navController: NavHostController, usersViewsModels: User
 
 @Composable
 fun GeocacheMap() {
-    // Coordenadas para o Mercadona em Felgueiras (substitua pelas coordenadas exatas)
+    // Coordinates for Mercadona in Felgueiras
     val location = LatLng(41.35898846349719, -8.193187783713917)
-    // Estado da posição da câmera
+    // Camera position state
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(location, 17f)
     }
@@ -146,7 +146,7 @@ fun GeocacheMap() {
             .height(300.dp),
         cameraPositionState = cameraPositionState
     ) {
-        // Marcador no mapa
+        // Marker on the map
         Marker(
             state = rememberMarkerState(position = location),
             title = "Mercadona",
@@ -154,6 +154,7 @@ fun GeocacheMap() {
         )
     }
 }
+
 
 @Preview
 @Composable

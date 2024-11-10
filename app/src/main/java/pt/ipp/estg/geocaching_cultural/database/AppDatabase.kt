@@ -20,7 +20,7 @@ import pt.ipp.estg.geocaching_cultural.database.dao.UserDao
         Hint::class,
         Notification::class,
         UserGeocacheFoundCrossRef::class],
-    version = 2
+    version = 3
 )
 @TypeConverters(LocalDateTimeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -36,7 +36,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context,
                     AppDatabase::class.java,
                     "app_database"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }

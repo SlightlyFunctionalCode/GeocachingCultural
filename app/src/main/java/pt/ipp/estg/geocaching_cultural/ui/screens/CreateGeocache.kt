@@ -53,19 +53,34 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import java.time.LocalDateTime
 
 @Composable
-fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels, usersViewModel: UsersViewsModels) {
-    val labelQuestions = remember {mutableStateListOf("Pergunta para 5km", "Pergunta para 1km", "Pergunta para 500m", "Pergunta Final")}
+fun CreateGeocacheScreen(
+    navController: NavHostController,
+    geocacheViewsModels: GeocacheViewsModels,
+    usersViewModel: UsersViewsModels
+) {
+    val labelQuestions = remember {
+        mutableStateListOf(
+            "Pergunta para 5km",
+            "Pergunta para 1km",
+            "Pergunta para 500m",
+            "Pergunta Final"
+        )
+    }
     // Estado para a categoria selecionada e localização
     var categorySelected by remember { mutableStateOf(GeocacheType.HISTORICO) }
-    var location by remember { mutableStateOf(Location(0.0, 0.0, "")) }
     val hints = remember { mutableStateListOf("", "", "") }
     val questions = remember { mutableStateListOf("", "", "", "") }
     val answers = remember { mutableStateListOf("", "", "", "") }
+    var latitude by remember { mutableStateOf("") }
+    var longitude by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
 
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
 
         hints.forEachIndexed { index, hint ->
             LabelHint(text = "Dica ${index + 1}",
@@ -76,7 +91,7 @@ fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: 
             Spacer(Modifier.padding(5.dp))
         }
         // Botão para adicionar uma nova dica
-        Button(onClick = { hints.add("Dica ${hints.size + 1}");}) {
+        Button(onClick = { hints.add("Dica ${hints.size + 1}"); }) {
             Text(text = "Adicionar Dica")
         }
 
@@ -95,7 +110,7 @@ fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: 
         // Caixa de seleção para categoria
         CategoryLabel(
             categorySelected = categorySelected,
-            onCategorySelectedChange = { newCategory->
+            onCategorySelectedChange = { newCategory ->
                 categorySelected = newCategory
             })
 
@@ -103,8 +118,12 @@ fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: 
 
         // Campo para Localização
         LocationField(
-            localizacao = location,
-            onLocalizacaoChange = { location = it }
+            latitude = latitude,
+            onLatitudeChange = { latitude = it },
+            longitude = longitude,
+            onLongitudeChange = { longitude = it },
+            address = address,
+            onAddressChange = { address = it },
         )
 
         Spacer(Modifier.height(16.dp))
@@ -112,11 +131,16 @@ fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: 
         Button(onClick = { // Criar um novo Geocache
             val geocache = Geocache(
                 geocacheId = 0,
-                location = location,
+                location = Location(
+                    latitude = latitude.toDouble(),
+                    longitude = longitude.toDouble(),
+                    address
+                ),
                 type = categorySelected,
                 name = "", // você precisa adicionar um campo para o nome do geocache
                 createdAt = LocalDateTime.now(),
-                createdBy = usersViewModel.currentUser.value?.userId?: 0 // você precisa adicionar um campo para o criador do geocache
+                createdBy = usersViewModel.currentUser.value?.userId
+                    ?: 0 // você precisa adicionar um campo para o criador do geocache
             )
             Log.d("Debug", "Geocache criada: $geocache")
             var geocacheId = 0
@@ -148,7 +172,10 @@ fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: 
                 }
             }
             geocacheViewsModels.getGeocacheWithHintsAndChallenges(1).observeForever { geocache ->
-                Log.d("Debug", "Geocache data: ${geocache.toString()}") // Imprimir dados após observação
+                Log.d(
+                    "Debug",
+                    "Geocache data: ${geocache.toString()}"
+                ) // Imprimir dados após observação
             }
             navController.navigate("homeScreen")
         }) {
@@ -158,7 +185,13 @@ fun CreateGeocacheScreen(navController: NavHostController, geocacheViewsModels: 
 }
 
 @Composable
-fun LabelHint(text: String, hint: String, isRemovable: Boolean, onRemoveClick: () -> Unit, onValueChange: (String) -> Unit = {}) {
+fun LabelHint(
+    text: String,
+    hint: String,
+    isRemovable: Boolean,
+    onRemoveClick: () -> Unit,
+    onValueChange: (String) -> Unit = {}
+) {
     Column {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = "$text:")
@@ -184,36 +217,49 @@ fun LabelHint(text: String, hint: String, isRemovable: Boolean, onRemoveClick: (
 }
 
 @Composable
-fun LabelQuestion(text: String, quest: (String), onQuestChange: (String) -> Unit, answer: String, onAnswerChange: (String)  -> Unit) {
+fun LabelQuestion(
+    text: String,
+    quest: (String),
+    onQuestChange: (String) -> Unit,
+    answer: String,
+    onAnswerChange: (String) -> Unit
+) {
     Column {
         Text(text = "$text:")
         Spacer(Modifier.padding(5.dp))
-        MyTextField(value= quest , onValueChange = onQuestChange)
+        MyTextField(value = quest, onValueChange = onQuestChange)
         Spacer(Modifier.padding(5.dp))
         Text("Atribua uma Resposta:")
         Spacer(Modifier.padding(5.dp))
-        MyTextField(label = { Text("Resposta")}, value = answer, onValueChange = onAnswerChange)
+        MyTextField(label = { Text("Resposta") }, value = answer, onValueChange = onAnswerChange)
     }
 }
 
 @Composable
-fun LocationField(localizacao: Location, onLocalizacaoChange: (Location) -> Unit) {
+fun LocationField(
+    latitude: String,
+    onLatitudeChange: (String) -> Unit,
+    longitude: String,
+    onLongitudeChange: (String) -> Unit,
+    address: String,
+    onAddressChange: (String) -> Unit
+) {
     /* TODO: verificar se vai ser assim mesmo a localização */
     Column {
         Text(text = "Latitude:")
         Spacer(Modifier.height(5.dp))
-        TextField(
-            value = localizacao.latitude.toString(),
-            onValueChange = { onLocalizacaoChange(localizacao.copy(latitude = it.toDouble())) },
+        MyTextField(
+            value = latitude,
+            onValueChange = onLatitudeChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Digite a latitude") }
         )
         Spacer(Modifier.height(10.dp))
         Text(text = "Longitude:")
         Spacer(Modifier.height(5.dp))
-        TextField(
-            value = localizacao.longitude.toString(),
-            onValueChange = { onLocalizacaoChange(localizacao.copy(longitude = it.toDouble())) },
+        MyTextField(
+            value = longitude,
+            onValueChange = onLongitudeChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Digite a longitude") }
         )
@@ -221,8 +267,8 @@ fun LocationField(localizacao: Location, onLocalizacaoChange: (Location) -> Unit
         Text(text = "Endereço:")
         Spacer(Modifier.height(5.dp))
         TextField(
-            value = localizacao.address?: "",
-            onValueChange = { onLocalizacaoChange(localizacao.copy(address = it)) },
+            value = address,
+            onValueChange = onAddressChange,
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Digite o endereço") }
         )

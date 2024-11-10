@@ -23,14 +23,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +45,8 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Black
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
@@ -52,8 +57,25 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.AnswerQuestionDialog
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 
 @Composable
-fun ActiveGeocacheScreen(navController: NavHostController) {
-    var walking by remember { mutableStateOf(true) }
+fun ActiveGeocacheScreen(
+    navController: NavHostController,
+    usersViewsModels: UsersViewsModels,
+    geocacheViewsModels: GeocacheViewsModels
+) {
+    val context = LocalContext.current
+    // Start location updates when the screen is opened
+    LaunchedEffect(Unit) {
+        usersViewsModels.startLocationUpdates(context)
+    }
+
+    // Stop location updates when the screen is exited (using DisposableEffect or other lifecycle management methods)
+    DisposableEffect(Unit) {
+        onDispose {
+            usersViewsModels.stopLocationUpdates()
+        }
+    }
+
+    val currentUser = usersViewsModels.currentUser.observeAsState()
 
     Box(
         modifier = Modifier
@@ -71,14 +93,16 @@ fun ActiveGeocacheScreen(navController: NavHostController) {
                     .fillMaxWidth(0.75f)
             ) {
                 VerticalSpacer()
-                AnimatedDrawable(walking = walking)
+                /* TODO: Mudar para lidar com o erro */
+                AnimatedDrawable(walking = currentUser.value!!.isWalking)
                 ProgressBar(3)
+                Text(text = " Location: ${currentUser.value!!.location.latitude},${currentUser.value!!.location.longitude}")
             }
 
-            ShowTip(
+            /*ShowTip(
                 1,
                 "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas\""
-            )
+            )*/
         }
     }
 }
@@ -220,7 +244,7 @@ fun ActiveGeocachePreview() {
                 .background(color = Yellow)
         ) {
             item {
-                ActiveGeocacheScreen(navController)
+                //     ActiveGeocacheScreen(navController)
             }
         }
     }

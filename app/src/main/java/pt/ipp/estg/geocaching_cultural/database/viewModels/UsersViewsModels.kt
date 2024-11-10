@@ -16,16 +16,18 @@ import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRe
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesCreated
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesFound
 import pt.ipp.estg.geocaching_cultural.database.repositories.UserRepository
+import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
 
 class UsersViewsModels(application: Application) : AndroidViewModel(application) {
 
     private val _currentUserId = MutableLiveData<Int>()
     private val _currentUser = MediatorLiveData<User>()
+    private val locationUpdateService: LocationUpdateService
 
     val currentUserId: LiveData<Int> get() = _currentUserId
     val currentUser: LiveData<User> get() = _currentUser
 
-    val repository: UserRepository
+    private val repository: UserRepository
     //val allBooks : LiveData<List<Book>>
 
     init {
@@ -34,6 +36,8 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
         repository = UserRepository(db.UserDao()/*restAPI*/)
         //allBooks = repository.getBooks()
         //this.updateBooksOnline()
+
+        locationUpdateService = LocationUpdateService(application, this)
 
         // Load the current user ID from SharedPreferences
         _currentUserId.value = loadCurrentUserIdFromPreferences()
@@ -49,10 +53,29 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
                 // Add source to _currentUser and observe the user data
                 _currentUser.addSource(userLiveData) { user ->
                     _currentUser.value =
-                        user ?: User(userId, "Unknown", "", "", 0, null, Location(0.0, 0.0, ""))
+                        user ?: User(
+                            userId,
+                            "Unknown",
+                            "",
+                            "",
+                            0,
+                            null,
+                            isWalking = false,
+                            Location(0.0, 0.0, "")
+                        )
                 }
             }
         }
+    }
+
+    fun startLocationUpdates(context: Context) {
+        // Start location updates when the user is available
+        locationUpdateService.startLocationUpdates(context)
+    }
+
+    fun stopLocationUpdates() {
+        // Stop location updates when no longer needed
+        locationUpdateService.stopLocationUpdates()
     }
 
     fun getTop10Users(): LiveData<List<User>> {

@@ -47,9 +47,8 @@ interface GeocacheDao {
     fun getGeocacheWithHintsAndChallenges(geocacheId: Int): LiveData<GeocacheWithHintsAndChallenges>
 
     @Transaction
-    @Query("SELECT * FROM Geocache G " +
-            "LIMIT 5")
-    fun getClosest5GeocacheWithHintsAndChallenges(): LiveData<List<GeocacheWithHintsAndChallenges>>
+    @Query("SELECT * FROM Geocache G ")
+    fun getAllGeocacheWithHintsAndChallenges(): LiveData<List<GeocacheWithHintsAndChallenges>>
 
     @Transaction
     @Query("SELECT * FROM Geocache G " +
