@@ -62,6 +62,10 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
         return repository.getTop10Users()
     }
 
+    fun getUsersWithGeocachesCreated(id: Int): LiveData<UserWithGeocachesCreated> {
+        return repository.getUserWithGeocachesCreated(id)
+    }
+
     fun insertUser(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insert(user)
