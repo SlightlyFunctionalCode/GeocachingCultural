@@ -294,7 +294,7 @@ fun MyScaffoldContent(
         composable("scoreboardScreen") { ScoreboardScreen(navController, usersViewsModels) }
         composable("profileScreen") { ProfileScreen(navController, usersViewsModels) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController) }
-        composable("historyScreen") { HistoryScreen(navController) }
+        composable("historyScreen") { HistoryScreen(navController, usersViewsModels) }
         composable("activeGeocacheScreen") { ActiveGeocacheScreen(navController) }
         composable("geocacheNotFoundScreen") { GeocacheNotFoundScreen(navController) }
         composable("createdGeocachesScreen") { CreatedGeocachesScreen(navController) }
