@@ -192,7 +192,7 @@ fun MyGeocache(geocache: GeocacheWithHintsAndChallenges) {
             .clickable(onClick = {})
     ) { // Adiciona um padding para o espaço do ícone
         Text(if (geocache.hints.isNotEmpty()) geocache.hints[0].hint else "Sem dicas", modifier = Modifier.padding(15.dp))
-        Text("5.0km", modifier = Modifier
+        Text("5.0km", modifier = Modifier /* TODO: tirar isto de estático quando tiver forma de calcular a distancia do utilzador até ao Geocache */
             .align(Alignment.End)
             .padding(3.dp))
     }

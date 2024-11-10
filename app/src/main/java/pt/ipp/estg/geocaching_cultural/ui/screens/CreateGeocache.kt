@@ -198,6 +198,7 @@ fun LabelQuestion(text: String, quest: (String), onQuestChange: (String) -> Unit
 
 @Composable
 fun LocationField(localizacao: Location, onLocalizacaoChange: (Location) -> Unit) {
+    /* TODO: verificar se vai ser assim mesmo a localização */
     Column {
         Text(text = "Latitude:")
         Spacer(Modifier.height(5.dp))

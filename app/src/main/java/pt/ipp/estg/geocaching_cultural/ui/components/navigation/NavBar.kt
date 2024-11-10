@@ -298,7 +298,7 @@ fun MyScaffoldContent(
         composable("activeGeocacheScreen") { ActiveGeocacheScreen(navController) }
         composable("geocacheNotFoundScreen") { GeocacheNotFoundScreen(navController) }
         composable("createdGeocachesScreen") { CreatedGeocachesScreen(navController) }
-        composable("createdGeocacheDetailsScreen") { CreatedGeocacheDetailsScreen(navController) }
+        composable("createdGeocacheDetailsScreen") { CreatedGeocacheDetailsScreen(navController, geocacheViewsModels) }
         composable("geocacheFoundScreen") { GeocacheFoundScreen(navController) }
     }
 }
