@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
+import android.location.Address
+import android.location.Geocoder
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
@@ -19,9 +21,58 @@ import com.google.android.gms.location.Priority
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
+import java.util.Locale
 
 class LocationUpdateService(application: Application, viewsModels: UsersViewsModels) :
     AndroidViewModel(application) {
+
+    companion object {
+        fun getDistanceToGeocache(userLocation: Location, geocacheLocation: Location): Double {
+            val userAndroidLocation = android.location.Location("user")
+            userAndroidLocation.latitude = userLocation.latitude
+            userAndroidLocation.longitude = userLocation.longitude
+
+            val geocacheAndroidLocation = android.location.Location("geocache")
+            geocacheAndroidLocation.latitude = geocacheLocation.latitude
+            geocacheAndroidLocation.longitude = geocacheLocation.longitude
+
+            return userAndroidLocation.distanceTo(geocacheAndroidLocation).toDouble()
+        }
+
+        fun getAddressFromCoordinates(
+            context: Context,
+            latitude: Double,
+            longitude: Double
+        ): String? {
+            val geocoder = Geocoder(context, Locale.getDefault())
+            try {
+                // Get the list of addresses from the coordinates
+                val addresses: MutableList<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+
+                // Check if we received any result
+                if (addresses != null) {
+                    if (addresses.isNotEmpty()) {
+                        val address = addresses[0] // Take the first address result
+
+                        // Format the address to "City, Country" format
+                        val city = address.locality
+                        val country = address.countryName
+
+                        // You can also access other parts of the address (such as sublocality, admin area, etc.)
+                        return if (city != null && country != null) {
+                            "$city, $country"
+                        } else {
+                            null
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return null
+        }
+
+    }
 
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(application)
@@ -136,4 +187,5 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }
+
 

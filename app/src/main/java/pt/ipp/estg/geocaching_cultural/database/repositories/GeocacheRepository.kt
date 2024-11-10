@@ -9,6 +9,7 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Hint
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.dao.GeocacheDao
+import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
 
 class GeocacheRepository(val geocacheDao: GeocacheDao) {
 
@@ -59,11 +60,6 @@ class GeocacheRepository(val geocacheDao: GeocacheDao) {
     fun getClosestGeocaches(userLocation: Location): LiveData<List<Pair<GeocacheWithHintsAndChallenges, Double>>> {
         val closestGeocaches = MutableLiveData<List<Pair<GeocacheWithHintsAndChallenges, Double>>>()
 
-        // Create an Android Location object for the user's location
-        val userAndroidLocation = android.location.Location("user")
-        userAndroidLocation.latitude = userLocation.latitude
-        userAndroidLocation.longitude = userLocation.longitude
-
         // Get all geocaches from the database (this is LiveData)
         val allGeocaches = geocacheDao.getAllGeocacheWithHintsAndChallenges() // Fetch geocaches
 
@@ -71,13 +67,12 @@ class GeocacheRepository(val geocacheDao: GeocacheDao) {
         allGeocaches.observeForever { geocaches ->
             // Calculate distance for each geocache and filter out those farther than 10km
             val distances = geocaches.mapNotNull { geocache ->
-                // Create a Location object for each geocache
-                val geocacheAndroidLocation = android.location.Location("geocache")
-                geocacheAndroidLocation.latitude = geocache.geocache.location.latitude
-                geocacheAndroidLocation.longitude = geocache.geocache.location.longitude
 
                 // Calculate the distance between user and geocache in meters
-                val distance = userAndroidLocation.distanceTo(geocacheAndroidLocation).toDouble()
+                val distance = LocationUpdateService.getDistanceToGeocache(
+                    userLocation,
+                    geocache.geocache.location
+                )
 
                 // Only include geocaches within 10 kilometers (10000 meters)
                 if (distance <= 10000) {

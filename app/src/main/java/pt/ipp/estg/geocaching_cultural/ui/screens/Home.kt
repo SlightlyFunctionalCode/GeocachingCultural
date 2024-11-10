@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,7 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
+import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.CloseGeocache
@@ -38,6 +40,7 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocaching_cultural.ui.utils.SmallVerticalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 import java.time.LocalDateTime
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -46,6 +49,8 @@ fun HomeScreen(
     usersViewsModels: UsersViewsModels
 ) {
     val currentUser = usersViewsModels.currentUser.observeAsState()
+
+    var context = LocalContext.current
 
     val closeGeocachesWithHints =
         currentUser.value?.let {
@@ -58,18 +63,25 @@ fun HomeScreen(
             .padding(30.dp)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                /* TODO: Corrigir Localização Atual */
-                text = "Felgueiras, Porto",
-                fontSize = 14.sp, // Define o tamanho da fonte
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(
-                text = "Geocaches Perto de Mim",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Bold,// Define o tamanho da fonte para o texto maior
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (currentUser.value != null) {
+                Text(
+                    text = LocationUpdateService.getAddressFromCoordinates(
+                        context,
+                        currentUser.value!!.location.latitude,
+                        currentUser.value!!.location.longitude
+                    ) ?: "",
+                    fontSize = 14.sp, // Define o tamanho da fonte
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = "Geocaches Perto de Mim",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,// Define o tamanho da fonte para o texto maior
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }else{
+                Text("Pedimos desculpa, um erro ocorreu!\nTente mais tarde.")
+            }
         }
         VerticalSpacer()
 
@@ -88,12 +100,18 @@ fun Closest5Geocaches(
             Text("Pedimos desculpa, não existem Geocaches numa àrea de 10 Km!")
             SmallVerticalSpacer()
         } else {
-            /* TODO: calcular distância */
             for (geocacheAndDistance in closest5Geocaches) {
 
                 CloseGeocache(
                     hint = if (geocacheAndDistance.first.hints.isNotEmpty()) geocacheAndDistance.first.hints[0].hint else "Sem dicas",
-                    distance = "${geocacheAndDistance.second/1000} Km",
+
+                    distance = "${
+                        String.format(
+                            Locale.US,
+                            "%.1f",
+                            geocacheAndDistance.second / 1000
+                        )
+                    } Km",
                     icon = when (geocacheAndDistance.first.geocache.type) {
                         GeocacheType.GASTRONOMIA -> painterResource(R.drawable.gastronomia)
                         GeocacheType.CULTURAL -> painterResource(R.drawable.cultural)

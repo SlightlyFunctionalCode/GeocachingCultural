@@ -43,14 +43,24 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
+import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
+import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
+import java.util.Locale
 
 @Composable
-fun ExplorerScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels? = null) {
+fun ExplorerScreen(
+    navController: NavHostController,
+    geocacheViewsModels: GeocacheViewsModels? = null,
+    usersViewsModels: UsersViewsModels? = null
+) {
     var categorySelected by remember { mutableStateOf(GeocacheType.HISTORICO) }
+
+    val user = usersViewsModels?.currentUser?.observeAsState()
 
     // Observa os geocaches da categoria selecionada
     var geocaches by remember { mutableStateOf(emptyList<GeocacheWithHintsAndChallenges>()) }
@@ -62,9 +72,11 @@ fun ExplorerScreen(navController: NavHostController, geocacheViewsModels: Geocac
             }
     }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Text(text = "Explorar Geocaches", fontSize = 22.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -93,7 +105,9 @@ fun ExplorerScreen(navController: NavHostController, geocacheViewsModels: Geocac
                 }
             } else {
                 items(geocaches) { geocache ->
-                    MyGeocache(geocache)
+                    if (user != null) {
+                        user.value?.let { MyGeocache(geocache, it.location) }
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -152,7 +166,13 @@ fun CategoryLabel(
                         icon = painterResource(id = icon),
                         isSelected = category == categorySelected.name,
                         onClick = {
-                            onCategorySelectedChange(GeocacheType.valueOf(category.toUpperCase()))
+                            onCategorySelectedChange(
+                                GeocacheType.valueOf(
+                                    category.uppercase(
+                                        Locale.ROOT
+                                    )
+                                )
+                            )
                             isExpanded = false
                         }
                     )
@@ -183,7 +203,7 @@ fun CategoryButton(name: String, icon: Painter, isSelected: Boolean, onClick: ()
 }
 
 @Composable
-fun MyGeocache(geocache: GeocacheWithHintsAndChallenges) {
+fun MyGeocache(geocache: GeocacheWithHintsAndChallenges, userLocation: Location) {
     // Conteúdo principal
     Column(
         modifier = Modifier
@@ -191,10 +211,25 @@ fun MyGeocache(geocache: GeocacheWithHintsAndChallenges) {
             .background(Color.White, shape = RoundedCornerShape(8.dp))
             .clickable(onClick = {})
     ) { // Adiciona um padding para o espaço do ícone
-        Text(if (geocache.hints.isNotEmpty()) geocache.hints[0].hint else "Sem dicas", modifier = Modifier.padding(15.dp))
-        Text("5.0km", modifier = Modifier /* TODO: tirar isto de estático quando tiver forma de calcular a distancia do utilzador até ao Geocache */
-            .align(Alignment.End)
-            .padding(3.dp))
+        Text(
+            if (geocache.hints.isNotEmpty()) geocache.hints[0].hint else "Sem dicas",
+            modifier = Modifier.padding(15.dp)
+        )
+        Text(
+            text = "${
+                String.format(
+                    Locale.US,
+                    "%.1f",
+                    LocationUpdateService.getDistanceToGeocache(
+                        userLocation,
+                        geocache.geocache.location
+                    ) / 1000
+                )
+            } Km",
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(3.dp)
+        )
     }
 }
 
