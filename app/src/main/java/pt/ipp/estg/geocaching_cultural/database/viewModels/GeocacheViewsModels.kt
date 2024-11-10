@@ -99,7 +99,4 @@ class GeocacheViewsModels (application : Application) : AndroidViewModel(applica
     fun getGeocachesByCategory(category: GeocacheType): LiveData<List<GeocacheWithHintsAndChallenges>> {
         return repository.getGeocachesByCategory(category)
     }
-
-
-
 }

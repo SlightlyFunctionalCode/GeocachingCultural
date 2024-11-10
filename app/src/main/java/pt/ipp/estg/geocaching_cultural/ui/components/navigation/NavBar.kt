@@ -94,6 +94,7 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.DarkGray
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.White
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
+import pt.ipp.estg.geocaching_cultural.ui.utils.CircularProfilePicture
 
 @Composable
 fun NavigationDrawer(
@@ -233,33 +234,15 @@ fun MyTopAppBar(
                     modifier = Modifier.size(45.dp)
                 )
             }
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = White, shape = CircleShape
-                    )
-                    .size(45.dp)
-                    .clip(CircleShape)
-            ) {
-                var userState = usersViewsModels.currentUser.observeAsState()
 
-                userState.value?.let { user ->
+            val userState = usersViewsModels.currentUser.observeAsState()
 
-                    if (user.profileImageUrl == null) {
-                        Image(
-                            painter = painterResource(id = R.drawable.avatar),
-                            contentDescription = stringResource(id = R.string.avatar_description)
-                        )
-                    } else {
-                        GlideImage(
-                            imageModel = { user.profileImageUrl }, // loading a network image using an URL.
-                            imageOptions = ImageOptions(
-                                contentScale = ContentScale.Crop, alignment = Alignment.Center
-                            ),
-                        )
-                    }
-                }
+            userState.value?.let { user ->
+                CircularProfilePicture(
+                    profileImageUrl = user.profileImageUrl, modifier = Modifier.size(45.dp)
+                )
             }
+
             Spacer(modifier = Modifier.width(8.dp))
             MyIconButton(Icons.Default.Menu, { onNavIconClick() }, modifier = Modifier)
         }
@@ -293,12 +276,22 @@ fun MyScaffoldContent(
         }
         composable("scoreboardScreen") { ScoreboardScreen(navController, usersViewsModels) }
         composable("profileScreen") { ProfileScreen(navController, usersViewsModels) }
-        composable("profileEditingScreen") { ProfileEditingScreen(navController) }
+        composable("profileEditingScreen") { ProfileEditingScreen(navController, usersViewsModels) }
         composable("historyScreen") { HistoryScreen(navController, usersViewsModels) }
         composable("activeGeocacheScreen") { ActiveGeocacheScreen(navController) }
         composable("geocacheNotFoundScreen") { GeocacheNotFoundScreen(navController) }
-        composable("createdGeocachesScreen") { CreatedGeocachesScreen(navController, usersViewsModels) }
-        composable("createdGeocacheDetailsScreen") { CreatedGeocacheDetailsScreen(navController, geocacheViewsModels) }
+        composable("createdGeocachesScreen") {
+            CreatedGeocachesScreen(
+                navController,
+                usersViewsModels
+            )
+        }
+        composable("createdGeocacheDetailsScreen") {
+            CreatedGeocacheDetailsScreen(
+                navController,
+                geocacheViewsModels
+            )
+        }
         composable("geocacheFoundScreen") { GeocacheFoundScreen(navController, usersViewsModels) }
     }
 }

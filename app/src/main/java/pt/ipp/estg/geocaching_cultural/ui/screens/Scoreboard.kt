@@ -7,6 +7,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,7 +35,10 @@ import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
+import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
+import pt.ipp.estg.geocaching_cultural.ui.utils.CircularProfilePicture
+import pt.ipp.estg.geocaching_cultural.ui.utils.SmallHorizontalSpacer
 
 @Composable
 fun ScoreboardScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
@@ -71,6 +76,7 @@ fun Top10Players(players: List<User>) {
                 Top3Players(index, user)
             } else {
                 Player(
+                    profileImageUrl = user.profileImageUrl,
                     playerName = user.name,
                     points = user.points,
                     rank = index + 1
@@ -92,6 +98,7 @@ fun Top3Players(index: Int, user: User) {
         }
 
         PlayerWithIcon(
+            profileImageUrl = user.profileImageUrl,
             playerName = user.name,
             points = user.points,
             rank = index + 1,
@@ -102,7 +109,12 @@ fun Top3Players(index: Int, user: User) {
 }
 
 @Composable
-fun Player(playerName: String, points: Int, rank: Int) {
+fun Player(
+    profileImageUrl: String?,
+    playerName: String,
+    points: Int,
+    rank: Int
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,12 +123,30 @@ fun Player(playerName: String, points: Int, rank: Int) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "$rank. $playerName - $points pontos", fontSize = 22.sp)
+        ScoreboardRowDetails(profileImageUrl, rank, playerName, points)
     }
 }
 
 @Composable
-fun PlayerWithIcon(playerName: String, points: Int, rank: Int, icon: Painter?) {
+fun ScoreboardRowDetails(profileImageUrl: String?, rank: Int, playerName: String, points: Int) {
+    Row {
+        Text(text = "$rank.", fontWeight = FontWeight.Bold, fontSize = 22.sp)
+        SmallHorizontalSpacer()
+        CircularProfilePicture(profileImageUrl, Modifier.size(24.dp))
+        SmallHorizontalSpacer()
+        Text(text = playerName, fontSize = 22.sp)
+        Text(text = " - $points p", color = LightGray, fontSize = 18.sp)
+    }
+}
+
+@Composable
+fun PlayerWithIcon(
+    profileImageUrl: String?,
+    playerName: String,
+    points: Int,
+    rank: Int,
+    icon: Painter?
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -125,7 +155,7 @@ fun PlayerWithIcon(playerName: String, points: Int, rank: Int, icon: Painter?) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "$rank. $playerName - $points pontos", fontSize = 22.sp)
+        ScoreboardRowDetails(profileImageUrl, rank, playerName, points)
 
         // Exibe o ícone adicional, se disponível
         icon?.let {

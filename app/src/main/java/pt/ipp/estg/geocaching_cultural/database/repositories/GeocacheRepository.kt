@@ -13,7 +13,6 @@ class GeocacheRepository(val geocacheDao : GeocacheDao)  {
 
     suspend fun insert(geocache: Geocache): Long {
         return geocacheDao.insertGeocache(geocache)
-
     }
 
     suspend fun update(geocache: Geocache){
