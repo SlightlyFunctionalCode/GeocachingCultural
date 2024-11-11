@@ -100,12 +100,6 @@ fun ActiveGeocacheScreen(
                 AnimatedDrawable(walking = currentUser.value!!.isWalking)
                 ProgressBar(3)
                 Text(text = " Location: ${currentUser.value!!.location.latitude},${currentUser.value!!.location.longitude}")
-                GlideImage(
-                    imageModel = { "https://cdnl.iconscout.com/lottie/premium/thumb/businessman-thinking-idea-animation-download-in-lottie-json-gif-static-svg-file-formats--strategy-having-business-people-pack-animations-4652129.gif" }, // loading a network image using an URL.
-                    imageOptions = ImageOptions(
-                        contentScale = ContentScale.Crop, alignment = Alignment.Center
-                    ),
-                )
             }
 
             /*ShowTip(

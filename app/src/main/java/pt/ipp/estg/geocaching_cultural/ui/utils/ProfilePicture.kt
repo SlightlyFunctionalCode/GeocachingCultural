@@ -19,7 +19,7 @@ import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.ui.theme.White
 
 @Composable
-fun ProfilePicture(imageUrl: String?, modifier: Modifier = Modifier) {
+fun ProfilePicture(profileImageUrl: String?, profileImageDefault: Int?, modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -27,16 +27,18 @@ fun ProfilePicture(imageUrl: String?, modifier: Modifier = Modifier) {
             .background(shape = RoundedCornerShape(10.dp), color = White)
             .padding(15.dp)
     ) {
-        if (imageUrl == null) {
-            Image(
-                contentScale = ContentScale.Crop,
-                painter = painterResource(R.drawable.avatar),
-                contentDescription = "Profile Picture",
-                modifier = Modifier.clip(RoundedCornerShape(5.dp))
-            )
+        if (profileImageUrl == "" || profileImageUrl == null) {
+            profileImageDefault?.let { painterResource(it) }?.let {
+                Image(
+                    contentScale = ContentScale.Crop,
+                    painter = it,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier.clip(RoundedCornerShape(5.dp))
+                )
+            }
         } else {
             GlideImage(
-                imageModel = { imageUrl }, // loading a network image using an URL.
+                imageModel = { profileImageUrl }, // loading a network image using an URL.
                 imageOptions = ImageOptions(
                     contentScale = ContentScale.Crop, alignment = Alignment.Center
                 ),

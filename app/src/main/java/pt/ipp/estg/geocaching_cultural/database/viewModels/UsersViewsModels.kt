@@ -60,7 +60,8 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
                             "",
                             0,
                             null,
-                            isWalking = false,
+                            1,
+                            false,
                             Location(0.0, 0.0, "")
                         )
                 }

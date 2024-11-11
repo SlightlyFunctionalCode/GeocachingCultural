@@ -80,6 +80,7 @@ import pt.ipp.estg.geocaching_cultural.ui.screens.GeocacheFoundScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.GeocacheNotFoundScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.HistoryScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.AboutUsScreen
+import pt.ipp.estg.geocaching_cultural.ui.screens.ChooseProfilePicScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.ExplorerScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.LoginScreen
 import pt.ipp.estg.geocaching_cultural.ui.screens.HomeScreen
@@ -239,7 +240,9 @@ fun MyTopAppBar(
 
             userState.value?.let { user ->
                 CircularProfilePicture(
-                    profileImageUrl = user.profileImageUrl, modifier = Modifier.size(45.dp)
+                    profileImageUrl = user.profileImageUrl,
+                    user.profilePictureDefault,
+                    modifier = Modifier.size(45.dp)
                 )
             }
 
@@ -289,6 +292,12 @@ fun MyScaffoldContent(
         composable("scoreboardScreen") { ScoreboardScreen(navController, usersViewsModels) }
         composable("profileScreen") { ProfileScreen(navController, usersViewsModels) }
         composable("profileEditingScreen") { ProfileEditingScreen(navController, usersViewsModels) }
+        composable("chooseProfilePicScreen") {
+            ChooseProfilePicScreen(
+                navController,
+                usersViewsModels
+            )
+        }
         composable("historyScreen") { HistoryScreen(navController, usersViewsModels) }
         composable("activeGeocacheScreen") {
             ActiveGeocacheScreen(

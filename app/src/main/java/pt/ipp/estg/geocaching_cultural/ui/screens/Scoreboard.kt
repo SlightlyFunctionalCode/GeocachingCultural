@@ -77,6 +77,7 @@ fun Top10Players(players: List<User>) {
             } else {
                 Player(
                     profileImageUrl = user.profileImageUrl,
+                    profilePicDefault = user.profilePictureDefault,
                     playerName = user.name,
                     points = user.points,
                     rank = index + 1
@@ -99,6 +100,7 @@ fun Top3Players(index: Int, user: User) {
 
         PlayerWithIcon(
             profileImageUrl = user.profileImageUrl,
+            profilePicDefault = user.profilePictureDefault,
             playerName = user.name,
             points = user.points,
             rank = index + 1,
@@ -111,6 +113,7 @@ fun Top3Players(index: Int, user: User) {
 @Composable
 fun Player(
     profileImageUrl: String?,
+    profilePicDefault: Int?,
     playerName: String,
     points: Int,
     rank: Int
@@ -123,16 +126,22 @@ fun Player(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ScoreboardRowDetails(profileImageUrl, rank, playerName, points)
+        ScoreboardRowDetails(profileImageUrl, profilePicDefault, rank, playerName, points)
     }
 }
 
 @Composable
-fun ScoreboardRowDetails(profileImageUrl: String?, rank: Int, playerName: String, points: Int) {
+fun ScoreboardRowDetails(
+    profileImageUrl: String?,
+    profilePicDefault: Int?,
+    rank: Int,
+    playerName: String,
+    points: Int
+) {
     Row {
         Text(text = "$rank.", fontWeight = FontWeight.Bold, fontSize = 22.sp)
         SmallHorizontalSpacer()
-        CircularProfilePicture(profileImageUrl, Modifier.size(24.dp))
+        CircularProfilePicture(profileImageUrl, profilePicDefault, Modifier.size(24.dp))
         SmallHorizontalSpacer()
         Text(text = playerName, fontSize = 22.sp)
         Text(text = " - $points p", color = LightGray, fontSize = 18.sp)
@@ -142,6 +151,7 @@ fun ScoreboardRowDetails(profileImageUrl: String?, rank: Int, playerName: String
 @Composable
 fun PlayerWithIcon(
     profileImageUrl: String?,
+    profilePicDefault: Int?,
     playerName: String,
     points: Int,
     rank: Int,
@@ -155,7 +165,7 @@ fun PlayerWithIcon(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ScoreboardRowDetails(profileImageUrl, rank, playerName, points)
+        ScoreboardRowDetails(profileImageUrl, profilePicDefault, rank, playerName, points)
 
         // Exibe o ícone adicional, se disponível
         icon?.let {

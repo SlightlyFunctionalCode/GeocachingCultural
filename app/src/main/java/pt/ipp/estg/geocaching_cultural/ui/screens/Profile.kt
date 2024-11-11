@@ -48,7 +48,7 @@ fun ProfileScreen(navController: NavHostController, usersViewsModels: UsersViews
             }
 
             VerticalSpacer()
-            ProfilePicture(user.profileImageUrl)
+            ProfilePicture(user.profileImageUrl, user.profilePictureDefault)
 
 
             Column(Modifier.fillMaxWidth()) {

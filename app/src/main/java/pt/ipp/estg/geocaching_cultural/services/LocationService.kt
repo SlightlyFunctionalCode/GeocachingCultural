@@ -144,6 +144,7 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
                     user.password,
                     user.points,
                     user.profileImageUrl,
+                    user.profilePictureDefault,
                     isWalking, // Update walking status
                     Location(latitude = currentLatitude, longitude = currentLongitude, address = "")
                 )

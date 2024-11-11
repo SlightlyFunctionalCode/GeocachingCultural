@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -63,9 +64,14 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             VerticalSpacer()
-            ProfilePicture(currentUser.value?.profileImageUrl)
+            ProfilePicture(
+                currentUser.value?.profileImageUrl,
+                currentUser.value?.profilePictureDefault
+            )
             /* TODO: função de alterar imagem a partir de presets ou de um link */
-            MyTextButton(text = "Alterar Imagem")
+            MyTextButton(
+                text = "Alterar Imagem",
+                onClick = { navController.navigate("chooseProfilePicScreen") })
 
             Column(Modifier.fillMaxWidth()) {
                 VerticalSpacer()
@@ -169,6 +175,7 @@ private fun updateUser(
         password = user.password,
         points = user.points,
         profileImageUrl = user.profileImageUrl,
+        profilePictureDefault = user.profilePictureDefault,
         location = user.location,
     )
     usersViewsModels.updateUser(updatedUser)
@@ -186,7 +193,7 @@ fun ProfileEditingPreview() {
                 .background(color = Yellow)
         ) {
             item {
-               // ProfileEditingScreen(navController)
+                // ProfileEditingScreen(navController)
             }
         }
     }

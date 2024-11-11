@@ -10,6 +10,7 @@ data class User(
     val password: String,
     val points: Int,
     val profileImageUrl: String?,
+    val profilePictureDefault: Int,
     val isWalking: Boolean = false,
     @Embedded val location: Location,
     /* TODO: adicionar um campo para imagens default */

@@ -254,7 +254,8 @@ fun register(
         password = password,
         points = 0,
         profileImageUrl = null,
-        location = Location(0.0, 0.0, "")
+        location = Location(0.0, 0.0, ""),
+        profilePictureDefault = R.drawable.avatar_male_01
     )
     usersViewsModels.insertUser(user)
     onRegistrationOutcome(true)
