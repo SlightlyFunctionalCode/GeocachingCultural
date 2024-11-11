@@ -1,6 +1,10 @@
 package pt.ipp.estg.geocaching_cultural.database.viewModels
 
 import android.app.Application
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,9 +20,10 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.repositories.GeocacheRepository
 import pt.ipp.estg.geocaching_cultural.database.repositories.UserRepository
+import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
 
 class GeocacheViewsModels(application: Application) : AndroidViewModel(application) {
-    val repository: GeocacheRepository
+    private val repository: GeocacheRepository
 
     init {
         val db = AppDatabase.getDatabase(application)

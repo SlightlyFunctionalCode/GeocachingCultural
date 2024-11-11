@@ -50,7 +50,24 @@ fun HomeScreen(
 ) {
     val currentUser = usersViewsModels.currentUser.observeAsState()
 
-    var context = LocalContext.current
+    val context = LocalContext.current
+
+    val address = if (currentUser.value != null && currentUser.value?.location != null) {
+        val addressLiveData = LocationUpdateService.getAddressFromCoordinates(
+            context,
+            currentUser.value!!.location.latitude,
+            currentUser.value!!.location.longitude
+        )
+
+        // Use `observeAsState` to convert LiveData to a Compose state
+        val addressState = addressLiveData.observeAsState()
+
+        // If addressState is null or empty, return empty string, otherwise return the address
+        addressState.value ?: ""
+    } else {
+        ""
+    }
+
 
     val closeGeocachesWithHints =
         currentUser.value?.let {
@@ -65,11 +82,7 @@ fun HomeScreen(
         Column(modifier = Modifier.fillMaxWidth()) {
             if (currentUser.value != null) {
                 Text(
-                    text = LocationUpdateService.getAddressFromCoordinates(
-                        context,
-                        currentUser.value!!.location.latitude,
-                        currentUser.value!!.location.longitude
-                    ) ?: "",
+                    text = address,
                     fontSize = 14.sp, // Define o tamanho da fonte
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -79,7 +92,7 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold,// Define o tamanho da fonte para o texto maior
                     modifier = Modifier.fillMaxWidth()
                 )
-            }else{
+            } else {
                 Text("Pedimos desculpa, um erro ocorreu!\nTente mais tarde.")
             }
         }

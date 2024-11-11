@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -44,6 +45,8 @@ import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.glide.GlideImage
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
@@ -97,6 +100,12 @@ fun ActiveGeocacheScreen(
                 AnimatedDrawable(walking = currentUser.value!!.isWalking)
                 ProgressBar(3)
                 Text(text = " Location: ${currentUser.value!!.location.latitude},${currentUser.value!!.location.longitude}")
+                GlideImage(
+                    imageModel = { "https://cdnl.iconscout.com/lottie/premium/thumb/businessman-thinking-idea-animation-download-in-lottie-json-gif-static-svg-file-formats--strategy-having-business-people-pack-animations-4652129.gif" }, // loading a network image using an URL.
+                    imageOptions = ImageOptions(
+                        contentScale = ContentScale.Crop, alignment = Alignment.Center
+                    ),
+                )
             }
 
             /*ShowTip(

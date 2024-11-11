@@ -12,12 +12,18 @@ import android.location.Geocoder
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
@@ -25,6 +31,10 @@ import java.util.Locale
 
 class LocationUpdateService(application: Application, viewsModels: UsersViewsModels) :
     AndroidViewModel(application) {
+
+    var lastKnownLocation: android.location.Location? = null
+    val stationaryInterval = 15000L  // 15 seconds for stationary
+    val movingInterval = 5000L       // 5 seconds for movement
 
     companion object {
         fun getDistanceToGeocache(userLocation: Location, geocacheLocation: Location): Double {
@@ -43,96 +53,77 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
             context: Context,
             latitude: Double,
             longitude: Double
-        ): String? {
-            val geocoder = Geocoder(context, Locale.getDefault())
-            try {
-                // Get the list of addresses from the coordinates
-                val addresses: MutableList<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+        ): LiveData<String?> {
+            val addressLiveData = MutableLiveData<String?>() // MutableLiveData to hold the result
 
-                // Check if we received any result
-                if (addresses != null) {
-                    if (addresses.isNotEmpty()) {
+            // Run the geocoding process on a background thread
+            CoroutineScope(Dispatchers.IO).launch {
+                val geocoder = Geocoder(context, Locale.getDefault())
+                try {
+                    // Get the list of addresses from the coordinates
+                    val addresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+
+                    // Check if we received any result
+                    if (!addresses.isNullOrEmpty()) {
                         val address = addresses[0] // Take the first address result
 
                         // Format the address to "City, Country" format
                         val city = address.locality
                         val country = address.countryName
 
-                        // You can also access other parts of the address (such as sublocality, admin area, etc.)
-                        return if (city != null && country != null) {
+                        val formattedAddress = if (city != null && country != null) {
                             "$city, $country"
                         } else {
                             null
                         }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return null
-        }
 
+                        // Post the formatted address to LiveData
+                        addressLiveData.postValue(formattedAddress)
+                    } else {
+                        // Post null if no address found
+                        addressLiveData.postValue(null)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    addressLiveData.postValue(null) // Post null in case of an error
+                }
+            }
+
+            return addressLiveData // Return the LiveData object
+        }
     }
 
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(application)
 
-    private val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000)
-        .setMinUpdateIntervalMillis(5000) // Fastest update every 5 seconds
+    private val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
+        .setMinUpdateIntervalMillis(2500) // Fastest update every 5 seconds
         .build()
 
-    /*TODO: mudar código para ficar mais fácil de ler */
+
     private val locationCallback = object : LocationCallback() {
-        private var lastLocation: pt.ipp.estg.geocaching_cultural.database.classes.Location? = null
-        private var lastUpdateTime: Long = 0
-        private val STOPPED_THRESHOLD = 10 * 1000 // 10 seconds in milliseconds
-
         override fun onLocationResult(locationResult: LocationResult) {
-            locationResult.lastLocation?.let { currentLocation ->
-                // Only calculate if we have a previous location
-                lastLocation?.let { prevLocation ->
-                    // Convert your custom Location to android.location.Location
-                    val prevAndroidLocation = android.location.Location("previous")
-                    prevAndroidLocation.latitude = prevLocation.latitude
-                    prevAndroidLocation.longitude = prevLocation.longitude
+            val currentLocation = locationResult.lastLocation
+            val hasMoved = (currentLocation?.let { lastKnownLocation?.distanceTo(it) }
+                ?: Float.MAX_VALUE) > 10f
 
-                    val currentAndroidLocation = android.location.Location("current")
-                    currentAndroidLocation.latitude = currentLocation.latitude
-                    currentAndroidLocation.longitude = currentLocation.longitude
+            if (hasMoved) {
+                // Update to faster interval when user is moving
+                locationRequest.setInterval(movingInterval)
+                lastKnownLocation = currentLocation
+            } else {
+                // Switch to slower interval when stationary
+                locationRequest.setInterval(stationaryInterval)
+            }
 
-                    // Calculate distance between last and current location
-                    val distance = prevAndroidLocation.distanceTo(currentAndroidLocation)
-
-                    // Check if user has stopped moving for 10 seconds
-                    if (distance < 1) { // You can adjust this threshold (1 meter)
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastUpdateTime > STOPPED_THRESHOLD) {
-                            updateWalkingStatus(
-                                false,
-                                currentLocation.latitude,
-                                currentLocation.longitude
-                            )
-                        }
-                    } else {
-                        updateWalkingStatus(
-                            true,
-                            currentLocation.latitude,
-                            currentLocation.longitude
-                        )
-                        lastUpdateTime = System.currentTimeMillis() // Reset timer
-                    }
-                }
-
-                // Update last known location
-                lastLocation = pt.ipp.estg.geocaching_cultural.database.classes.Location(
-                    currentLocation.latitude,
-                    currentLocation.longitude,
-                    "" // You can pass the other data you need for Location
-                )
+            // Now handle the location update as needed
+            if (currentLocation != null) {
+                updateUserLocation(hasMoved, currentLocation.latitude, currentLocation.longitude)
             }
         }
 
-        private fun updateWalkingStatus(
+
+        private fun updateUserLocation(
             isWalking: Boolean,
             currentLatitude: Double,
             currentLongitude: Double
