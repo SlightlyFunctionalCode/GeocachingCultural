@@ -61,7 +61,7 @@ fun MyTextField(
             focusedBorderColor = Gray,
             unfocusedBorderColor = LightGray,
             cursorColor = Gray,
-            focusedTextColor = LightGray,
+            focusedTextColor = Black,
             unfocusedTextColor = LightGray,
             focusedContainerColor = White,
             unfocusedContainerColor = White,

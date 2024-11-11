@@ -1,24 +1,18 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
-import android.content.Context
-import android.graphics.Picture
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -33,25 +27,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getString
 import androidx.navigation.NavHostController
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.glide.GlideImage
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Black
 import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
-import pt.ipp.estg.geocaching_cultural.ui.theme.White
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import pt.ipp.estg.geocaching_cultural.ui.utils.ProfilePicture
@@ -82,11 +66,9 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
     var buttonState by remember { mutableStateOf(false) }
 
     var isProfilePicUrlValid by remember { mutableStateOf(true) }
-    var isProfilePicDefaultValid by remember { mutableStateOf(true) }
 
     /*TODO: add errors */
     var supportingTextProfilePicUrlValid by remember { mutableStateOf("") }
-    var supportingTexProfilePicDefaultValid by remember { mutableStateOf("") }
 
     val snackbarHostState = remember { SnackbarHostState() }
     var updateSuccessful by remember { mutableStateOf(false) }
@@ -105,6 +87,11 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
             )
 
             VerticalSpacer()
+
+            MyTextButton(text = "Remover Imagem de Perfil Custom", { answerProfilePicUrl = "" })
+
+            VerticalSpacer()
+
             Column {
                 MyTextField(
                     label = { Text("Choose Custom Profile Picture Url") },
@@ -119,9 +106,21 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
                             contentDescription = "Lock Icon"
                         )
                     },
+                    isError = !isProfilePicUrlValid,
+                    supportingText = { Text(text = supportingTextProfilePicUrlValid, color = Pink) },
                     modifier = Modifier
                 )
-                FlowRow() {
+
+                supportingTextProfilePicUrlValid =
+                    if (!isProfilePicUrlValid) "Senha deve ter pelo menos 6 caracteres" else ""
+
+                VerticalSpacer()
+
+                FlowRow(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.Center,
+                     modifier = Modifier.fillMaxWidth()
+                ) {
                     for (image in defaultProfilePics)
                         Image(
                             painter = painterResource(image),
@@ -129,26 +128,25 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center,
                             modifier = Modifier
+                                .padding(8.dp)
                                 .sizeIn(50.dp, 50.dp, 100.dp, 100.dp)
                                 .clickable { answerProfilePicDefault = image }
-                                .border(
-                                    width = if (image == answerProfilePicDefault) 5.dp else 0.dp,
-                                    brush = Brush.horizontalGradient(
-                                        colors = listOf(
-                                            White, Black
-                                        ),
-                                        startX = 0.0f,
-                                        endX = 500.0f,
-                                        tileMode = TileMode.Repeated
-                                    ),
-                                    shape = RoundedCornerShape(10.dp)
+                                .then(
+                                    if (image == answerProfilePicDefault) {
+                                        Modifier.border(
+                                            width = 5.dp,
+                                            color = Black,
+                                            shape = RoundedCornerShape(10.dp)
+                                        )
+                                    } else {
+                                        Modifier // No border modifier
+                                    }
                                 )
                         )
                 }
             }
 
-            buttonState = isProfilePicUrlValid &&
-                    isProfilePicDefaultValid
+            buttonState = isProfilePicUrlValid
 
             VerticalSpacer()
             MyTextButton(
