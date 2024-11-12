@@ -1,6 +1,5 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,55 +10,52 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import pt.ipp.estg.geocaching_cultural.R
+import com.google.android.libraries.places.api.Places
 import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
-import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesFound
-import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.GeocacheCard
 import pt.ipp.estg.geocaching_cultural.ui.utils.Title
-import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
+import pt.ipp.estg.geocaching_cultural.utils_api.fetchGeocacheImage
+import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
 
 @Composable
 fun HistoryScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
+    val context = LocalContext.current
 
     val user by usersViewsModels.currentUserId.observeAsState()
 
-    val geocacheFound = UserGeocacheFoundCrossRef(user!!, 2)
+    val geocacheFound = UserGeocacheFoundCrossRef(user!!, 1)
     usersViewsModels.insertUserGeocacheFound(geocacheFound) /* TODO: isto deve ser feito quando um geocache é encontrado quando estiver implementado retirar daqui*/
 
     val geocachesFound = user?.let { usersViewsModels.getUserWithGeocachesFound(it).observeAsState() }?.value
 
-    Column(Modifier.padding(top = 28.dp, start = 28.dp, end = 28.dp, bottom = 0.dp)) {
+    getApiKey(context)?.let { Places.initialize(context, it) }
+
+    Column(Modifier.padding(28.dp)) {
         Title(text = "Histórico Geocaches")
 
-        if (geocachesFound != null) {
-        Column {
-            geocachesFound.geocachesFound.forEachIndexed { index, geocache -> /* TODO: quando souber como ir buscar imagens e outros dados do googleplaces necessário alterar*/
-                VerticalSpacer()
-
-                GeocacheCard(
-                    title = "Mercadona",
-                    description = "Sítio onde se faz compras",
-                    points = 52,
-                    image = painterResource(
-                        R.drawable.mercadona
-                    )
-                )
-            }
-
-        }
-        } else {
+        if (geocachesFound!= null) {
             Column {
-                Text("Carregando histórico de geocaches...")
+                geocachesFound.geocachesFound.forEach { geocache ->
+                    val image = fetchGeocacheImage(geocache, context)
+
+                    GeocacheCard(
+                        title = geocache.name,
+                        description = geocache.address?: "Endereço desconhecido",
+                        points = 52, // valor fixo ou dinâmico
+                        image = image
+                    )
+                }
             }
+        } else {
+            Text("Carregando histórico de geocaches...")
         }
     }
 }

@@ -319,7 +319,7 @@ fun MyScaffoldContent(
                 geocacheViewsModels
             )
         }
-        composable("geocacheFoundScreen") { GeocacheFoundScreen(navController, usersViewsModels) }
+        composable("geocacheFoundScreen") { GeocacheFoundScreen(navController, usersViewsModels, geocacheViewsModels) }
     }
 }
 

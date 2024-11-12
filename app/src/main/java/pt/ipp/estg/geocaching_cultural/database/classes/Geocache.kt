@@ -10,6 +10,7 @@ data class Geocache(
     @Embedded val location: Location,
     val type: GeocacheType,
     val name: String,
+    val address: String,
     val createdAt: LocalDateTime,
     val createdBy: Int,
 ){

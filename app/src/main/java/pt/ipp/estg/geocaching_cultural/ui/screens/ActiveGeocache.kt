@@ -101,7 +101,7 @@ fun ActiveGeocacheScreen(
                 /* TODO: Mudar para lidar com o erro */
                 AnimatedDrawable(walking = currentUser.value!!.isWalking)
                 ProgressBar(3)
-                Text(text = " Location: ${currentUser.value!!.location.latitude},${currentUser.value!!.location.longitude}")
+                Text(text = " Location: ${currentUser.value!!.location.lat},${currentUser.value!!.location.lng}")
             }
 
             /*ShowTip(

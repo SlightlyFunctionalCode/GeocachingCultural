@@ -36,12 +36,12 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
     companion object {
         fun getDistanceToGeocache(userLocation: Location, geocacheLocation: Location): Double {
             val userAndroidLocation = android.location.Location("user")
-            userAndroidLocation.latitude = userLocation.latitude
-            userAndroidLocation.longitude = userLocation.longitude
+            userAndroidLocation.latitude = userLocation.lat
+            userAndroidLocation.longitude = userLocation.lng
 
             val geocacheAndroidLocation = android.location.Location("geocache")
-            geocacheAndroidLocation.latitude = geocacheLocation.latitude
-            geocacheAndroidLocation.longitude = geocacheLocation.longitude
+            geocacheAndroidLocation.latitude = geocacheLocation.lat
+            geocacheAndroidLocation.longitude = geocacheLocation.lng
 
             return userAndroidLocation.distanceTo(geocacheAndroidLocation).toDouble()
         }
@@ -128,9 +128,8 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
             val updatedUser = userToUpdate.copy(
                 location =
                 Location(
-                    latitude = currentLatitude,
-                    longitude = currentLongitude,
-                    address = ""
+                    lat = currentLatitude,
+                    lng = currentLongitude,
                 )
             )
 

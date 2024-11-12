@@ -68,8 +68,8 @@ fun HomeScreen(
     val address = if (currentUser.value != null && currentUser.value?.location != null) {
         val addressLiveData = LocationUpdateService.getAddressFromCoordinates(
             context,
-            currentUser.value!!.location.latitude,
-            currentUser.value!!.location.longitude
+            currentUser.value!!.location.lat,
+            currentUser.value!!.location.lng
         )
 
         // Use `observeAsState` to convert LiveData to a Compose state

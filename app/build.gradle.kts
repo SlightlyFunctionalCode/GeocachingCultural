@@ -71,6 +71,8 @@ android {
 }
 
 dependencies {
+    implementation (libs.kotlinx.coroutines.android)
+    implementation (libs.places)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -99,8 +101,8 @@ dependencies {
     implementation(libs.secrets.gradle.plugin)
 
     //Api
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 
     //Room
     val room_version = "2.6.1"

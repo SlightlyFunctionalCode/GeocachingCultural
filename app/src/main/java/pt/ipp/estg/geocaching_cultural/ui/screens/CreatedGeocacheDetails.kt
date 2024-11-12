@@ -70,9 +70,8 @@ fun CreatedGeocacheDetailsScreen(navController: NavHostController, geocacheViews
         val geocacheLocation = remember {
             mutableStateOf(
                 Location(
-                    latitude = geocache!!.geocache.location.latitude,
-                    longitude = geocache!!.geocache.location.longitude,
-                    address = geocache!!.geocache.location.address
+                    lat = geocache!!.geocache.location.lat,
+                    lng = geocache!!.geocache.location.lng
                 )
             )
         }
@@ -105,7 +104,7 @@ fun CreatedGeocacheDetailsScreen(navController: NavHostController, geocacheViews
             item {
                 Text(text = "Localização:", fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 SmallHorizontalSpacer()
-                LocationItem(geocacheLocation.value)
+                LocationItem(geocache!!.geocache.address)
 
                 VerticalSpacer()
 
@@ -163,7 +162,7 @@ fun QuestionItem(label: String, question: String, answer: String) {
 }
 
 @Composable
-fun LocationItem(location: Location) {
+fun LocationItem(address: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,8 +173,7 @@ fun LocationItem(location: Location) {
             Icon(imageVector = Icons.Filled.LocationOn, contentDescription = "location icon")
             SmallHorizontalSpacer()
             Column {
-                Text(text = "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
-                location.address?.let { Text(text = "Endereço: $it", color = LightGray, fontSize = 12.sp) }
+                Text(text = "Endereço: $address", color = LightGray, fontSize = 12.sp)
             }
         }
     }

@@ -113,7 +113,7 @@ fun DisplayUser(user: User) {
     Column {
         Text(text = "Id: ${user.userId}")
         Text(text = "Nome: ${user.name}")
-        Text(text = "Location: ${user.location.address},(${user.location.latitude},${user.location.longitude})")
+        Text(text = "Location: ${user.location.lat},${user.location.lng})")
         Text(text = "Points: ${user.points}")
         Text(text = "Email: ${user.email}")
         Text(text = "Password: ${user.password}")

@@ -3,8 +3,6 @@ package pt.ipp.estg.geocaching_cultural.ui.screens
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,20 +12,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +29,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.android.libraries.places.api.Places
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
@@ -51,6 +50,9 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import java.time.LocalDateTime
+import pt.ipp.estg.geocaching_cultural.utils_api.fetchAddressSuggestions
+import pt.ipp.estg.geocaching_cultural.utils_api.fetchCoordinatesFromAddress
+import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
 
 @Composable
 fun CreateGeocacheScreen(
@@ -71,10 +73,11 @@ fun CreateGeocacheScreen(
     val hints = remember { mutableStateListOf("", "", "") }
     val questions = remember { mutableStateListOf("", "", "", "") }
     val answers = remember { mutableStateListOf("", "", "", "") }
-    var latitude by remember { mutableStateOf("") }
-    var longitude by remember { mutableStateOf("") }
+    var latitude by remember { mutableDoubleStateOf(0.0) }
+    var longitude by remember { mutableDoubleStateOf(0.0) }
     var address by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
@@ -118,12 +121,26 @@ fun CreateGeocacheScreen(
 
         // Campo para Localização
         LocationField(
-            latitude = latitude,
-            onLatitudeChange = { latitude = it },
-            longitude = longitude,
-            onLongitudeChange = { longitude = it },
             address = address,
             onAddressChange = { address = it },
+            onAddressSelected = { selectedAddress ->
+                address = selectedAddress
+                val apiKey = getApiKey(context)
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (apiKey != null) {
+                        val coordinates = fetchCoordinatesFromAddress(selectedAddress, apiKey)
+
+                        if (coordinates?.first != null && coordinates.second != null) {
+                            latitude = coordinates.first!!
+                            longitude = coordinates.second!!
+                        } else {
+                            Log.e("Geocoding", "Falha ao obter coordenadas para o endereço fornecido")
+                        }
+                    } else {
+                        Log.e("Geocoding", "Chave de API não encontrada")
+                    }
+                }
+            }
         )
 
         Spacer(Modifier.height(16.dp))
@@ -131,10 +148,10 @@ fun CreateGeocacheScreen(
         Button(onClick = { // Criar um novo Geocache
             val geocache = Geocache(
                 geocacheId = 0,
+                address = address,
                 location = Location(
-                    latitude = latitude.toDouble(),
-                    longitude = longitude.toDouble(),
-                    address
+                    lat = latitude,
+                    lng = longitude,
                 ),
                 type = categorySelected,
                 name = "", // você precisa adicionar um campo para o nome do geocache
@@ -237,41 +254,50 @@ fun LabelQuestion(
 
 @Composable
 fun LocationField(
-    latitude: String,
-    onLatitudeChange: (String) -> Unit,
-    longitude: String,
-    onLongitudeChange: (String) -> Unit,
     address: String,
-    onAddressChange: (String) -> Unit
+    onAddressChange: (String) -> Unit,
+    onAddressSelected: (String) -> Unit
 ) {
-    /* TODO: verificar se vai ser assim mesmo a localização */
+    val context = LocalContext.current
+
+    getApiKey(context)?.let { Places.initialize(context, it) }
+
+    val placesClient = remember { Places.createClient(context) }
+    val suggestions = remember { mutableStateOf<List<String>>(emptyList()) }
+
     Column {
-        Text(text = "Latitude:")
-        Spacer(Modifier.height(5.dp))
-        MyTextField(
-            value = latitude,
-            onValueChange = onLatitudeChange,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Digite a latitude") }
-        )
-        Spacer(Modifier.height(10.dp))
-        Text(text = "Longitude:")
-        Spacer(Modifier.height(5.dp))
-        MyTextField(
-            value = longitude,
-            onValueChange = onLongitudeChange,
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Digite a longitude") }
-        )
-        Spacer(Modifier.height(10.dp))
         Text(text = "Endereço:")
         Spacer(Modifier.height(5.dp))
-        TextField(
+
+        MyTextField(
             value = address,
-            onValueChange = onAddressChange,
+            onValueChange = {
+                onAddressChange(it)
+                fetchAddressSuggestions(it, placesClient) { suggestions.value = it }
+            },
             modifier = Modifier.fillMaxWidth(),
             placeholder = { Text("Digite o endereço") }
         )
+
+        // Exibe sugestões de auto-complete
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp) // Defina uma altura máxima para o LazyColumn
+        ) {
+            items(suggestions.value) { suggestion ->
+                Text(
+                    text = suggestion,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onAddressSelected(suggestion)
+                            suggestions.value = emptyList() // Limpar sugestões após selecionar
+                        }
+                        .padding(8.dp)
+                )
+            }
+        }
     }
 }
 

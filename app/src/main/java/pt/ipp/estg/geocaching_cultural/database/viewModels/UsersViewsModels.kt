@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.AppDatabase
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
@@ -64,9 +65,9 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
                             "",
                             0,
                             null,
-                            1,
+                            R.drawable.avatar_male_01,
                             false,
-                            Location(0.0, 0.0, "")
+                            Location(0.0, 0.0)
                         )
                 }
             }
