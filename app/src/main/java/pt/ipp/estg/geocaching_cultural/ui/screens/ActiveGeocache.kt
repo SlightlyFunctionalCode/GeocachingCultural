@@ -1,6 +1,9 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
+import android.content.Context
 import android.graphics.drawable.AnimationDrawable
+import android.os.Handler
+import android.os.Looper
 import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -99,7 +102,7 @@ fun ActiveGeocacheScreen(
             ) {
                 VerticalSpacer()
                 /* TODO: Mudar para lidar com o erro */
-                AnimatedDrawable(walking = currentUser.value!!.isWalking)
+                AnimatedDrawable(isWalking = currentUser.value!!.isWalking)
                 ProgressBar(3)
                 Text(text = " Location: ${currentUser.value!!.location.lat},${currentUser.value!!.location.lng}")
             }
@@ -152,44 +155,87 @@ fun IconSection() {
     }
 }
 
-
 @Composable
-fun AnimatedDrawable(walking: Boolean) {
+fun AnimatedDrawable(isWalking: Boolean) {
 
-    var isAnimating by remember { mutableStateOf(false) }
+    var animationState by remember { mutableStateOf("sitting_down") }
 
-    // Observe changes to `walking` and update `isAnimating`
-    LaunchedEffect(walking) {
-        isAnimating = walking
+    // Observe changes to `isWalking` and update `animationState`
+    LaunchedEffect(isWalking) {
+        animationState = when {
+            isWalking && animationState == "sitting_down" -> "getting_up"
+            isWalking && animationState == "walking" -> "walking"
+            !isWalking && animationState == "walking" -> "sitting_down"
+            !isWalking && animationState == "getting_up" -> "sitting_down"
+            else -> animationState
+        }
     }
 
     AndroidView(
         modifier = Modifier.size(250.dp),
         factory = { context ->
-            val imageView = ImageView(context).apply {
-                val animation = ContextCompat.getDrawable(
-                    context,
-                    R.drawable.walking_animation
-                ) as AnimationDrawable
-                setImageDrawable(animation)
-                animation.isOneShot = false
-                if (isAnimating) {
-                    animation.start()
-                } else {
-                    animation.stop()
+            val imageView = ImageView(context)
+            updateAnimationDrawable(context, imageView, animationState) {
+                // Triggered after `getting_up` completes
+                if (animationState == "getting_up" && isWalking) {
+                    animationState = "walking"
                 }
             }
             imageView
         },
         update = { imageView ->
-            val animation = imageView.drawable as AnimationDrawable
-            if (isAnimating) {
-                animation.start()
-            } else {
-                animation.stop()
+            updateAnimationDrawable(imageView.context, imageView, animationState) {
+                if (animationState == "getting_up" && isWalking) {
+                    animationState = "walking"
+                }
             }
         }
     )
+}
+
+private fun updateAnimationDrawable(
+    context: Context,
+    imageView: ImageView,
+    animationState: String,
+    onAnimationEnd: (() -> Unit)? = null
+) {
+    val animationDrawable = when (animationState) {
+        "walking" -> ContextCompat.getDrawable(
+            context,
+            R.drawable.walking_animation
+        ) as AnimationDrawable
+
+        "getting_up" -> ContextCompat.getDrawable(
+            context,
+            R.drawable.getting_up_animation
+        ) as AnimationDrawable
+
+        "sitting_down" -> ContextCompat.getDrawable(
+            context,
+            R.drawable.sitting_down_animation
+        ) as AnimationDrawable
+
+        else -> null
+    }
+
+    animationDrawable?.let { drawable ->
+        imageView.setImageDrawable(drawable)
+        drawable.isOneShot = animationState != "walking" // Loop `walking`, not others
+
+        // Calculate total animation duration for `getting_up` to use a delay
+        if (animationState == "getting_up") {
+            val totalDuration = (0 until drawable.numberOfFrames).sumOf { drawable.getDuration(it) }
+
+            // Start the animation and set a delay to trigger the callback after it completes
+            drawable.start()
+            Handler(Looper.getMainLooper()).postDelayed({
+                onAnimationEnd?.invoke()
+            }, totalDuration.toLong())
+        } else {
+            // Directly start for other states
+            drawable.start()
+        }
+    }
 }
 
 @Composable

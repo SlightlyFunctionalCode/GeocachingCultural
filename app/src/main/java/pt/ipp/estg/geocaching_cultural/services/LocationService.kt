@@ -5,7 +5,6 @@ import android.Manifest
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.Resources.NotFoundException
 import android.location.Address
 import android.location.Geocoder
 import android.os.Looper
@@ -100,7 +99,7 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
-            val currentLocation = locationResult.lastLocation
+            val currentLocation: android.location.Location? = locationResult.lastLocation
             val hasMoved = user?.isWalking ?: false
 
             if (hasMoved) {
@@ -122,19 +121,19 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
             currentLatitude: Double,
             currentLongitude: Double
         ) {
-            val userToUpdate = user?: throw NotFoundException()
-
-            // Update user's walking status and other user details
-            val updatedUser = userToUpdate.copy(
-                location =
-                Location(
-                    lat = currentLatitude,
-                    lng = currentLongitude,
+            if (user != null) {
+                // Update user's walking status and other user details
+                val updatedUser = user.copy(
+                    location =
+                    Location(
+                        lat = currentLatitude,
+                        lng = currentLongitude,
+                    )
                 )
-            )
 
-            // Update user in ViewModel
-            viewsModels.updateUser(updatedUser)
+                // Update user in ViewModel
+                viewsModels.updateUser(updatedUser)
+            }
         }
     }
 
