@@ -116,7 +116,6 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
             }
         }
 
-
         private fun updateUserLocation(
             currentLatitude: Double,
             currentLongitude: Double

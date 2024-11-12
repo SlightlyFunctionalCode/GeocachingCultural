@@ -313,10 +313,13 @@ fun MyScaffoldContent(
                 usersViewsModels
             )
         }
-        composable("createdGeocacheDetailsScreen") {
+        composable("createdGeocacheDetailsScreen/{geocacheId}") {
+                backStackEntry ->
+            val geocacheId = backStackEntry.arguments?.getString("geocacheId")
             CreatedGeocacheDetailsScreen(
                 navController,
-                geocacheViewsModels
+                geocacheViewsModels,
+                geocacheId?.toInt()
             )
         }
         composable("geocacheFoundScreen") { GeocacheFoundScreen(navController, usersViewsModels, geocacheViewsModels) }

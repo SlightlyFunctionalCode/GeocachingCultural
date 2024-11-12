@@ -8,15 +8,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.libraries.places.api.Places
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
@@ -46,9 +52,9 @@ fun CreatedGeocachesScreen(navController: NavHostController, usersViewsModels: U
 
                     GeocacheCard(
                         title = geocache.name,
-                        description = geocache.address ?: "Endereço desconhecido",
-                        image = image,
-                        modifier = Modifier.clickable { navController.navigate("createdGeocacheDetailsScreen") }
+                        description = geocache.address,
+                        image = image, // Usa o estado da imagem atualizado
+                        modifier = Modifier.clickable { navController.navigate("createdGeocacheDetailsScreen/${geocache.geocacheId}") }
                     )
                 }
             }
