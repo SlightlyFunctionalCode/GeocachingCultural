@@ -5,6 +5,7 @@ import android.Manifest
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources.NotFoundException
 import android.location.Address
 import android.location.Geocoder
 import android.os.Looper
@@ -27,10 +28,6 @@ import java.util.Locale
 
 class LocationUpdateService(application: Application, viewsModels: UsersViewsModels) :
     AndroidViewModel(application) {
-
-    val stationaryInterval = 15000L  // 15 seconds for stationary
-    val movingInterval = 5000L       // 5 seconds for movement
-    val user = viewsModels.currentUser.value
 
     companion object {
         fun getDistanceToGeocache(userLocation: Location, geocacheLocation: Location): Double {
@@ -100,18 +97,10 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val currentLocation: android.location.Location? = locationResult.lastLocation
-            val hasMoved = user?.isWalking ?: false
-
-            if (hasMoved) {
-                // Update to faster interval when user is moving
-                locationRequest.setInterval(movingInterval)
-            } else {
-                // Switch to slower interval when stationary
-                locationRequest.setInterval(stationaryInterval)
-            }
 
             // Now handle the location update as needed
             if (currentLocation != null) {
+                println("CHEGUEI CHEGUEI CHEGUEI CHEGUEI CHEGUEI CHEGUEI ")
                 updateUserLocation(currentLocation.latitude, currentLocation.longitude)
             }
         }
@@ -120,19 +109,19 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
             currentLatitude: Double,
             currentLongitude: Double
         ) {
-            if (user != null) {
-                // Update user's walking status and other user details
-                val updatedUser = user.copy(
-                    location =
-                    Location(
-                        lat = currentLatitude,
-                        lng = currentLongitude,
-                    )
-                )
+            println("CurrentLatitude: $currentLatitude")
+            println("CurrentLatitude: $currentLongitude")
 
-                // Update user in ViewModel
-                viewsModels.updateUser(updatedUser)
-            }
+            val user = viewsModels.currentUser.value ?: throw NotFoundException()
+
+            val updatedUser = user.copy(
+                location = Location(
+                    lat = currentLatitude,
+                    lng = currentLongitude,
+                )
+            )
+
+            viewsModels.updateUser(updatedUser)
         }
     }
 

@@ -13,5 +13,4 @@ data class User(
     val profilePictureDefault: Int,
     val isWalking: Boolean = false,
     @Embedded val location: Location,
-    /* TODO: adicionar um campo para imagens default */
 )
