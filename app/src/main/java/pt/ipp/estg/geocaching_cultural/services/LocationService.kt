@@ -4,7 +4,6 @@ package pt.ipp.estg.geocaching_cultural.services
 import android.Manifest
 import android.app.Application
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.location.Address
@@ -23,18 +22,16 @@ import com.google.android.gms.location.Priority
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
-import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import java.util.Locale
 
 class LocationUpdateService(application: Application, viewsModels: UsersViewsModels) :
     AndroidViewModel(application) {
 
-    var lastKnownLocation: android.location.Location? = null
     val stationaryInterval = 15000L  // 15 seconds for stationary
     val movingInterval = 5000L       // 5 seconds for movement
+    val user = viewsModels.currentUser.value
 
     companion object {
         fun getDistanceToGeocache(userLocation: Location, geocacheLocation: Location): Double {
@@ -104,13 +101,11 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val currentLocation = locationResult.lastLocation
-            val hasMoved = (currentLocation?.let { lastKnownLocation?.distanceTo(it) }
-                ?: Float.MAX_VALUE) > 5f
+            val hasMoved = user?.isWalking ?: false
 
             if (hasMoved) {
                 // Update to faster interval when user is moving
                 locationRequest.setInterval(movingInterval)
-                lastKnownLocation = currentLocation
             } else {
                 // Switch to slower interval when stationary
                 locationRequest.setInterval(stationaryInterval)
@@ -118,40 +113,29 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
 
             // Now handle the location update as needed
             if (currentLocation != null) {
-                updateUserLocation(hasMoved, currentLocation.latitude, currentLocation.longitude)
+                updateUserLocation(currentLocation.latitude, currentLocation.longitude)
             }
         }
 
 
         private fun updateUserLocation(
-            isWalking: Boolean,
             currentLatitude: Double,
             currentLongitude: Double
         ) {
-            // Retrieve the current user ID from SharedPreferences
-            val sharedPreferences = getApplication<Application>()
-                .getSharedPreferences("user_prefs", MODE_PRIVATE)
-            val userId = sharedPreferences.getInt("current_user_id", -1)
+            val userToUpdate = user?: throw NotFoundException()
 
-            if (userId != -1) {
-                val user = viewsModels.currentUser.value ?: throw NotFoundException()
-
-                // Update user's walking status and other user details
-                val updatedUser = User(
-                    userId,
-                    user.name,
-                    user.email,
-                    user.password,
-                    user.points,
-                    user.profileImageUrl,
-                    user.profilePictureDefault,
-                    isWalking, // Update walking status
-                    Location(latitude = currentLatitude, longitude = currentLongitude, address = "")
+            // Update user's walking status and other user details
+            val updatedUser = userToUpdate.copy(
+                location =
+                Location(
+                    latitude = currentLatitude,
+                    longitude = currentLongitude,
+                    address = ""
                 )
+            )
 
-                // Update user in ViewModel
-                viewsModels.updateUser(updatedUser)
-            }
+            // Update user in ViewModel
+            viewsModels.updateUser(updatedUser)
         }
     }
 
@@ -164,7 +148,6 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // Request permissions if not granted
             return
         }
 

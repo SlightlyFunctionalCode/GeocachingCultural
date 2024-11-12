@@ -17,12 +17,15 @@ import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesCreated
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesFound
 import pt.ipp.estg.geocaching_cultural.database.repositories.UserRepository
 import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
+import pt.ipp.estg.geocaching_cultural.services.SensorService
 
 class UsersViewsModels(application: Application) : AndroidViewModel(application) {
 
     private val _currentUserId = MutableLiveData<Int>()
     private val _currentUser = MediatorLiveData<User>()
     private val locationUpdateService: LocationUpdateService
+    private val sensorService: SensorService
+
 
     val currentUserId: LiveData<Int> get() = _currentUserId
     val currentUser: LiveData<User> get() = _currentUser
@@ -38,6 +41,7 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
         //this.updateBooksOnline()
 
         locationUpdateService = LocationUpdateService(application, this)
+        sensorService = SensorService(application, this)
 
         // Load the current user ID from SharedPreferences
         _currentUserId.value = loadCurrentUserIdFromPreferences()
@@ -77,6 +81,16 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
     fun stopLocationUpdates() {
         // Stop location updates when no longer needed
         locationUpdateService.stopLocationUpdates()
+    }
+
+    fun startSensorUpdates() {
+        // Start location updates when the user is available
+        sensorService.startSensorUpdates()
+    }
+
+    fun stopSensorUpdates() {
+        // Stop location updates when no longer needed
+        sensorService.stopSensorUpdates()
     }
 
     fun getTop10Users(): LiveData<List<User>> {

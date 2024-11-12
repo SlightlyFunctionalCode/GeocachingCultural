@@ -3,8 +3,4 @@
     <item android:drawable="@drawable/sprite_1" android:duration="150"/>
     <item android:drawable="@drawable/sprite_2" android:duration="150"/>
     <item android:drawable="@drawable/sprite_3" android:duration="150"/>
-    <item android:drawable="@drawable/sprite_4" android:duration="150"/>
-    <item android:drawable="@drawable/sprite_5" android:duration="150"/>
-    <item android:drawable="@drawable/sprite_6" android:duration="150"/>
-    <item android:drawable="@drawable/sprite_7" android:duration="150"/>
 </animation-list>
