@@ -16,60 +16,51 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPhotoRequest
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
+import kotlinx.coroutines.tasks.await
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 
-@Composable
-fun fetchGeocacheImage(geocache: Geocache, context: Context): Painter {
-    // Estado para armazenar a imagem como ImageBitmap
-    val imageState = remember { mutableStateOf<ImageBitmap?>(null) }
-    val defaultImage = painterResource(R.drawable.home)
-
+// Função `suspend` para buscar a imagem de um geocache
+suspend fun fetchGeocacheImageAsync(geocache: Geocache, context: Context): ImageBitmap? {
+    val apiKey = getApiKey(context)
     val placesClient = Places.createClient(context)
     val placeFields = listOf(Place.Field.PHOTO_METADATAS)
 
-    val context = LocalContext.current
-    getApiKey(context)?.let { Places.initialize(context, it) }
+    return try {
+        val placeId = getPlaceIdByCoordinatesAsync(geocache.location.lat, geocache.location.lng, apiKey)
+
+        placeId?.let { id ->
+            val request = FetchPlaceRequest.builder(id, placeFields).build()
+            val response = placesClient.fetchPlace(request).await() // usando await para chamadas suspensas
+
+            val photoMetadata = response.place.photoMetadatas?.firstOrNull()
+            if (photoMetadata != null) {
+                val photoRequest = FetchPhotoRequest.builder(photoMetadata)
+                    .setMaxWidth(500)
+                    .setMaxHeight(300)
+                    .build()
+
+                val photoResponse = placesClient.fetchPhoto(photoRequest).await()
+                photoResponse.bitmap.asImageBitmap() // Retorna o ImageBitmap
+            } else {
+                null // Retorna null se não houver metadados de foto
+            }
+        }
+    } catch (e: Exception) {
+        Log.e("Places", "Erro na requisição de rede: ${e.message}")
+        null // Retorna null em caso de erro
+    }
+}
+
+// Função `@Composable` que gerencia o estado da imagem e invoca `fetchGeocacheImageAsync`
+@Composable
+fun fetchGeocacheImage(geocache: Geocache, context: Context): Painter {
+    val imageState = remember { mutableStateOf<ImageBitmap?>(null) }
+    val defaultImage = painterResource(R.drawable.home)
 
     LaunchedEffect(geocache) {
-        try {
-            val apiKey = getApiKey(context)
-            val placeId = getPlaceIdByCoordinatesAsync(geocache.location.lat, geocache.location.lng, apiKey)
-
-            placeId?.let { id ->
-                val request = FetchPlaceRequest.builder(id, placeFields).build()
-                placesClient.fetchPlace(request)
-                    .addOnSuccessListener { response ->
-                        val photoMetadata = response.place.photoMetadatas?.firstOrNull()
-
-                        if (photoMetadata != null) {
-                            val photoRequest = FetchPhotoRequest.builder(photoMetadata)
-                                .setMaxWidth(500)
-                                .setMaxHeight(300)
-                                .build()
-
-                            placesClient.fetchPhoto(photoRequest)
-                                .addOnSuccessListener { fetchPhotoResponse ->
-                                    val bitmap = fetchPhotoResponse.bitmap
-                                    imageState.value = bitmap.asImageBitmap()
-                                }
-                                .addOnFailureListener { exception ->
-                                    Log.e("Places", "Erro ao buscar foto: ${exception.message}")
-                                    imageState.value = null
-                                }
-                        } else {
-                            Log.d("Places", "Metadados de foto nulos")
-                            imageState.value = null
-                        }
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.e("Places", "Erro ao buscar informações do lugar: ${exception.message}")
-                        imageState.value = null
-                    }
-            }
-        } catch (e: Exception) {
-            Log.e("Places", "Erro na requisição de rede: ${e.message}")
-        }
+        // Chama a função suspensa e atualiza o estado da imagem
+        imageState.value = fetchGeocacheImageAsync(geocache, context)
     }
 
     return imageState.value?.let { BitmapPainter(it) } ?: defaultImage

@@ -23,9 +23,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -49,8 +51,10 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.Title
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 
 @Composable
-fun CreatedGeocacheDetailsScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels) {
-    val geocacheLiveData = geocacheViewsModels.getGeocacheWithHintsAndChallenges(2) /* TODO: deve ir buscar este id ao CreatedGeocaches */
+fun CreatedGeocacheDetailsScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels, geocacheId: Int?) {
+    val geocache_id by remember { mutableIntStateOf(geocacheId ?: 0) }
+
+    val geocacheLiveData = geocacheViewsModels.getGeocacheWithHintsAndChallenges(geocache_id)
     val geocache by geocacheLiveData.observeAsState()
 
     // Log para verificar se geocache não é null

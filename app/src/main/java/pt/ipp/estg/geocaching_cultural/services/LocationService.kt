@@ -117,24 +117,23 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
             }
         }
 
-
         private fun updateUserLocation(
             currentLatitude: Double,
             currentLongitude: Double
         ) {
-            val userToUpdate = user?: throw NotFoundException()
-
-            // Update user's walking status and other user details
-            val updatedUser = userToUpdate.copy(
-                location =
-                Location(
-                    lat = currentLatitude,
-                    lng = currentLongitude,
+            if (user != null) {
+                // Update user's walking status and other user details
+                val updatedUser = user.copy(
+                    location =
+                    Location(
+                        lat = currentLatitude,
+                        lng = currentLongitude,
+                    )
                 )
-            )
 
-            // Update user in ViewModel
-            viewsModels.updateUser(updatedUser)
+                // Update user in ViewModel
+                viewsModels.updateUser(updatedUser)
+            }
         }
     }
 
