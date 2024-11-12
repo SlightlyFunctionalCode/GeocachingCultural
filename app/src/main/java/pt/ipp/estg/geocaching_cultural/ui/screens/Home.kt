@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -48,9 +50,20 @@ fun HomeScreen(
     geocacheViewsModels: GeocacheViewsModels,
     usersViewsModels: UsersViewsModels
 ) {
-    val currentUser = usersViewsModels.currentUser.observeAsState()
-
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        usersViewsModels.startLocationUpdates(context)
+    }
+
+    // Stop location updates when the screen is exited (using DisposableEffect or other lifecycle management methods)
+    DisposableEffect(Unit) {
+        onDispose {
+            usersViewsModels.stopLocationUpdates()
+        }
+    }
+
+    val currentUser = usersViewsModels.currentUser.observeAsState()
 
     val address = if (currentUser.value != null && currentUser.value?.location != null) {
         val addressLiveData = LocationUpdateService.getAddressFromCoordinates(
@@ -67,7 +80,6 @@ fun HomeScreen(
     } else {
         ""
     }
-
 
     val closeGeocachesWithHints =
         currentUser.value?.let {

@@ -105,7 +105,7 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
         override fun onLocationResult(locationResult: LocationResult) {
             val currentLocation = locationResult.lastLocation
             val hasMoved = (currentLocation?.let { lastKnownLocation?.distanceTo(it) }
-                ?: Float.MAX_VALUE) > 10f
+                ?: Float.MAX_VALUE) > 5f
 
             if (hasMoved) {
                 // Update to faster interval when user is moving
