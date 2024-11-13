@@ -53,8 +53,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
+import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
+import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Black
@@ -65,6 +68,7 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.White
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.AnswerQuestionDialog
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
+import java.time.LocalDateTime
 
 @Composable
 fun ActiveGeocacheScreen(
@@ -87,7 +91,10 @@ fun ActiveGeocacheScreen(
         }
     }
 
-   // AnswerQuestionDialog()
+    val geocache =
+        Geocache(0, Location(0.0, 0.0), GeocacheType.CULTURAL, "", "", LocalDateTime.now(), 0)
+
+    // AnswerQuestionDialog()
 
     val currentUser = usersViewsModels.currentUser.observeAsState()
 
@@ -99,7 +106,7 @@ fun ActiveGeocacheScreen(
     ) {
         Column(
         ) {
-            IconSection(context, currentUser.value, navController)
+            IconSection(context, currentUser.value, geocache, navController)
 
             Column(
                 modifier = Modifier
@@ -125,7 +132,12 @@ fun ActiveGeocacheScreen(
 }
 
 @Composable
-fun IconSection(context: Context, currentUser: User?, navController: NavHostController) {
+fun IconSection(
+    context: Context,
+    currentUser: User?,
+    geocache: Geocache,
+    navController: NavHostController
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
@@ -152,15 +164,18 @@ fun IconSection(context: Context, currentUser: User?, navController: NavHostCont
         }
 
         Column() {
-            IconButton({}) {
+            IconButton({
+                navController.navigate("explorarScreen/${geocache.type}")
+            }) {
                 Image(
-                    painter = painterResource(R.drawable.gastronomia),
+                    painter = when (geocache.type) {
+                        GeocacheType.GASTRONOMIA -> painterResource(R.drawable.gastronomia)
+                        GeocacheType.CULTURAL -> painterResource(R.drawable.cultural)
+                        GeocacheType.HISTORICO -> painterResource(R.drawable.historico)
+                    },
                     contentDescription = "Categoria Selecionada",
                     modifier = Modifier
                         .size(56.dp)
-                        .clickable {
-                            navController.navigate("explorarScreen")
-                        }
                 )
             }
         }

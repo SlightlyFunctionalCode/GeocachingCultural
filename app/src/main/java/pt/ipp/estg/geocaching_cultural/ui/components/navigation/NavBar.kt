@@ -70,6 +70,7 @@ import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.screens.ActiveGeocacheScreen
@@ -275,11 +276,16 @@ fun MyScaffoldContent(
                 usersViewsModels
             )
         }
-        composable("explorarScreen") {
+        composable("explorarScreen/{geocacheType}") { backStackEntry ->
+            val parameter = backStackEntry.arguments?.getString("geocacheType")
+
+            val geocacheType = parameter?.let { GeocacheType.valueOf(it) }
+
             ExplorerScreen(
                 navController,
                 geocacheViewsModels,
-                usersViewsModels
+                usersViewsModels,
+                geocacheType
             )
         }
         composable("createGeocacheScreen") {
@@ -313,8 +319,7 @@ fun MyScaffoldContent(
                 usersViewsModels
             )
         }
-        composable("createdGeocacheDetailsScreen/{geocacheId}") {
-                backStackEntry ->
+        composable("createdGeocacheDetailsScreen/{geocacheId}") { backStackEntry ->
             val geocacheId = backStackEntry.arguments?.getString("geocacheId")
             CreatedGeocacheDetailsScreen(
                 navController,
@@ -322,7 +327,13 @@ fun MyScaffoldContent(
                 geocacheId?.toInt()
             )
         }
-        composable("geocacheFoundScreen") { GeocacheFoundScreen(navController, usersViewsModels, geocacheViewsModels) }
+        composable("geocacheFoundScreen") {
+            GeocacheFoundScreen(
+                navController,
+                usersViewsModels,
+                geocacheViewsModels
+            )
+        }
     }
 }
 

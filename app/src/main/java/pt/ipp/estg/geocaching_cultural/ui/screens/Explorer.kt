@@ -56,9 +56,10 @@ import java.util.Locale
 fun ExplorerScreen(
     navController: NavHostController,
     geocacheViewsModels: GeocacheViewsModels? = null,
-    usersViewsModels: UsersViewsModels? = null
+    usersViewsModels: UsersViewsModels? = null,
+    geocacheType: GeocacheType? = null
 ) {
-    var categorySelected by remember { mutableStateOf(GeocacheType.HISTORICO) }
+    var categorySelected by remember { mutableStateOf(geocacheType ?: GeocacheType.HISTORICO) }
 
     val user = usersViewsModels?.currentUser?.observeAsState()
 
@@ -134,7 +135,8 @@ fun CategoryLabel(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White, shape = RoundedCornerShape(10.dp))
-                .padding(8.dp),
+                .padding(8.dp)
+                .clickable { isExpanded = !isExpanded },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -189,7 +191,8 @@ fun CategoryButton(name: String, icon: Painter, isSelected: Boolean, onClick: ()
         modifier = Modifier
             .background(Color.Transparent, RoundedCornerShape(8.dp))
             .padding(8.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+        ,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
