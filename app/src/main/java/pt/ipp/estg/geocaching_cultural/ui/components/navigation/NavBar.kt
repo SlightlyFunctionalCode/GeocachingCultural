@@ -120,7 +120,11 @@ fun NavigationDrawer(
                         modifier = Modifier.padding(16.dp)
 
                     ) {
-                        Text(text = "Menu", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = stringResource(R.string.menu),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                         Spacer(Modifier.height(12.dp))
                         drawerItemList.forEach { item ->
                             DrawerItem(
@@ -349,7 +353,7 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
     drawerItemsList.add(
         NavigationDrawerData(
             label = "Explorer",
-            route = "explorarScreen",
+            route = "explorarScreen/${GeocacheType.HISTORICO}",
             icon = Icons.Filled.LocationOn
         )
     )
