@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +30,7 @@ fun GeocacheCard(
     title: String,
     description: String,
     points: Number? = null,
-    image: Painter,
+    image: ImageBitmap,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -53,7 +55,7 @@ fun GeocacheCard(
         }
         Column() {
             Image(
-                painter = image,
+                painter = BitmapPainter(image),
                 contentDescription = "Geocache Picture",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

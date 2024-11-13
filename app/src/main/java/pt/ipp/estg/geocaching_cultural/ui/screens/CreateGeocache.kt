@@ -1,18 +1,27 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
@@ -28,8 +37,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,6 +55,7 @@ import com.google.android.libraries.places.api.Places
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
@@ -46,12 +63,15 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
+import pt.ipp.estg.geocaching_cultural.ui.theme.Black
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import java.time.LocalDateTime
 import pt.ipp.estg.geocaching_cultural.utils_api.fetchAddressSuggestions
 import pt.ipp.estg.geocaching_cultural.utils_api.fetchCoordinatesFromAddress
+import pt.ipp.estg.geocaching_cultural.utils_api.fetchGeocachesImages
+import pt.ipp.estg.geocaching_cultural.utils_api.fetchNearbyImages
 import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
 
 @Composable
@@ -76,6 +96,8 @@ fun CreateGeocacheScreen(
     var latitude by remember { mutableDoubleStateOf(0.0) }
     var longitude by remember { mutableDoubleStateOf(0.0) }
     var address by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
+    var selectedImage by remember { mutableStateOf<ImageBitmap?>(null) }
 
     val context = LocalContext.current
 
@@ -84,6 +106,8 @@ fun CreateGeocacheScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+
+        MyTextField(value = name, onValueChange = { name = it })
 
         hints.forEachIndexed { index, hint ->
             LabelHint(text = "Dica ${index + 1}",
@@ -144,6 +168,16 @@ fun CreateGeocacheScreen(
         )
 
         Spacer(Modifier.height(16.dp))
+        val images = fetchGeocachesImages(latitude, longitude, context)
+        // Mostrar a seleção de imagens somente quando o campo de endereço estiver preenchido
+        if (address.isNotEmpty()) {
+            Text("Escolha uma imagem:")
+            ChooseImage(images = images) { image ->
+                selectedImage = image // Armazena a imagem selecionada
+            }
+        }
+
+        Spacer(Modifier.height(16.dp))
 
         Button(onClick = { // Criar um novo Geocache
             val geocache = Geocache(
@@ -154,10 +188,11 @@ fun CreateGeocacheScreen(
                     lng = longitude,
                 ),
                 type = categorySelected,
-                name = "", // você precisa adicionar um campo para o nome do geocache
+                name = name,
+                image = selectedImage!!,
                 createdAt = LocalDateTime.now(),
                 createdBy = usersViewModel.currentUser.value?.userId
-                    ?: 0 // você precisa adicionar um campo para o criador do geocache
+                    ?: 0
             )
             Log.d("Debug", "Geocache criada: $geocache")
             var geocacheId = 0
@@ -181,7 +216,7 @@ fun CreateGeocacheScreen(
                             geocacheId = geocacheId,
                             question = quest,
                             correctAnswer = answers[index],
-                            pointsAwarded = 0 // você precisa adicionar um campo para os pontos da challenge
+                            pointsAwarded = 0
                         )
                         Log.d("Debug", "Challenge criado: $newChallenge")
                         geocacheViewsModels.insertChallenge(newChallenge)
@@ -192,7 +227,7 @@ fun CreateGeocacheScreen(
                 Log.d(
                     "Debug",
                     "Geocache data: ${geocache.toString()}"
-                ) // Imprimir dados após observação
+                )
             }
             navController.navigate("homeScreen")
         }) {
@@ -200,6 +235,7 @@ fun CreateGeocacheScreen(
         }
     }
 }
+
 
 @Composable
 fun LabelHint(
@@ -300,6 +336,33 @@ fun LocationField(
         }
     }
 }
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ChooseImage(images:List<ImageBitmap>, onImageSelected: (ImageBitmap) -> Unit) {
+    FlowRow(
+        verticalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        images.forEach { imageBitmap ->
+
+                Image(
+                    painter = BitmapPainter(imageBitmap),
+                    contentDescription = "Escolha de imagem",
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.Center,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .sizeIn(50.dp, 50.dp, 100.dp, 100.dp)
+                        .clickable {
+                            onImageSelected(imageBitmap) // Retorna o Bitmap selecionado
+                        }
+                )
+            }
+        }
+}
+
 
 @Preview
 @Composable

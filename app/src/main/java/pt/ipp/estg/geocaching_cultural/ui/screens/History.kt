@@ -27,7 +27,6 @@ import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
 
 @Composable
 fun HistoryScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
-    val context = LocalContext.current
 
     val user by usersViewsModels.currentUserId.observeAsState()
 
@@ -36,21 +35,18 @@ fun HistoryScreen(navController: NavHostController, usersViewsModels: UsersViews
 
     val geocachesFound = user?.let { usersViewsModels.getUserWithGeocachesFound(it).observeAsState() }?.value
 
-    getApiKey(context)?.let { Places.initialize(context, it) }
-
     Column(Modifier.padding(28.dp)) {
         Title(text = "Histórico Geocaches")
 
         if (geocachesFound!= null) {
             Column {
                 geocachesFound.geocachesFound.forEach { geocache ->
-                    val image = fetchGeocacheImage(geocache, context)
 
                     GeocacheCard(
                         title = geocache.name,
                         description = geocache.address?: "Endereço desconhecido",
                         points = 52, // valor fixo ou dinâmico
-                        image = image
+                        image = geocache.image!!
                     )
                 }
             }

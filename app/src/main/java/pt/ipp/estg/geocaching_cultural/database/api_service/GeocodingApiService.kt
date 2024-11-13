@@ -27,4 +27,11 @@ interface GeocodingApiService {
         @Query("fields") fields: String = "place_id",
         @Query("key") apiKey: String
     ): Response<PlaceSearchResponse>
+
+    @GET("place/nearbysearch/json")
+    suspend fun getNearbyPlaces(
+        @Query("location") location: String,
+        @Query("radius") radius: Int = 100, // Ajuste o raio conforme necessário
+        @Query("key") apiKey: String
+    ): Response<PlaceSearchResponse>
 }

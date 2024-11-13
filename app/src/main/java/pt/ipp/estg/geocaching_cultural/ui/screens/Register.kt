@@ -78,6 +78,7 @@ fun RegisterScreen(
     var supportingTextPassword by remember { mutableStateOf("") }
     var supportingConfirmTextPassword by remember { mutableStateOf("") }
 
+    /*TODO: Validar a passowrd*/
     Box(modifier = Modifier.fillMaxSize()) {
         val snackbarHostState = remember { SnackbarHostState() }
         var registrationSuccessful by remember { mutableStateOf(false) }

@@ -71,15 +71,6 @@ fun CreatedGeocacheDetailsScreen(navController: NavHostController, geocacheViews
             )
         }
 
-        val geocacheLocation = remember {
-            mutableStateOf(
-                Location(
-                    lat = geocache!!.geocache.location.lat,
-                    lng = geocache!!.geocache.location.lng
-                )
-            )
-        }
-
         val geocacheType = remember { mutableStateOf(geocache!!.geocache.type) }
 
         LazyColumn(modifier = Modifier.fillMaxWidth().height(1000.dp)) {

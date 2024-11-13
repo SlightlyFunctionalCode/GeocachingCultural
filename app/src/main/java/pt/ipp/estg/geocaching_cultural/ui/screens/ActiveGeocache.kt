@@ -92,7 +92,7 @@ fun ActiveGeocacheScreen(
     }
 
     val geocache =
-        Geocache(0, Location(0.0, 0.0), GeocacheType.CULTURAL, "", "", LocalDateTime.now(), 0)
+        Geocache(0, Location(0.0, 0.0), GeocacheType.CULTURAL, "", "", null, LocalDateTime.now(), 0)
 
     // AnswerQuestionDialog()
 

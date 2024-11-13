@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -48,16 +49,13 @@ fun GeocacheFoundScreen(
     usersViewsModels: UsersViewsModels,
     geocacheViewsModels: GeocacheViewsModels
 ) {
-    val context = LocalContext.current
     val userId by usersViewsModels.currentUserId.observeAsState()
     val geocacheId = 2 // Esse ID deve vir de uma fonte dinâmica em vez de ser estático
     val geocacheFound = UserGeocacheFoundCrossRef(userId!!, 1)
     val geocache = geocacheViewsModels.getGeocache(geocacheFound.geocacheId).observeAsState().value
 
-    getApiKey(context)?.let { Places.initialize(context, it) }
 
     if (geocache != null) {
-        val image = fetchGeocacheImage(geocache, context)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -86,7 +84,7 @@ fun GeocacheFoundScreen(
 
                     // Imagem do Geocache
                     Image(
-                        painter = image,
+                        painter = BitmapPainter(geocache.image!!),
                         contentDescription = "Imagem do Local",
                         modifier = Modifier
                             .fillMaxWidth()

@@ -104,7 +104,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                 supportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
             }
 
-            item {
+            item { /*TODO: Fazer ser possível ver a password */
                 VerticalSpacer()
                 var showPassword by remember { mutableStateOf(false) }
                 MyTextField(
