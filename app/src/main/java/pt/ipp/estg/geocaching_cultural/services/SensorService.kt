@@ -19,8 +19,6 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
     private var lastAccelValues = floatArrayOf(0f, 0f, 0f)
     private val alpha = 0.8f // Smoothing factor
 
-    /* TODO:add Permissions*/
-
     private val sensorEventListener = object : SensorEventListener {
         override fun onSensorChanged(event: SensorEvent) {
             when (event.sensor.type) {

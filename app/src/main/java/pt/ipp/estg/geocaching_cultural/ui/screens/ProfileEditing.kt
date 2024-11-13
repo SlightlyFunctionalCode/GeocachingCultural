@@ -68,7 +68,6 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
                 currentUser.value?.profileImageUrl,
                 currentUser.value?.profilePictureDefault
             )
-            /* TODO: função de alterar imagem a partir de presets ou de um link */
             MyTextButton(
                 text = "Alterar Imagem",
                 onClick = { navController.navigate("chooseProfilePicScreen") })

@@ -67,7 +67,6 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
 
     var isProfilePicUrlValid by remember { mutableStateOf(true) }
 
-    /*TODO: add errors */
     var supportingTextProfilePicUrlValid by remember { mutableStateOf("") }
 
     val snackbarHostState = remember { SnackbarHostState() }
@@ -107,7 +106,12 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
                         )
                     },
                     isError = !isProfilePicUrlValid,
-                    supportingText = { Text(text = supportingTextProfilePicUrlValid, color = Pink) },
+                    supportingText = {
+                        Text(
+                            text = supportingTextProfilePicUrlValid,
+                            color = Pink
+                        )
+                    },
                     modifier = Modifier
                 )
 
@@ -119,7 +123,7 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
                 FlowRow(
                     verticalArrangement = Arrangement.Center,
                     horizontalArrangement = Arrangement.Center,
-                     modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     for (image in defaultProfilePics)
                         Image(

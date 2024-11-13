@@ -44,8 +44,7 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
 
         fun getAddressFromCoordinates(
             context: Context,
-            latitude: Double,
-            longitude: Double
+            location: Location
         ): LiveData<String?> {
             val addressLiveData = MutableLiveData<String?>() // MutableLiveData to hold the result
 
@@ -54,7 +53,8 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
                 val geocoder = Geocoder(context, Locale.getDefault())
                 try {
                     // Get the list of addresses from the coordinates
-                    val addresses: List<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+                    val addresses: List<Address>? =
+                        geocoder.getFromLocation(location.lat, location.lng, 1)
 
                     // Check if we received any result
                     if (!addresses.isNullOrEmpty()) {
@@ -100,7 +100,6 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
 
             // Now handle the location update as needed
             if (currentLocation != null) {
-                println("CHEGUEI CHEGUEI CHEGUEI CHEGUEI CHEGUEI CHEGUEI ")
                 updateUserLocation(currentLocation.latitude, currentLocation.longitude)
             }
         }
@@ -109,9 +108,6 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
             currentLatitude: Double,
             currentLongitude: Double
         ) {
-            println("CurrentLatitude: $currentLatitude")
-            println("CurrentLatitude: $currentLongitude")
-
             val user = viewsModels.currentUser.value ?: throw NotFoundException()
 
             val updatedUser = user.copy(

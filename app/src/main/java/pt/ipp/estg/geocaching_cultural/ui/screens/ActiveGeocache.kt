@@ -1,12 +1,15 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -46,11 +48,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.glide.GlideImage
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
+import pt.ipp.estg.geocaching_cultural.database.classes.Hint
+import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Black
@@ -83,6 +87,8 @@ fun ActiveGeocacheScreen(
         }
     }
 
+   // AnswerQuestionDialog()
+
     val currentUser = usersViewsModels.currentUser.observeAsState()
 
     Box(
@@ -93,7 +99,7 @@ fun ActiveGeocacheScreen(
     ) {
         Column(
         ) {
-            IconSection()
+            IconSection(context, currentUser.value, navController)
 
             Column(
                 modifier = Modifier
@@ -101,38 +107,48 @@ fun ActiveGeocacheScreen(
                     .fillMaxWidth(0.75f)
             ) {
                 VerticalSpacer()
-                /* TODO: Mudar para lidar com o erro */
-                AnimatedDrawable(isWalking = currentUser.value!!.isWalking)
+                AnimatedDrawable(isWalking = currentUser.value?.isWalking ?: false)
                 ProgressBar(3)
                 Text(text = " Location: ${currentUser.value!!.location.lat},${currentUser.value!!.location.lng}")
             }
 
-            /*ShowTip(
+            ShowHint(
                 1,
-                "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas\""
-            )*/
+                Hint(
+                    0,
+                    0,
+                    "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas\""
+                )
+            )
         }
     }
 }
 
 @Composable
-fun IconSection() {
+fun IconSection(context: Context, currentUser: User?, navController: NavHostController) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        Column() {
-            AnswerQuestionDialog()
-            IconButton({}) {
-                Icon(
-                    imageVector = Icons.Filled.LocationOn,
-                    contentDescription = "open Map",
-                    tint = Purple,
-                    modifier = Modifier.size(56.dp)
-                )
+        if (currentUser != null) {
+            Column() {
+                IconButton({
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("geo:${currentUser.location.lat},${currentUser.location.lng}")
+                    )
+                    startActivity(context, intent, null)
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.LocationOn,
+                        contentDescription = "open Map",
+                        tint = Purple,
+                        modifier = Modifier
+                            .size(56.dp)
+                    )
+                }
             }
-            Text(text = "Localização", color = LightGray)
         }
 
         Column() {
@@ -140,17 +156,19 @@ fun IconSection() {
                 Image(
                     painter = painterResource(R.drawable.gastronomia),
                     contentDescription = "Categoria Selecionada",
-                    modifier = Modifier.size(56.dp)
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clickable {
+                            navController.navigate("explorarScreen")
+                        }
                 )
             }
-            Text(text = "Categoria\nSelecionada", color = LightGray)
         }
 
         Column() {
             IconButton({}) {
                 Text(text = "?", fontSize = 44.sp, color = Purple)
             }
-            Text(text = "Dica", color = LightGray)
         }
     }
 }
@@ -239,13 +257,13 @@ private fun updateAnimationDrawable(
 }
 
 @Composable
-fun ProgressBar(tipNumber: Number) {
-    val progression = remember { mutableFloatStateOf(tipNumber.toFloat() / 4) }
+fun ProgressBar(questionNumber: Number) {
+    val progression = remember { mutableFloatStateOf(questionNumber.toFloat() / 4) }
 
     Column()
     {
         Text(
-            text = "$tipNumber de 4",
+            text = "$questionNumber de 4",
             textAlign = TextAlign.End,
             modifier = Modifier.fillMaxWidth()
         )
@@ -268,17 +286,33 @@ fun ProgressBar(tipNumber: Number) {
 }
 
 @Composable
-fun ShowTip(tipNumber: Number, tip: String, modifier: Modifier = Modifier) {
+fun ShowHint(hintNumber: Number, hint: Hint, modifier: Modifier = Modifier) {
     Column() {
         VerticalSpacer()
-        Text("Dica $tipNumber", color = LightGray, fontSize = 14.sp)
+        Text("Dica $hintNumber", color = LightGray, fontSize = 14.sp)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(shape = RoundedCornerShape(10.dp), color = White)
                 .padding(10.dp)
         ) {
-            Text(tip, fontSize = 14.sp, lineHeight = 14.sp)
+            Text(hint.hint, fontSize = 14.sp, lineHeight = 14.sp)
+        }
+    }
+}
+
+@Composable
+fun ShowQuestion(questionNumber: Number, challenge: Challenge, modifier: Modifier = Modifier) {
+    Column() {
+        VerticalSpacer()
+        Text("Question $questionNumber", color = LightGray, fontSize = 14.sp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(shape = RoundedCornerShape(10.dp), color = White)
+                .padding(10.dp)
+        ) {
+            Text(challenge.question, fontSize = 14.sp, lineHeight = 14.sp)
         }
     }
 }

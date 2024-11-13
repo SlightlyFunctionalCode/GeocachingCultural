@@ -21,25 +21,19 @@ import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
 import pt.ipp.estg.geocaching_cultural.services.SensorService
 
 class UsersViewsModels(application: Application) : AndroidViewModel(application) {
-
     private val _currentUserId = MutableLiveData<Int>()
     private val _currentUser = MediatorLiveData<User>()
     private val locationUpdateService: LocationUpdateService
     private val sensorService: SensorService
 
-
     val currentUserId: LiveData<Int> get() = _currentUserId
     val currentUser: LiveData<User> get() = _currentUser
 
     private val repository: UserRepository
-    //val allBooks : LiveData<List<Book>>
 
     init {
         val db = AppDatabase.getDatabase(application)
-        //val restAPI = RetrofitHelper.getInstance().create(BookAPI::class.java)
-        repository = UserRepository(db.UserDao()/*restAPI*/)
-        //allBooks = repository.getBooks()
-        //this.updateBooksOnline()
+        repository = UserRepository(db.UserDao())
 
         locationUpdateService = LocationUpdateService(application, this)
         sensorService = SensorService(application, this)
@@ -101,10 +95,6 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
         return repository.getTop10Users()
     }
 
-    fun getUsersWithGeocachesCreated(id: Int): LiveData<UserWithGeocachesCreated> {
-        return repository.getUserWithGeocachesCreated(id)
-    }
-
     fun insertUser(user: User) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.insert(user)
@@ -134,10 +124,6 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
             val user = repository.getUserWithLogin(email, password)
             callback(user)
         }
-    }
-
-    fun getUser(id: Int): LiveData<User> {
-        return repository.getUser(id)
     }
 
     fun getUserWithGeocachesCreated(id: Int): LiveData<UserWithGeocachesCreated> {
@@ -170,18 +156,4 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
             .getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         return sharedPreferences.getInt("current_user_id", -1)
     }
-
-    /* TODO: adicionar rest api*/
-    /*fun updateBooksOnline(){
-        viewModelScope.launch(Dispatchers.IO){
-            val response = repository.updateBooksOnline()
-            if (response.isSuccessful){
-                val content = response.body()
-                content?.docs?.forEach {
-                    insertBook(User(it.key,it.title,it.author_name.toString(),it.year))
-                }
-            }
-        }
-    }*/
-
 }
