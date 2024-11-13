@@ -29,10 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,16 +63,20 @@ fun RegisterScreen(
     var answerName by remember { mutableStateOf("") }
     var answerEmail by remember { mutableStateOf(parameter ?: "") }
     var answerPassword by remember { mutableStateOf("") }
+    var answerConfirmPassword by remember { mutableStateOf("") }
+
 
     var buttonState by remember { mutableStateOf(false) }
 
     var isEmailValid by remember { mutableStateOf(true) }
     var isNameValid by remember { mutableStateOf(true) }
     var isPasswordValid by remember { mutableStateOf(true) }
+    var isConfirmPasswordValid by remember { mutableStateOf(true) }
 
     var supportingTextName by remember { mutableStateOf("") }
     var supportingTextEmail by remember { mutableStateOf("") }
     var supportingTextPassword by remember { mutableStateOf("") }
+    var supportingConfirmTextPassword by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize()) {
         val snackbarHostState = remember { SnackbarHostState() }
@@ -142,6 +149,7 @@ fun RegisterScreen(
 
             item {
                 VerticalSpacer()
+                var showPassword by remember { mutableStateOf(false) }
 
                 MyTextField(
                     label = { Text("Password*") },
@@ -151,12 +159,16 @@ fun RegisterScreen(
                         isPasswordValid = it.length >= 6  // Password must be at least 6 characters
                     },
                     trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Lock,
-                            contentDescription = "Lock Icon"
-                        )
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(
+                                imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(
+                                    R.drawable.visibility_off
+                                ),
+                                contentDescription = if (showPassword) "Hide password" else "Show password"
+                            )
+                        }
                     },
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     isError = !isPasswordValid,
                     supportingText = { Text(text = supportingTextPassword, color = Pink) },
@@ -164,6 +176,43 @@ fun RegisterScreen(
                 )
                 supportingTextPassword =
                     if (!isPasswordValid) "Senha deve ter pelo menos 6 caracteres" else ""
+            }
+
+            item {
+                VerticalSpacer()
+                var showPassword by remember { mutableStateOf(false) }
+
+                MyTextField(
+                    label = { Text("Confirmar Password*") },
+                    value = answerConfirmPassword,
+                    onValueChange = {
+                        answerConfirmPassword = it
+                        isPasswordValid = it.length >= 6  // Password must be at least 6 characters
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(
+                                imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(
+                                    R.drawable.visibility_off
+                                ),
+                                contentDescription = if (showPassword) "Hide password" else "Show password"
+                            )
+                        }
+                    },
+                    visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    isError = !isConfirmPasswordValid,
+                    supportingText = { Text(text = supportingConfirmTextPassword, color = Pink) },
+                    modifier = Modifier
+                )
+                supportingConfirmTextPassword =
+                    if (!isConfirmPasswordValid) {
+                        "Senha deve ter pelo menos 6 caracteres"
+                    } else if (answerPassword != answerConfirmPassword) {
+                        "A password deve ser a mesma"
+                    } else {
+                        ""
+                    }
             }
 
             /* TODO: add firebase autentication */
@@ -197,9 +246,11 @@ fun RegisterScreen(
             buttonState = isNameValid &&
                     isPasswordValid &&
                     isEmailValid &&
+                    isConfirmPasswordValid &&
                     answerName != "" &&
                     answerEmail != "" &&
-                    answerPassword != ""
+                    answerPassword != "" &&
+                    answerConfirmPassword != ""
 
             item {
                 VerticalSpacer()
