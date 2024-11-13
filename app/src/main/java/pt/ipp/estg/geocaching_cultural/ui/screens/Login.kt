@@ -25,7 +25,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -63,6 +65,12 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
     var loginError by remember { mutableStateOf(false) }
     var loginSuccessful by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
+    if (usersViewsModels.currentUserId.value != -1) {
+        navController.navigate("homeScreen")
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,7 +82,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
         ) {
             item {
                 Text(
-                    text = "Login",
+                    text = stringResource(R.string.login),
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     textAlign = TextAlign.Center
@@ -84,7 +92,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
             item {
                 VerticalSpacer()
                 MyTextField(
-                    label = { Text("Email*") },
+                    label = { Text(stringResource(R.string.email_label)) },
                     value = answerEmail,
                     onValueChange = {
                         answerEmail = it
@@ -93,7 +101,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Email,
-                            contentDescription = "Email Icon"
+                            contentDescription = stringResource(R.string.email_icon)
                         )
                     },
                     isError = !isEmailValid,
@@ -101,14 +109,15 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                     modifier = Modifier
                 )
 
-                supportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
+                supportingTextEmail =
+                    if (!isEmailValid) stringResource(R.string.email_error_message) else ""
             }
 
             item { /*TODO: Fazer ser possível ver a password */
                 VerticalSpacer()
                 var showPassword by remember { mutableStateOf(false) }
                 MyTextField(
-                    label = { Text("Password*") },
+                    label = { Text(stringResource(R.string.password_label)) },
                     value = answerPassword,
                     onValueChange = {
                         answerPassword = it
@@ -117,8 +126,12 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                     trailingIcon = {
                         IconButton(onClick = { showPassword = !showPassword }) {
                             Icon(
-                                imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(R.drawable.visibility_off),
-                                contentDescription = if (showPassword) "Hide password" else "Show password"
+                                imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(
+                                    R.drawable.visibility_off
+                                ),
+                                contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(
+                                    R.string.show_password
+                                )
                             )
                         }
                     },
@@ -129,7 +142,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                     modifier = Modifier
                 )
                 supportingTextPassword =
-                    if (!isPasswordValid) "Senha deve ter pelo menos 6 caracteres" else ""
+                    if (!isPasswordValid) stringResource(R.string.password_error_message) else ""
             }
 
             buttonState = isPasswordValid &&
@@ -140,7 +153,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
             item {
                 VerticalSpacer()
                 MyTextButton(
-                    text = "Submit",
+                    text = stringResource(R.string.submit),
                     enabled = buttonState,
                     onClick = {
                         login(
@@ -157,7 +170,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
 
                 LaunchedEffect(loginError) {
                     if (loginError) {
-                        snackbarHostState.showSnackbar("Por favor verifique as suas credênciais!")
+                        snackbarHostState.showSnackbar(context.getString(R.string.invalid_credentials_login))
                         loginError = false
                     }
                 }

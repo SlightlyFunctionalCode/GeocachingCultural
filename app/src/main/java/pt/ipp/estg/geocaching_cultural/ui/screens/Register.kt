@@ -30,7 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -78,7 +80,8 @@ fun RegisterScreen(
     var supportingTextPassword by remember { mutableStateOf("") }
     var supportingConfirmTextPassword by remember { mutableStateOf("") }
 
-    /*TODO: Validar a passowrd*/
+    val context = LocalContext.current
+
     Box(modifier = Modifier.fillMaxSize()) {
         val snackbarHostState = remember { SnackbarHostState() }
         var registrationSuccessful by remember { mutableStateOf(false) }
@@ -93,7 +96,7 @@ fun RegisterScreen(
         ) {
             item {
                 Text(
-                    text = "Registo",
+                    text = stringResource(R.string.register),
                     fontWeight = FontWeight.Bold,
                     fontSize = 28.sp,
                     textAlign = TextAlign.Center
@@ -105,7 +108,7 @@ fun RegisterScreen(
 
 
                 MyTextField(
-                    label = { Text("Nome*") },
+                    label = { Text(stringResource(R.string.name_label)) },
                     value = answerName,
                     onValueChange = {
                         answerName = it
@@ -114,21 +117,22 @@ fun RegisterScreen(
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Person,
-                            contentDescription = "Person Icon"
+                            contentDescription = stringResource(R.string.name_icon)
                         )
                     },
                     isError = !isNameValid,
                     supportingText = { Text(text = supportingTextName, color = Pink) },
                     modifier = Modifier
                 )
-                supportingTextName = if (!isNameValid) "Nome é obrigatório" else ""
+                supportingTextName =
+                    if (!isNameValid) stringResource(R.string.name_error_message) else ""
             }
 
             item {
                 VerticalSpacer()
 
                 MyTextField(
-                    label = { Text("Email*") },
+                    label = { Text(stringResource(R.string.email_label)) },
                     value = answerEmail,
                     onValueChange = {
                         answerEmail = it
@@ -137,7 +141,7 @@ fun RegisterScreen(
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Email,
-                            contentDescription = "Email Icon"
+                            contentDescription = stringResource(R.string.email_icon)
                         )
                     },
                     isError = !isEmailValid,
@@ -145,7 +149,8 @@ fun RegisterScreen(
                     modifier = Modifier
                 )
 
-                supportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
+                supportingTextEmail =
+                    if (!isEmailValid) stringResource(R.string.email_error_message) else ""
             }
 
             item {
@@ -153,7 +158,7 @@ fun RegisterScreen(
                 var showPassword by remember { mutableStateOf(false) }
 
                 MyTextField(
-                    label = { Text("Password*") },
+                    label = { Text(stringResource(R.string.password_label)) },
                     value = answerPassword,
                     onValueChange = {
                         answerPassword = it
@@ -165,7 +170,9 @@ fun RegisterScreen(
                                 imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(
                                     R.drawable.visibility_off
                                 ),
-                                contentDescription = if (showPassword) "Hide password" else "Show password"
+                                contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(
+                                    R.string.show_password
+                                )
                             )
                         }
                     },
@@ -176,7 +183,7 @@ fun RegisterScreen(
                     modifier = Modifier
                 )
                 supportingTextPassword =
-                    if (!isPasswordValid) "Senha deve ter pelo menos 6 caracteres" else ""
+                    if (!isPasswordValid) stringResource(R.string.password_error_message) else ""
             }
 
             item {
@@ -184,11 +191,11 @@ fun RegisterScreen(
                 var showPassword by remember { mutableStateOf(false) }
 
                 MyTextField(
-                    label = { Text("Confirmar Password*") },
+                    label = { Text(stringResource(R.string.password_confirmation_label)) },
                     value = answerConfirmPassword,
                     onValueChange = {
                         answerConfirmPassword = it
-                        isPasswordValid = it.length >= 6  // Password must be at least 6 characters
+                        isConfirmPasswordValid = it.length >= 6  // Password must be at least 6 characters
                     },
                     trailingIcon = {
                         IconButton(onClick = { showPassword = !showPassword }) {
@@ -196,7 +203,9 @@ fun RegisterScreen(
                                 imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(
                                     R.drawable.visibility_off
                                 ),
-                                contentDescription = if (showPassword) "Hide password" else "Show password"
+                                contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(
+                                    R.string.show_password
+                                )
                             )
                         }
                     },
@@ -208,9 +217,9 @@ fun RegisterScreen(
                 )
                 supportingConfirmTextPassword =
                     if (!isConfirmPasswordValid) {
-                        "Senha deve ter pelo menos 6 caracteres"
+                        stringResource(R.string.password_error_message)
                     } else if (answerPassword != answerConfirmPassword) {
-                        "A password deve ser a mesma"
+                        stringResource(R.string.different_password)
                     } else {
                         ""
                     }
@@ -223,21 +232,21 @@ fun RegisterScreen(
                     IconButton({}) {
                         Image(
                             painter = painterResource(id = R.drawable.facebook),
-                            contentDescription = "Open Navigation Items",
+                            contentDescription = stringResource(R.string.open_login_icons),
                             modifier = Modifier.size(54.dp)
                         )
                     }
                     IconButton({}) {
                         Image(
                             painter = painterResource(id = R.drawable.facebook),
-                            contentDescription = "Open Navigation Items",
+                            contentDescription = stringResource(R.string.open_login_icons),
                             modifier = Modifier.size(54.dp)
                         )
                     }
                     IconButton({}) {
                         Image(
                             painter = painterResource(id = R.drawable.facebook),
-                            contentDescription = "Open Navigation Items",
+                            contentDescription = stringResource(R.string.open_login_icons),
                             modifier = Modifier.size(54.dp)
                         )
                     }
@@ -256,7 +265,7 @@ fun RegisterScreen(
             item {
                 VerticalSpacer()
                 MyTextButton(
-                    text = "Submit",
+                    text = stringResource(R.string.submit),
                     enabled = buttonState && !registrationSuccessful,
                     onClick = {
                         register(
@@ -276,7 +285,7 @@ fun RegisterScreen(
 
                 LaunchedEffect(registrationSuccessful) {
                     if (registrationSuccessful) {
-                        snackbarHostState.showSnackbar("Registo Concluído!")
+                        snackbarHostState.showSnackbar(context.getString(R.string.successful_register))
                         navController.navigate("loginScreen")
                         registrationSuccessful = false
                     }

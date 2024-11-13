@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,11 +53,11 @@ fun ScoreboardScreen(navController: NavHostController, usersViewsModels: UsersVi
         Row {
             Icon(
                 painter = painterResource(R.drawable.trofeu),
-                contentDescription = "Trophy Icon",
+                contentDescription = stringResource(R.string.trophy_icon),
                 modifier = Modifier.size(26.dp)
             )
             Text(
-                text = "ScoreBoard",
+                text = stringResource(R.string.scoreboard),
                 fontSize = 22.sp,
                 modifier = Modifier.padding(start = 10.dp)
             )
@@ -171,7 +172,7 @@ fun PlayerWithIcon(
         icon?.let {
             Image(
                 painter = it,
-                contentDescription = "Ícone posição $rank",
+                contentDescription = "${stringResource(R.string.open_login_icons)} $rank",
                 modifier = Modifier.size(24.dp)
             )
         }

@@ -20,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
 import pt.ipp.estg.geocaching_cultural.ui.theme.White
@@ -61,20 +63,24 @@ fun GeocacheNotFoundScreen(navController: NavHostController) {
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "",
-                            modifier = Modifier.size(32.dp).scale(1.3f)
+                            modifier = Modifier
+                                .size(32.dp)
+                                .scale(1.3f)
                         )
                     }
                     Text(
-                        text = "Geocache Não Encontrado",
+                        text = stringResource(R.string.geocache_not_found),
                         color = Pink,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 LargeVerticalSpacer()
-                Text(text = "Infelizmente, não acertou a pergunta desafio. \nNão ganhou pontos desta vez, mas pode tentar de novo!")
+                Text(text = stringResource(R.string.not_found_message))
                 VerticalSpacer()
-                MyTextButton(text = "Voltar", onClick = { navController.navigate("homeScreen") })
+                MyTextButton(
+                    text = stringResource(R.string.go_back),
+                    onClick = { navController.navigate("homeScreen") })
             }
         }
     }

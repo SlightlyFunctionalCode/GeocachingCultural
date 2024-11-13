@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,7 +79,7 @@ fun ExplorerScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(text = "Explorar Geocaches", fontSize = 22.sp)
+        Text(text = stringResource(R.string.explore_geocaches), fontSize = 22.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -94,12 +95,12 @@ fun ExplorerScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp) // Defina uma altura máxima para o LazyColumn
+                .height(300.dp)
         ) {
             if (geocaches.isEmpty()) {
                 item {
                     Text(
-                        "Nenhuma geocache encontrada", modifier = Modifier
+                        stringResource(R.string.no_geocache_found), modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
                     )
@@ -122,15 +123,14 @@ fun CategoryLabel(
     onCategorySelectedChange: (GeocacheType) -> Unit
 ) {
     val categories = listOf(
-        "GASTRONOMIA" to R.drawable.gastronomia,
-        "CULTURAL" to R.drawable.cultural,
-        "HISTORICO" to R.drawable.historico
+        stringResource(R.string.gastronomy) to R.drawable.gastronomia,
+        stringResource(R.string.cultural) to R.drawable.cultural,
+        stringResource(R.string.historic) to R.drawable.historico
     )
 
     var isExpanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Barra de categorias
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -150,7 +150,7 @@ fun CategoryLabel(
             IconButton(onClick = { isExpanded = !isExpanded }) {
                 Icon(
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Mostrar categorias"
+                    contentDescription = stringResource(R.string.show_categories_icon)
                 )
             }
         }
@@ -191,8 +191,7 @@ fun CategoryButton(name: String, icon: Painter, isSelected: Boolean, onClick: ()
         modifier = Modifier
             .background(Color.Transparent, RoundedCornerShape(8.dp))
             .padding(8.dp)
-            .clickable(onClick = onClick)
-        ,
+            .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -213,15 +212,15 @@ fun MyGeocache(geocache: GeocacheWithHintsAndChallenges, userLocation: Location)
             .fillMaxWidth()
             .background(Color.White, shape = RoundedCornerShape(8.dp))
             .clickable(onClick = {})
-    ) { // Adiciona um padding para o espaço do ícone
+    ) {
         Text(
-            if (geocache.hints.isNotEmpty()) geocache.hints[0].hint else "Sem dicas",
+            if (geocache.hints.isNotEmpty()) geocache.hints[0].hint else stringResource(R.string.no_hint),
             modifier = Modifier.padding(15.dp)
         )
         Text(
             text = "${
                 String.format(
-                    Locale.US,
+                    Locale.getDefault(),
                     "%.1f",
                     LocationUpdateService.getDistanceToGeocache(
                         userLocation,

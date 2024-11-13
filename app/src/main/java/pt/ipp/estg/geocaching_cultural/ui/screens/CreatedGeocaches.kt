@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
@@ -28,7 +30,7 @@ fun CreatedGeocachesScreen(navController: NavHostController, usersViewsModels: U
     val geocachesCreated = usersViewsModels.getUserWithGeocachesCreated(userId!!).observeAsState().value
 
     Column(Modifier.padding(top = 28.dp, start = 28.dp, end = 28.dp, bottom = 0.dp)) {
-        Title(text = "Geocaches Criados")
+        Title(text = stringResource(R.string.created_geocaches))
 
         if (geocachesCreated != null) {
             Column {

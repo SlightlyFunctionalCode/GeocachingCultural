@@ -35,7 +35,7 @@ fun Footer(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = "© GeoCultura Explorer Inc 2024",
+                    text = stringResource(R.string.footer_app_name),
                     color = LightGray,
                     fontSize = 12.sp,
                     modifier = Modifier.weight(2f)

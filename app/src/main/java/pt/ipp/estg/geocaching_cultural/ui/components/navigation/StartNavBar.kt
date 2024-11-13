@@ -9,9 +9,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
@@ -62,9 +64,14 @@ fun StartNavBar(
 @Composable
 fun StartTopAppBar(onLoginClick: () -> Unit) {
     TopAppBar(
-        title = { Text(text = "GeoCultura Explorer", fontWeight = FontWeight.Bold) },
+        title = {
+            Text(
+                text = stringResource(R.string.app_name_topbar),
+                fontWeight = FontWeight.Bold
+            )
+        },
         actions = {
-            MyTextButton(text = "Login", onClick = onLoginClick)
+            MyTextButton(text = stringResource(R.string.login), onClick = onLoginClick)
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer

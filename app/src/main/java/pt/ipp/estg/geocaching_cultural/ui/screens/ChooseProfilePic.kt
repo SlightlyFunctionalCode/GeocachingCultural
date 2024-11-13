@@ -28,7 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import pt.ipp.estg.geocaching_cultural.R
@@ -72,13 +74,15 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
     val snackbarHostState = remember { SnackbarHostState() }
     var updateSuccessful by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
     Column(modifier = Modifier.padding(28.dp)) {
-        Title(text = "Alterar Imagem de Perfil")
+        Title(text = stringResource(R.string.change_profile_pic))
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Foto Perfil Atual")
+            Text(stringResource(R.string.current_profile_pic))
 
             ProfilePicture(
                 currentUser.value?.profileImageUrl,
@@ -87,13 +91,15 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
 
             VerticalSpacer()
 
-            MyTextButton(text = "Remover Imagem de Perfil Custom", { answerProfilePicUrl = "" })
+            MyTextButton(
+                text = stringResource(R.string.remove_custom_profile_pic),
+                { answerProfilePicUrl = "" })
 
             VerticalSpacer()
 
             Column {
                 MyTextField(
-                    label = { Text("Choose Custom Profile Picture Url") },
+                    label = { Text(stringResource(R.string.choose_custom_profile_pic)) },
                     value = answerProfilePicUrl,
                     onValueChange = {
                         answerProfilePicUrl = it
@@ -102,7 +108,7 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Face,
-                            contentDescription = "Lock Icon"
+                            contentDescription = stringResource(R.string.profile_pic_icon)
                         )
                     },
                     isError = !isProfilePicUrlValid,
@@ -116,7 +122,7 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
                 )
 
                 supportingTextProfilePicUrlValid =
-                    if (!isProfilePicUrlValid) "Senha deve ter pelo menos 6 caracteres" else ""
+                    if (!isProfilePicUrlValid) stringResource(R.string.url_error_message) else ""
 
                 VerticalSpacer()
 
@@ -128,7 +134,7 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
                     for (image in defaultProfilePics)
                         Image(
                             painter = painterResource(image),
-                            contentDescription = "Default avatar pic",
+                            contentDescription = stringResource(R.string.default_avatar_pic),
                             contentScale = ContentScale.Crop,
                             alignment = Alignment.Center,
                             modifier = Modifier
@@ -143,7 +149,7 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
                                             shape = RoundedCornerShape(10.dp)
                                         )
                                     } else {
-                                        Modifier // No border modifier
+                                        Modifier
                                     }
                                 )
                         )
@@ -154,7 +160,7 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
 
             VerticalSpacer()
             MyTextButton(
-                text = "Submit",
+                text = stringResource(R.string.submit),
                 enabled = buttonState && !updateSuccessful,
                 onClick = {
                     currentUser.value?.let {
@@ -176,7 +182,7 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
 
             LaunchedEffect(updateSuccessful) {
                 if (updateSuccessful) {
-                    snackbarHostState.showSnackbar("Perfil Atualizado!")
+                    snackbarHostState.showSnackbar(context.getString(R.string.profile_updated_message))
                     navController.navigate("profileScreen")
                     updateSuccessful = false
                 }

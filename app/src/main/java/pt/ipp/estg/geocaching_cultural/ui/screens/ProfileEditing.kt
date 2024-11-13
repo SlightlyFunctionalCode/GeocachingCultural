@@ -23,10 +23,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
@@ -57,8 +59,10 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
     val snackbarHostState = remember { SnackbarHostState() }
     var updateSuccessful by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+
     Column(modifier = Modifier.padding(28.dp)) {
-        Title(text = "Editar Perfil")
+        Title(text = stringResource(R.string.update_profile))
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -69,13 +73,13 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
                 currentUser.value?.profilePictureDefault
             )
             MyTextButton(
-                text = "Alterar Imagem",
+                text = stringResource(R.string.change_profile_pic),
                 onClick = { navController.navigate("chooseProfilePicScreen") })
 
             Column(Modifier.fillMaxWidth()) {
                 VerticalSpacer()
                 MyTextField(
-                    label = { Text("Nome*") },
+                    label = { Text(stringResource(R.string.name_label)) },
                     value = answerName,
                     onValueChange = {
                         answerName = it
@@ -84,17 +88,18 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Person,
-                            contentDescription = "Person Icon"
+                            contentDescription = stringResource(R.string.name_icon)
                         )
                     },
                     isError = !isNameValid,
                     supportingText = { Text(text = supportingTextName, color = Pink) },
                     modifier = Modifier
                 )
-                supportingTextName = if (!isNameValid) "Nome é obrigatório" else ""
+                supportingTextName =
+                    if (!isNameValid) stringResource(R.string.name_error_message) else ""
 
                 MyTextField(
-                    label = { Text("Email*") },
+                    label = { Text(stringResource(R.string.email_label)) },
                     value = answerEmail,
                     onValueChange = {
                         answerEmail = it
@@ -103,7 +108,7 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Filled.Email,
-                            contentDescription = "Email Icon"
+                            contentDescription = stringResource(R.string.email_icon)
                         )
                     },
                     isError = !isEmailValid,
@@ -111,11 +116,12 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
                     modifier = Modifier
                 )
 
-                supportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
+                supportingTextEmail =
+                    if (!isEmailValid) stringResource(R.string.email_error_message) else ""
 
                 SmallVerticalSpacer()
                 /* TODO: tentar fazer integraçao com o firebase para mandar email */
-                MyTextButton(text = "Change password")
+                MyTextButton(text = stringResource(R.string.change_password))
 
                 buttonState = isNameValid &&
                         isEmailValid &&
@@ -124,7 +130,7 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
 
                 VerticalSpacer()
                 MyTextButton(
-                    text = "Submit",
+                    text = stringResource(R.string.submit),
                     enabled = buttonState && !updateSuccessful,
                     onClick = {
                         currentUser.value?.let {
@@ -146,7 +152,7 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
 
                 LaunchedEffect(updateSuccessful) {
                     if (updateSuccessful) {
-                        snackbarHostState.showSnackbar("Perfil Atualizado!")
+                        snackbarHostState.showSnackbar(context.getString(R.string.profile_updated_message))
                         navController.navigate("profileScreen")
                         updateSuccessful = false
                     }

@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -154,7 +155,7 @@ fun IconSection(
                 }) {
                     Icon(
                         imageVector = Icons.Filled.LocationOn,
-                        contentDescription = "open Map",
+                        contentDescription = stringResource(R.string.open_map_icon),
                         tint = Purple,
                         modifier = Modifier
                             .size(56.dp)
@@ -173,13 +174,14 @@ fun IconSection(
                         GeocacheType.CULTURAL -> painterResource(R.drawable.cultural)
                         GeocacheType.HISTORICO -> painterResource(R.drawable.historico)
                     },
-                    contentDescription = "Categoria Selecionada",
+                    contentDescription = stringResource(R.string.category_selected),
                     modifier = Modifier
                         .size(56.dp)
                 )
             }
         }
 
+        /*TODO abrir uma dica random */
         Column() {
             IconButton({}) {
                 Text(text = "?", fontSize = 44.sp, color = Purple)
@@ -278,7 +280,7 @@ fun ProgressBar(questionNumber: Number) {
     Column()
     {
         Text(
-            text = "$questionNumber de 4",
+            text = "$questionNumber / 4",
             textAlign = TextAlign.End,
             modifier = Modifier.fillMaxWidth()
         )
@@ -304,7 +306,7 @@ fun ProgressBar(questionNumber: Number) {
 fun ShowHint(hintNumber: Number, hint: Hint, modifier: Modifier = Modifier) {
     Column() {
         VerticalSpacer()
-        Text("Dica $hintNumber", color = LightGray, fontSize = 14.sp)
+        Text("${stringResource(R.string.hint)} $hintNumber", color = LightGray, fontSize = 14.sp)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -312,22 +314,6 @@ fun ShowHint(hintNumber: Number, hint: Hint, modifier: Modifier = Modifier) {
                 .padding(10.dp)
         ) {
             Text(hint.hint, fontSize = 14.sp, lineHeight = 14.sp)
-        }
-    }
-}
-
-@Composable
-fun ShowQuestion(questionNumber: Number, challenge: Challenge, modifier: Modifier = Modifier) {
-    Column() {
-        VerticalSpacer()
-        Text("Question $questionNumber", color = LightGray, fontSize = 14.sp)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(shape = RoundedCornerShape(10.dp), color = White)
-                .padding(10.dp)
-        ) {
-            Text(challenge.question, fontSize = 14.sp, lineHeight = 14.sp)
         }
     }
 }

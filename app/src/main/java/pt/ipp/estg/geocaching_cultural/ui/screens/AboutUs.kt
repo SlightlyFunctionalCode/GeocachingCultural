@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
@@ -51,7 +53,7 @@ fun AboutUsScreen(navController: NavHostController) {
 
         VerticalSpacer()
         Text(
-            text = "Desafie-se a explorar, a aprender e a criar!",
+            text = stringResource(R.string.slogan),
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp,
             textAlign = TextAlign.Center
@@ -59,8 +61,7 @@ fun AboutUsScreen(navController: NavHostController) {
 
         VerticalSpacer()
         Text(
-            text = "Junte-se à aventura do Geocaching Cultural e descubra os tesouros escondidos " +
-                    "em locais históricos e culturais próximos a você!",
+            text = stringResource(R.string.about_us),
             textAlign = TextAlign.Center,
             color = LightGray
         )
@@ -71,7 +72,11 @@ fun AboutUsScreen(navController: NavHostController) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             MyTextField(
-                label = { Text("Email*") },
+                label = {
+                    Text(
+                        stringResource(R.string.email_label)
+                    )
+                },
                 value = answerEmail,
                 onValueChange = {
                     answerEmail = it
@@ -80,7 +85,7 @@ fun AboutUsScreen(navController: NavHostController) {
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Email,
-                        contentDescription = "Email Icon"
+                        contentDescription = stringResource(R.string.email_icon)
                     )
                 },
                 isError = !isEmailValid,
@@ -88,7 +93,8 @@ fun AboutUsScreen(navController: NavHostController) {
                 modifier = Modifier
             )
 
-            supportingTextEmail = if (!isEmailValid) "Insira um email válido" else ""
+            supportingTextEmail =
+                if (!isEmailValid) stringResource(R.string.email_error_message) else ""
 
             MyTextButton(
                 text = "Sign-Up",

@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,6 @@ fun HomeScreen(
         usersViewsModels.startLocationUpdates(context)
     }
 
-    // Stop location updates when the screen is exited (using DisposableEffect or other lifecycle management methods)
     DisposableEffect(Unit) {
         onDispose {
             usersViewsModels.stopLocationUpdates()
@@ -71,10 +71,8 @@ fun HomeScreen(
             currentUser.value!!.location
         )
 
-        // Use `observeAsState` to convert LiveData to a Compose state
         val addressState = addressLiveData.observeAsState()
 
-        // If addressState is null or empty, return empty string, otherwise return the address
         addressState.value ?: ""
     } else {
         ""
@@ -94,17 +92,17 @@ fun HomeScreen(
             if (currentUser.value != null) {
                 Text(
                     text = address,
-                    fontSize = 14.sp, // Define o tamanho da fonte
+                    fontSize = 14.sp,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
-                    text = "Geocaches Perto de Mim",
+                    text = stringResource(R.string.closest_geocaches),
                     fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,// Define o tamanho da fonte para o texto maior
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.fillMaxWidth()
                 )
             } else {
-                Text("Pedimos desculpa, um erro ocorreu!\nTente mais tarde.")
+                Text(stringResource(R.string.error_try_later))
             }
         }
         VerticalSpacer()
@@ -121,17 +119,19 @@ fun Closest5Geocaches(
     Column(modifier = Modifier.fillMaxWidth()) {
 
         if (closest5Geocaches.isNullOrEmpty()) {
-            Text("Pedimos desculpa, não existem Geocaches numa àrea de 10 Km!")
+            Text(stringResource(R.string.no_geocaches_in_10km))
             SmallVerticalSpacer()
         } else {
             for (geocacheAndDistance in closest5Geocaches) {
 
                 CloseGeocache(
-                    hint = if (geocacheAndDistance.first.hints.isNotEmpty()) geocacheAndDistance.first.hints[0].hint else "Sem dicas",
+                    hint = if (geocacheAndDistance.first.hints.isNotEmpty()) geocacheAndDistance.first.hints[0].hint else stringResource(
+                        R.string.no_hint
+                    ),
 
                     distance = "${
                         String.format(
-                            Locale.US,
+                            Locale.getDefault(),
                             "%.1f",
                             geocacheAndDistance.second / 1000
                         )

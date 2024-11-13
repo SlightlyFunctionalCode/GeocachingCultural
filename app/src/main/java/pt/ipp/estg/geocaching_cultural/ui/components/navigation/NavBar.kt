@@ -1,8 +1,8 @@
 package pt.ipp.estg.geocaching_cultural.ui.components.navigation
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import android.content.Context
+import android.graphics.drawable.VectorDrawable
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Menu
@@ -41,6 +42,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -52,9 +54,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -105,9 +109,11 @@ fun NavigationDrawer(
     usersViewsModels: UsersViewsModels,
     geocacheViewsModels: GeocacheViewsModels
 ) {
-    val drawerItemList = prepareNavigationDrawerItems()
+    val drawerItemList = prepareNavigationDrawerItems(LocalContext.current)
     var selectedItem by remember { mutableStateOf(drawerItemList[0]) }
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+    CompositionLocalProvider(
+        LocalLayoutDirection provides LayoutDirection.Rtl
+    ) {
         ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 ModalDrawerSheet(
@@ -338,63 +344,68 @@ fun MyScaffoldContent(
                 geocacheViewsModels
             )
         }
+        composable("logout") {
+            usersViewsModels.saveCurrentUserId(-1)
+            navController.navigate("aboutUsScreen")
+        }
     }
 }
 
-private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
+private fun prepareNavigationDrawerItems(context: Context): List<NavigationDrawerData> {
     val drawerItemsList = arrayListOf<NavigationDrawerData>()
+
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Home",
+            label = context.getString(R.string.home),
             route = "homeScreen",
             icon = Icons.Filled.Home
         )
     )
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Explorer",
+            label = context.getString(R.string.explorer),
             route = "explorarScreen/${GeocacheType.HISTORICO}",
             icon = Icons.Filled.LocationOn
         )
     )
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "CreateGeocache",
+            label = context.getString(R.string.create_geocache),
             route = "createGeocacheScreen",
             icon = Icons.Filled.Add
         )
     )
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Scoreboard",
+            label = context.getString(R.string.scoreboard),
             route = "scoreboardScreen",
             icon = Icons.Filled.Star
         )
     )
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Perfil",
+            label = context.getString(R.string.profile),
             route = "profileScreen",
             icon = Icons.Filled.Person
         )
     )
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Histórico",
+            label = context.getString(R.string.history),
             route = "historyScreen",
             icon = Icons.AutoMirrored.Filled.List
         )
     )
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Geocache Atual",
+            label = context.getString(R.string.active_geocache),
             route = "activeGeocacheScreen",
             icon = Icons.Filled.PlayArrow
         )
     )
     drawerItemsList.add(
         NavigationDrawerData(
-            label = "Geocaches Criados",
+            label = context.getString(R.string.created_geocaches),
             route = "createdGeocachesScreen",
             icon = Icons.Filled.PlayArrow
         )
@@ -406,12 +417,18 @@ private fun prepareNavigationDrawerItems(): List<NavigationDrawerData> {
             icon = Icons.Filled.PlayArrow
         )
     )
-
     drawerItemsList.add(
         NavigationDrawerData(
             label = "Geocache Not Found",
             route = "geocacheNotFoundScreen",
             icon = Icons.Filled.PlayArrow
+        )
+    )
+    drawerItemsList.add(
+        NavigationDrawerData(
+            label = context.getString(R.string.logout),
+            route = "logout",
+            icon = Icons.Filled.ExitToApp
         )
     )
 
