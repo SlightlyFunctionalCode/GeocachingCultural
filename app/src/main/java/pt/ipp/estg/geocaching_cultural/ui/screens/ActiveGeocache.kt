@@ -9,7 +9,6 @@ import android.os.Looper
 import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +52,6 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
-import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
@@ -67,7 +65,6 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocaching_cultural.ui.theme.Purple
 import pt.ipp.estg.geocaching_cultural.ui.theme.White
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
-import pt.ipp.estg.geocaching_cultural.ui.utils.AnswerQuestionDialog
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 import java.time.LocalDateTime
 
@@ -323,6 +320,18 @@ fun ShowHint(hintNumber: Number, hint: Hint, modifier: Modifier = Modifier) {
 fun ActiveGeocachePreview() {
     val navController = rememberNavController()
 
+    val user = User(
+        1,
+        name = "admin",
+        email = "admin@ad.ad",
+        password = "admin123",
+        points = 100,
+        profileImageUrl = "avatar",
+        profilePictureDefault = 1,
+        isWalking = false,
+        location = Location(0.0, 0.0),
+    )
+
     Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
@@ -330,7 +339,75 @@ fun ActiveGeocachePreview() {
                 .background(color = Yellow)
         ) {
             item {
-                //     ActiveGeocacheScreen(navController)
+                val context = LocalContext.current
+
+                val geocache =
+                    Geocache(
+                        0,
+                        Location(0.0, 0.0),
+                        GeocacheType.CULTURAL,
+                        "",
+                        "",
+                        null,
+                        LocalDateTime.now(),
+                        0
+                    )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(1f)
+                        .padding(28.dp)
+
+                ) {
+                    Column() {
+                        IconSection(context, user, geocache, navController)
+
+                        Column(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .fillMaxWidth(0.75f)
+                        ) {
+                            VerticalSpacer()
+                            Image(
+                                painter = painterResource(id = R.drawable.walking_animation_01),
+                                contentDescription = "Avatar"
+                            )
+                            Column()
+                            {
+                                Text(
+                                    text = "3 / 4",
+                                    textAlign = TextAlign.End,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Box(
+                                    Modifier
+                                        .height(28.dp)
+                                        .fillMaxWidth()
+                                        .background(color = White, shape = RoundedCornerShape(10.dp))
+                                        .padding(4.dp)
+                                ) {
+                                    Spacer(
+                                        Modifier
+                                            .fillMaxHeight()
+                                            .fillMaxWidth(3/4.toFloat())
+                                            .background(color = Black, shape = RoundedCornerShape(10.dp))
+                                            .zIndex(1000f)
+                                    )
+                                }
+                            }
+                            Text(text = " Location: ${user.location.lat},${user.location.lng}")
+                        }
+
+                        ShowHint(
+                            1,
+                            Hint(
+                                0,
+                                0,
+                                "\"Um local onde pode encontrar tudo para encher o carrinho, desde produtos frescos até marcas exclusivas\""
+                            )
+                        )
+                    }
+                }
             }
         }
     }

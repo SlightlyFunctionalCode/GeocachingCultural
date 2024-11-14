@@ -1,15 +1,18 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
@@ -31,13 +34,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Black
+import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
+import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import pt.ipp.estg.geocaching_cultural.ui.utils.ProfilePicture
@@ -215,5 +221,107 @@ private fun updateUser(
     )
     usersViewsModels.updateUser(updatedUser)
     onUpdateOutcome(true)
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Preview
+@Composable
+fun ChooseProfilePicScreenPreview() {
+    val defaultProfilePics = listOf(
+        R.drawable.avatar_male_01,
+        R.drawable.avatar_male_02,
+        R.drawable.avatar_male_03,
+        R.drawable.avatar_female_01,
+        R.drawable.avatar_female_02,
+        R.drawable.avatar_female_03
+    )
+
+    var answerProfilePicUrl = ""
+    var answerProfilePicDefault = R.drawable.avatar_male_01
+    Geocaching_CulturalTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Yellow)
+        ) {
+            item {
+                Column(modifier = Modifier.padding(28.dp)) {
+                    Title(text = stringResource(R.string.change_profile_pic))
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(stringResource(R.string.current_profile_pic))
+
+                        ProfilePicture(
+                            "",
+                            R.drawable.avatar_male_01
+                        )
+
+                        VerticalSpacer()
+
+                        MyTextButton(
+                            text = stringResource(R.string.remove_custom_profile_pic),
+                            { answerProfilePicUrl = "" })
+
+                        VerticalSpacer()
+
+                        Column {
+                            MyTextField(
+                                label = { Text(stringResource(R.string.choose_custom_profile_pic)) },
+                                value = answerProfilePicUrl,
+                                onValueChange = { },
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Face,
+                                        contentDescription = stringResource(R.string.profile_pic_icon)
+                                    )
+                                },
+                                modifier = Modifier
+                            )
+
+                            VerticalSpacer()
+
+                            FlowRow(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                for (image in defaultProfilePics)
+                                    Image(
+                                        painter = painterResource(image),
+                                        contentDescription = stringResource(R.string.default_avatar_pic),
+                                        contentScale = ContentScale.Crop,
+                                        alignment = Alignment.Center,
+                                        modifier = Modifier
+                                            .padding(8.dp)
+                                            .sizeIn(50.dp, 50.dp, 100.dp, 100.dp)
+                                            .clickable { answerProfilePicDefault = image }
+                                            .then(
+                                                if (image == answerProfilePicDefault) {
+                                                    Modifier.border(
+                                                        width = 5.dp,
+                                                        color = Black,
+                                                        shape = RoundedCornerShape(10.dp)
+                                                    )
+                                                } else {
+                                                    Modifier
+                                                }
+                                            )
+                                    )
+                            }
+                        }
+
+                        VerticalSpacer()
+                        MyTextButton(
+                            text = stringResource(R.string.submit),
+                            onClick = {},
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
