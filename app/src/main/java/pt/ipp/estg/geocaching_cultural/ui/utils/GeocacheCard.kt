@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -53,17 +54,22 @@ fun GeocacheCard(
 
             )
         }
-        Column() {
-            Image(
-                painter = BitmapPainter(image),
-                contentDescription = "Geocache Picture",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.75f)
-                    .clip(RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp))
-            )
-
+        Column(
+            modifier = modifier
+                .fillMaxSize(0.85f)
+                .background(shape = RoundedCornerShape(10.dp), color = White)
+                .padding(25.dp)
+        )  {
+                Image(
+                    painter = BitmapPainter(image),
+                    contentDescription = "Geocache Picture",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(5.dp))
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.75f)
+                        .clip(RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp))
+                )
             Column(Modifier.padding(28.dp)) {
                 Text(text = title, fontWeight = FontWeight.Bold, fontSize = 28.sp)
 
