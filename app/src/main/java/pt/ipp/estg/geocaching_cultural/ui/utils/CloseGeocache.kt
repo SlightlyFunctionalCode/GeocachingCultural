@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.ui.theme.Green
 
 @Composable
@@ -30,7 +32,7 @@ fun CloseGeocache(hint: String, distance: String, icon: Painter, onClick: () -> 
         }
         Icon(
             painter = icon,
-            contentDescription = "Ícone",
+            contentDescription =  stringResource(R.string.show_categories_icon),
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)

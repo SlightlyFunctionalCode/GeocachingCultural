@@ -33,6 +33,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.DisplayUser
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
@@ -168,7 +169,6 @@ fun PlayerWithIcon(
     ) {
         ScoreboardRowDetails(profileImageUrl, profilePicDefault, rank, playerName, points)
 
-        // Exibe o ícone adicional, se disponível
         icon?.let {
             Image(
                 painter = it,
@@ -182,17 +182,147 @@ fun PlayerWithIcon(
 @Preview
 @Composable
 fun ScoreboardPreview() {
-    val navController = rememberNavController()
-    Geocaching_CulturalTheme {
-        val usersViewsModels: UsersViewsModels = viewModel()
+    val users = listOf(
+        User(
+            1,
+            name = "admin",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 3333,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            2,
+            name = "joaquim",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 993,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            3,
+            name = "joão",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 665,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            4,
+            name = "leonardo",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 555,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            5,
+            name = "rafael",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 120,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            6,
+            name = "bot1",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 32,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            7,
+            name = "bot2",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 12,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            8,
+            name = "bot3",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 11,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            9,
+            name = "bot4",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 10,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+        User(
+            10,
+            name = "bot5",
+            email = "admin@ad.ad",
+            password = "admin123",
+            points = 1,
+            profileImageUrl = "avatar",
+            profilePictureDefault = 1,
+            isWalking = false,
+            location = Location(0.0, 0.0),
+        ),
+    )
 
+    Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Yellow)
         ) {
             item {
-                ScoreboardScreen(navController, usersViewsModels)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    Row {
+                        Icon(
+                            painter = painterResource(R.drawable.trofeu),
+                            contentDescription = stringResource(R.string.trophy_icon),
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Text(
+                            text = stringResource(R.string.scoreboard),
+                            fontSize = 22.sp,
+                            modifier = Modifier.padding(start = 10.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Top10Players(users)
+                }
             }
         }
     }

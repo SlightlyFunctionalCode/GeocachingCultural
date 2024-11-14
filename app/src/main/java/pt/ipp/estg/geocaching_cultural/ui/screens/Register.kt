@@ -67,7 +67,6 @@ fun RegisterScreen(
     var answerPassword by remember { mutableStateOf("") }
     var answerConfirmPassword by remember { mutableStateOf("") }
 
-
     var buttonState by remember { mutableStateOf(false) }
 
     var isEmailValid by remember { mutableStateOf(true) }
@@ -105,7 +104,6 @@ fun RegisterScreen(
 
             item {
                 VerticalSpacer()
-
 
                 MyTextField(
                     label = { Text(stringResource(R.string.name_label)) },
@@ -195,7 +193,8 @@ fun RegisterScreen(
                     value = answerConfirmPassword,
                     onValueChange = {
                         answerConfirmPassword = it
-                        isConfirmPasswordValid = it.length >= 6  // Password must be at least 6 characters
+                        isConfirmPasswordValid =
+                            it.length >= 6  // Password must be at least 6 characters
                     },
                     trailingIcon = {
                         IconButton(onClick = { showPassword = !showPassword }) {
@@ -322,6 +321,7 @@ fun register(
     onRegistrationOutcome(true)
 }
 
+
 @Preview
 @Composable
 fun RegisterPreview() {
@@ -333,7 +333,222 @@ fun RegisterPreview() {
                 .fillMaxSize()
                 .background(color = Yellow)
         ) {
-            // RegisterScreen(navController)
+            var answerName by remember { mutableStateOf("") }
+            var answerEmail by remember { mutableStateOf(  "") }
+            var answerPassword by remember { mutableStateOf("") }
+            var answerConfirmPassword by remember { mutableStateOf("") }
+
+            var buttonState by remember { mutableStateOf(false) }
+
+            var isEmailValid by remember { mutableStateOf(true) }
+            var isNameValid by remember { mutableStateOf(true) }
+            var isPasswordValid by remember { mutableStateOf(true) }
+            var isConfirmPasswordValid by remember { mutableStateOf(true) }
+
+            var supportingTextName by remember { mutableStateOf("") }
+            var supportingTextEmail by remember { mutableStateOf("") }
+            var supportingTextPassword by remember { mutableStateOf("") }
+            var supportingConfirmTextPassword by remember { mutableStateOf("") }
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                val registrationSuccessful by remember { mutableStateOf(false) }
+
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.65f)
+                        .align(Alignment.Center)
+                ) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.register),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    item {
+                        VerticalSpacer()
+
+                        MyTextField(
+                            label = { Text(stringResource(R.string.name_label)) },
+                            value = answerName,
+                            onValueChange = {
+                                answerName = it
+                                isNameValid = it.isNotBlank()
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Person,
+                                    contentDescription = stringResource(R.string.name_icon)
+                                )
+                            },
+                            isError = !isNameValid,
+                            supportingText = { Text(text = supportingTextName, color = Pink) },
+                            modifier = Modifier
+                        )
+                        supportingTextName =
+                            if (!isNameValid) stringResource(R.string.name_error_message) else ""
+                    }
+
+                    item {
+                        VerticalSpacer()
+
+                        MyTextField(
+                            label = { Text(stringResource(R.string.email_label)) },
+                            value = answerEmail,
+                            onValueChange = {
+                                answerEmail = it
+                                isEmailValid =
+                                    android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Email,
+                                    contentDescription = stringResource(R.string.email_icon)
+                                )
+                            },
+                            isError = !isEmailValid,
+                            supportingText = { Text(text = supportingTextEmail, color = Pink) },
+                            modifier = Modifier
+                        )
+
+                        supportingTextEmail =
+                            if (!isEmailValid) stringResource(R.string.email_error_message) else ""
+                    }
+
+                    item {
+                        VerticalSpacer()
+                        var showPassword by remember { mutableStateOf(false) }
+
+                        MyTextField(
+                            label = { Text(stringResource(R.string.password_label)) },
+                            value = answerPassword,
+                            onValueChange = {
+                                answerPassword = it
+                                isPasswordValid =
+                                    it.length >= 6  // Password must be at least 6 characters
+                            },
+                            trailingIcon = {
+                                IconButton(onClick = { showPassword = !showPassword }) {
+                                    Icon(
+                                        imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(
+                                            R.drawable.visibility_off
+                                        ),
+                                        contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(
+                                            R.string.show_password
+                                        )
+                                    )
+                                }
+                            },
+                            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            isError = !isPasswordValid,
+                            supportingText = { Text(text = supportingTextPassword, color = Pink) },
+                            modifier = Modifier
+                        )
+                        supportingTextPassword =
+                            if (!isPasswordValid) stringResource(R.string.password_error_message) else ""
+                    }
+
+                    item {
+                        VerticalSpacer()
+                        var showPassword by remember { mutableStateOf(false) }
+
+                        MyTextField(
+                            label = { Text(stringResource(R.string.password_confirmation_label)) },
+                            value = answerConfirmPassword,
+                            onValueChange = {
+                                answerConfirmPassword = it
+                                isConfirmPasswordValid =
+                                    it.length >= 6  // Password must be at least 6 characters
+                            },
+                            trailingIcon = {
+                                IconButton(onClick = { showPassword = !showPassword }) {
+                                    Icon(
+                                        imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(
+                                            R.drawable.visibility_off
+                                        ),
+                                        contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(
+                                            R.string.show_password
+                                        )
+                                    )
+                                }
+                            },
+                            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            isError = !isConfirmPasswordValid,
+                            supportingText = {
+                                Text(
+                                    text = supportingConfirmTextPassword,
+                                    color = Pink
+                                )
+                            },
+                            modifier = Modifier
+                        )
+                        supportingConfirmTextPassword =
+                            if (!isConfirmPasswordValid) {
+                                stringResource(R.string.password_error_message)
+                            } else if (answerPassword != answerConfirmPassword) {
+                                stringResource(R.string.different_password)
+                            } else {
+                                ""
+                            }
+                    }
+
+                    /* TODO: add firebase autentication */
+                    item {
+                        VerticalSpacer()
+                        Row {
+                            IconButton({}) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.facebook),
+                                    contentDescription = stringResource(R.string.open_login_icons),
+                                    modifier = Modifier.size(54.dp)
+                                )
+                            }
+                            IconButton({}) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.facebook),
+                                    contentDescription = stringResource(R.string.open_login_icons),
+                                    modifier = Modifier.size(54.dp)
+                                )
+                            }
+                            IconButton({}) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.facebook),
+                                    contentDescription = stringResource(R.string.open_login_icons),
+                                    modifier = Modifier.size(54.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    buttonState = isNameValid &&
+                            isPasswordValid &&
+                            isEmailValid &&
+                            isConfirmPasswordValid &&
+                            answerName != "" &&
+                            answerEmail != "" &&
+                            answerPassword != "" &&
+                            answerConfirmPassword != ""
+
+                    item {
+                        VerticalSpacer()
+                        MyTextButton(
+                            text = stringResource(R.string.submit),
+                            enabled = buttonState && !registrationSuccessful,
+                            onClick = {},
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        LargeVerticalSpacer()
+                    }
+                }
+            }
         }
     }
 }

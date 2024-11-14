@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
@@ -32,13 +33,13 @@ fun ProfilePicture(profileImageUrl: String?, profileImageDefault: Int?, modifier
                 Image(
                     contentScale = ContentScale.Crop,
                     painter = it,
-                    contentDescription = "Profile Picture",
+                    contentDescription =  stringResource(R.string.profile_pic_icon),
                     modifier = Modifier.clip(RoundedCornerShape(5.dp))
                 )
             }
         } else {
             GlideImage(
-                imageModel = { profileImageUrl }, // loading a network image using an URL.
+                imageModel = { profileImageUrl },
                 imageOptions = ImageOptions(
                     contentScale = ContentScale.Crop, alignment = Alignment.Center
                 ),

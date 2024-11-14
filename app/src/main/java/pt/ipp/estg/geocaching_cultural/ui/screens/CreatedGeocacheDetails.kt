@@ -28,7 +28,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
+import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
+import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
+import pt.ipp.estg.geocaching_cultural.database.classes.Hint
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
@@ -47,47 +55,82 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.SmallHorizontalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.SmallVerticalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.Title
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
+import java.time.LocalDateTime
 
 @Composable
-fun CreatedGeocacheDetailsScreen(navController: NavHostController, geocacheViewsModels: GeocacheViewsModels, geocacheId: Int?) {
-    val geocache_id by remember { mutableIntStateOf(geocacheId ?: 0) }
-
-    val geocacheLiveData = geocacheViewsModels.getGeocacheWithHintsAndChallenges(geocache_id)
+fun CreatedGeocacheDetailsScreen(
+    navController: NavHostController,
+    geocacheViewsModels: GeocacheViewsModels,
+    geocacheId: Int?
+) {
+    val geocacheLiveData = geocacheViewsModels.getGeocacheWithHintsAndChallenges(geocacheId ?: 0)
     val geocache by geocacheLiveData.observeAsState()
 
-    // Log para verificar se geocache não é null
-    Log.d("Debug", "Geocache data: $geocache")
+    val context = LocalContext.current
 
     if (geocache != null) {
         data class QuestionAndAnswer(val label: String, val question: String, val answer: String)
+
         val questions = remember {
             mutableStateListOf(
-                QuestionAndAnswer("Pergunta para 5km", geocache!!.challenges[0].question, geocache!!.challenges[0].correctAnswer),
-                QuestionAndAnswer("Pergunta para 1km", geocache!!.challenges[1].question, geocache!!.challenges[1].correctAnswer),
-                QuestionAndAnswer("Pergunta para 500m", geocache!!.challenges[2].question, geocache!!.challenges[2].correctAnswer),
-                QuestionAndAnswer("Pergunta Desafio", geocache!!.challenges[3].question, geocache!!.challenges[3].correctAnswer)
+                QuestionAndAnswer(
+                    context.getString(R.string.question_5km),
+                    geocache!!.challenges[0].question,
+                    geocache!!.challenges[0].correctAnswer
+                ),
+                QuestionAndAnswer(
+                    context.getString(R.string.question_1km),
+                    geocache!!.challenges[1].question,
+                    geocache!!.challenges[1].correctAnswer
+                ),
+                QuestionAndAnswer(
+                    context.getString(R.string.question_500m),
+                    geocache!!.challenges[2].question,
+                    geocache!!.challenges[2].correctAnswer
+                ),
+                QuestionAndAnswer(
+                    context.getString(R.string.challenge_question),
+                    geocache!!.challenges[3].question,
+                    geocache!!.challenges[3].correctAnswer
+                )
             )
         }
 
         val geocacheType = remember { mutableStateOf(geocache!!.geocache.type) }
 
-        LazyColumn(modifier = Modifier.fillMaxWidth().height(1000.dp)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1000.dp)
+        ) {
             item {
-                Title(text = "Detalhes Geocache")
+                Title(text = stringResource(R.string.geocache_details))
                 Column {
                     VerticalSpacer()
 
-                    Text(text = "Dicas:", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = stringResource(R.string.hints),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                     geocache!!.hints.forEachIndexed { index, hint ->
-                        TipItem("Dica ${index + 1}", hint.hint)
+                        HintItem("${stringResource(R.string.hint)} ${index + 1}", hint.hint)
                         SmallVerticalSpacer()
                     }
 
                     VerticalSpacer()
 
-                    Text(text = "Perguntas:", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        text = stringResource(R.string.challenges),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                     for (questionAndAnswer in questions) {
-                        QuestionItem(questionAndAnswer.label,questionAndAnswer.question, questionAndAnswer.answer)
+                        QuestionItem(
+                            questionAndAnswer.label,
+                            questionAndAnswer.question,
+                            questionAndAnswer.answer
+                        )
                         SmallVerticalSpacer()
                     }
 
@@ -95,24 +138,32 @@ fun CreatedGeocacheDetailsScreen(navController: NavHostController, geocacheViews
                 }
             }
             item {
-                Text(text = "Localização:", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(R.string.location),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 SmallHorizontalSpacer()
                 LocationItem(geocache!!.geocache.address)
 
                 VerticalSpacer()
 
-                Text(text = "Tipo de Geocache:", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = stringResource(R.string.geocache_type),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
                 SmallHorizontalSpacer()
                 CategoryItem(geocacheType.value)
             }
         }
     } else {
-        Text("Carregando dados do geocache...")
+        Text(stringResource(R.string.loading_geocache_info))
     }
 }
 
 @Composable
-fun TipItem(tip: String, dica:String) {
+fun HintItem(label: String, hint: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -123,8 +174,8 @@ fun TipItem(tip: String, dica:String) {
             Icon(imageVector = Icons.Filled.Info, contentDescription = "tip icon")
             SmallHorizontalSpacer()
             Column {
-                Text(text = tip)
-                Text(text = dica)
+                Text(text = label)
+                Text(text = hint)
             }
         }
     }
@@ -141,14 +192,18 @@ fun QuestionItem(label: String, question: String, answer: String) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 painter = painterResource(R.drawable.question),
-                contentDescription = "tip icon",
+                contentDescription = stringResource(R.string.hint_icon),
                 modifier = Modifier.size(20.dp)
             )
             SmallHorizontalSpacer()
             Column {
                 Text(text = label)
                 Text(text = question)
-                Text(text = "Resposta: $answer", color = LightGray, fontSize = 12.sp)
+                Text(
+                    text = "${stringResource(R.string.answer_question)} $answer",
+                    color = LightGray,
+                    fontSize = 12.sp
+                )
             }
         }
     }
@@ -163,10 +218,17 @@ fun LocationItem(address: String) {
             .padding(10.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = Icons.Filled.LocationOn, contentDescription = "location icon")
+            Icon(
+                imageVector = Icons.Filled.LocationOn,
+                contentDescription = stringResource(R.string.location_icon)
+            )
             SmallHorizontalSpacer()
             Column {
-                Text(text = "Endereço: $address", color = LightGray, fontSize = 12.sp)
+                Text(
+                    text = "${stringResource(R.string.address)} $address",
+                    color = LightGray,
+                    fontSize = 12.sp
+                )
             }
         }
     }
@@ -181,7 +243,10 @@ fun CategoryItem(category: GeocacheType) {
             .padding(10.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(imageVector = Icons.Filled.Menu, contentDescription = "category icon")
+            Icon(
+                imageVector = Icons.Filled.Menu,
+                contentDescription = stringResource(R.string.show_categories_icon)
+            )
             SmallHorizontalSpacer()
             Text(text = category.name)
         }
@@ -191,7 +256,34 @@ fun CategoryItem(category: GeocacheType) {
 @Preview
 @Composable
 fun CreatedGeocacheDetailsScreenPreview() {
-    val navController = rememberNavController()
+    val avatar = ImageBitmap.imageResource(id = R.drawable.home)
+
+    val geocache =
+        GeocacheWithHintsAndChallenges(
+            geocache = Geocache(
+                1,
+                Location(0.0, 0.0),
+                GeocacheType.HISTORICO,
+                "Address 1",
+                "ImageURL1",
+                avatar,
+                LocalDateTime.now(),
+                1
+            ), hints =
+            listOf(
+                Hint(1, 1, "Hint 1"),
+                Hint(2, 1, "Hint 2"),
+                Hint(3, 1, "Hint 3")
+            ),
+            challenges = listOf(
+                Challenge(1, 1, "Challenge 1", "answer challenge 1", 7),
+                Challenge(2, 1, "Challenge 2", "answer challenge 2", 7),
+                Challenge(3, 1, "Challenge 3", "answer challenge 3", 7),
+                Challenge(3, 1, "Final Challenge", "answer final challenge", 7)
+            )
+        )
+
+    val context = LocalContext.current
 
     Geocaching_CulturalTheme {
         LazyColumn(
@@ -200,7 +292,98 @@ fun CreatedGeocacheDetailsScreenPreview() {
                 .background(color = Yellow)
         ) {
             item {
-               // CreatedGeocacheDetailsScreen(navController)
+                data class QuestionAndAnswer(
+                    val label: String,
+                    val question: String,
+                    val answer: String
+                )
+
+                val questions = remember {
+                    mutableStateListOf(
+                        QuestionAndAnswer(
+                            context.getString(R.string.question_5km),
+                            geocache.challenges[0].question,
+                            geocache.challenges[0].correctAnswer
+                        ),
+                        QuestionAndAnswer(
+                            context.getString(R.string.question_1km),
+                            geocache.challenges[1].question,
+                            geocache.challenges[1].correctAnswer
+                        ),
+                        QuestionAndAnswer(
+                            context.getString(R.string.question_500m),
+                            geocache.challenges[2].question,
+                            geocache.challenges[2].correctAnswer
+                        ),
+                        QuestionAndAnswer(
+                            context.getString(R.string.challenge_question),
+                            geocache.challenges[3].question,
+                            geocache.challenges[3].correctAnswer
+                        )
+                    )
+                }
+
+                val geocacheType = remember { mutableStateOf(geocache.geocache.type) }
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1000.dp)
+                ) {
+                    item {
+                        Title(text = stringResource(R.string.geocache_details))
+                        Column {
+                            VerticalSpacer()
+
+                            Text(
+                                text = stringResource(R.string.hints),
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            geocache.hints.forEachIndexed { index, hint ->
+                                HintItem("${stringResource(R.string.hint)} ${index + 1}", hint.hint)
+                                SmallVerticalSpacer()
+                            }
+
+                            VerticalSpacer()
+
+                            Text(
+                                text = stringResource(R.string.challenges),
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            for (questionAndAnswer in questions) {
+                                QuestionItem(
+                                    questionAndAnswer.label,
+                                    questionAndAnswer.question,
+                                    questionAndAnswer.answer
+                                )
+                                SmallVerticalSpacer()
+                            }
+
+                            VerticalSpacer()
+                        }
+                    }
+                    item {
+                        Text(
+                            text = stringResource(R.string.location),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        SmallHorizontalSpacer()
+                        LocationItem(geocache.geocache.address)
+
+                        VerticalSpacer()
+
+                        Text(
+                            text = stringResource(R.string.geocache_type),
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        SmallHorizontalSpacer()
+                        CategoryItem(geocacheType.value)
+                    }
+                }
             }
         }
     }

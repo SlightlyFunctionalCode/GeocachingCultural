@@ -1,7 +1,5 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,20 +36,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.libraries.places.api.Places
@@ -63,7 +56,6 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
-import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
@@ -75,7 +67,6 @@ import java.time.LocalDateTime
 import pt.ipp.estg.geocaching_cultural.utils_api.fetchAddressSuggestions
 import pt.ipp.estg.geocaching_cultural.utils_api.fetchCoordinatesFromAddress
 import pt.ipp.estg.geocaching_cultural.utils_api.fetchGeocachesImages
-import pt.ipp.estg.geocaching_cultural.utils_api.fetchNearbyImages
 import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
 
 @Composable
@@ -84,12 +75,17 @@ fun CreateGeocacheScreen(
     geocacheViewsModels: GeocacheViewsModels,
     usersViewModel: UsersViewsModels
 ) {
+    val context = LocalContext.current
+
     val labelQuestions = remember {
         mutableStateListOf(
-            "Pergunta para 5km", "Pergunta para 1km", "Pergunta para 500m", "Pergunta Final"
+            context.getString(R.string.question_5km),
+            context.getString(R.string.question_1km),
+            context.getString(R.string.question_500m),
+            context.getString(R.string.challenge_question),
         )
     }
-    // Estado para a categoria selecionada e localização
+
     var categorySelected by remember { mutableStateOf(GeocacheType.HISTORICO) }
     val hints = remember { mutableStateListOf("", "", "") }
     val questions = remember { mutableStateListOf("", "", "", "") }
@@ -100,8 +96,6 @@ fun CreateGeocacheScreen(
     var name by remember { mutableStateOf("") }
     var selectedImage by remember { mutableStateOf<ImageBitmap?>(null) }
 
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -111,16 +105,16 @@ fun CreateGeocacheScreen(
         MyTextField(value = name, onValueChange = { name = it })
 
         hints.forEachIndexed { index, hint ->
-            LabelHint(text = "Dica ${index + 1}",
-                hint = hint,
-                isRemovable = index >= 3,
+            LabelHint(text = "${stringResource(R.string.hint)} ${index + 1}",
+                hint = hint, isRemovable = index >= 3,
                 onRemoveClick = { hints.removeAt(index) },
                 onValueChange = { hints[index] = it })
             Spacer(Modifier.padding(5.dp))
         }
+
         // Botão para adicionar uma nova dica
-        Button(onClick = { hints.add("Dica ${hints.size + 1}"); }) {
-            Text(text = "Adicionar Dica")
+        Button(onClick = { hints.add("${context.getString(R.string.hint)} ${hints.size + 1}"); }) {
+            Text(text = stringResource(R.string.add_hint))
         }
 
         labelQuestions.forEachIndexed { index, question ->
@@ -131,7 +125,7 @@ fun CreateGeocacheScreen(
                 onAnswerChange = { answers[index] = it })
             Spacer(Modifier.padding(5.dp))
         }
-        Text("Categoria:")
+        Text(stringResource(R.string.geocache_type))
         Spacer(Modifier.padding(5.dp))
         // Caixa de seleção para categoria
         CategoryLabel(categorySelected = categorySelected,
@@ -169,9 +163,9 @@ fun CreateGeocacheScreen(
         val images = fetchGeocachesImages(latitude, longitude, context)
         // Mostrar a seleção de imagens somente quando o campo de endereço estiver preenchido
         if (address.isNotEmpty()) {
-            Text("Escolha uma imagem:")
+            Text(stringResource(R.string.choose_image))
             ChooseImage(images = images) { image ->
-                selectedImage = image // Armazena a imagem selecionada
+                selectedImage = image
             }
         }
 
@@ -191,7 +185,7 @@ fun CreateGeocacheScreen(
                 createdAt = LocalDateTime.now(),
                 createdBy = usersViewModel.currentUser.value?.userId ?: 0
             )
-            Log.d("Debug", "Geocache criada: $geocache")
+
             var geocacheId = 0
             geocacheViewsModels.insertGeocache(geocache).observeForever { id ->
                 geocacheId = id.toInt()
@@ -200,7 +194,6 @@ fun CreateGeocacheScreen(
                 hints.forEach { hint ->
                     if (hints.isNotEmpty()) {
                         val newHint = Hint(0, geocacheId, hint)
-                        Log.d("Debug", "Hint criada: $newHint")
                         geocacheViewsModels.insertHint(newHint)
                     }
                 }
@@ -215,19 +208,14 @@ fun CreateGeocacheScreen(
                             correctAnswer = answers[index],
                             pointsAwarded = 0
                         )
-                        Log.d("Debug", "Challenge criado: $newChallenge")
                         geocacheViewsModels.insertChallenge(newChallenge)
                     }
                 }
             }
-            geocacheViewsModels.getGeocacheWithHintsAndChallenges(1).observeForever { geocache ->
-                Log.d(
-                    "Debug", "Geocache data: ${geocache.toString()}"
-                )
-            }
+
             navController.navigate("homeScreen")
         }) {
-            Text(text = "Enviar")
+            Text(text = stringResource(R.string.submit))
         }
     }
 }
@@ -255,7 +243,7 @@ fun LabelHint(
                 IconButton(onClick = onRemoveClick) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Remover Dica",
+                        contentDescription = stringResource(R.string.remove_hint),
                         tint = Color.Red
                     )
                 }
@@ -278,9 +266,13 @@ fun LabelQuestion(
         Spacer(Modifier.padding(5.dp))
         MyTextField(value = quest, onValueChange = onQuestChange)
         Spacer(Modifier.padding(5.dp))
-        Text("Atribua uma Resposta:")
+        Text(stringResource(R.string.add_answer))
         Spacer(Modifier.padding(5.dp))
-        MyTextField(label = { Text("Resposta") }, value = answer, onValueChange = onAnswerChange)
+        MyTextField(
+            label = { Text(stringResource(R.string.answer_label)) },
+            value = answer,
+            onValueChange = onAnswerChange
+        )
     }
 }
 
@@ -297,14 +289,8 @@ fun LocationField(
     val isEditing = remember { mutableStateOf(false) }
 
     Column {
-        Text(text = "Endereço:")
+        Text(text = stringResource(R.string.address))
         Spacer(Modifier.height(5.dp))
-
-        MyTextField(value = address, onValueChange = {
-            isEditing.value = true
-            onAddressChange(it)
-            fetchAddressSuggestions(it, placesClient) { suggestions.value = it }
-        }, modifier = Modifier.fillMaxWidth(), placeholder = { Text("Digite o endereço") })
 
         // Exibe sugestões de auto-complete
         if (isEditing.value && suggestions.value.isNotEmpty()) {
@@ -312,7 +298,7 @@ fun LocationField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White, shape = RoundedCornerShape(10.dp))
-                    .height(200.dp) // Defina uma altura máxima para o LazyColumn
+                    .height(200.dp)
             ) {
                 items(suggestions.value) { suggestion ->
                     Text(text = suggestion, modifier = Modifier
@@ -339,8 +325,9 @@ fun ChooseImage(images: List<ImageBitmap>, onImageSelected: (ImageBitmap) -> Uni
         var imageSelected by remember { mutableStateOf<ImageBitmap?>(null) }
         images.forEach { imageBitmap ->
 
-            Image(painter = BitmapPainter(imageBitmap),
-                contentDescription = "Escolha de imagem",
+            Image(
+                painter = BitmapPainter(imageBitmap),
+                contentDescription = stringResource(R.string.choose_image),
                 contentScale = ContentScale.Crop,
                 alignment = Alignment.Center,
                 modifier = Modifier
@@ -369,14 +356,14 @@ fun ChooseImage(images: List<ImageBitmap>, onImageSelected: (ImageBitmap) -> Uni
 @Preview
 @Composable
 fun CreateGeocacheScreenPreview() {
-    val navController = rememberNavController()
+    val context= LocalContext.current
 
     val labelQuestions = remember {
         mutableStateListOf(
-            "Pergunta para 5km",
-            "Pergunta para 1km",
-            "Pergunta para 500m",
-            "Pergunta Final"
+            context.getString(R.string.question_5km),
+            context.getString(R.string.question_1km),
+            context.getString(R.string.question_500m),
+            context.getString(R.string.challenge_question),
         )
     }
     // Estado para a categoria selecionada e localização
@@ -405,7 +392,7 @@ fun CreateGeocacheScreenPreview() {
                     MyTextField(value = name, onValueChange = { })
 
                     hints.forEachIndexed { index, hint ->
-                        LabelHint(text = "Dica ${index + 1}",
+                        LabelHint(text = "${stringResource(R.string.hint)} ${index + 1}",
                             hint = hint,
                             isRemovable = index >= 3,
                             onRemoveClick = { },
@@ -414,7 +401,7 @@ fun CreateGeocacheScreenPreview() {
                     }
                     // Botão para adicionar uma nova dica
                     Button(onClick = { }) {
-                        Text(text = "Adicionar Dica")
+                        Text(text = stringResource(R.string.add_hint))
                     }
 
                     labelQuestions.forEachIndexed { index, question ->
@@ -425,7 +412,7 @@ fun CreateGeocacheScreenPreview() {
                             onAnswerChange = { })
                         Spacer(Modifier.padding(5.dp))
                     }
-                    Text("Categoria:")
+                    Text(stringResource(R.string.geocache_type))
                     Spacer(Modifier.padding(5.dp))
                     // Caixa de seleção para categoria
                     CategoryLabel(categorySelected = categorySelected,
@@ -435,26 +422,25 @@ fun CreateGeocacheScreenPreview() {
 
                     // Campo para Localização
                     Column {
-                        Text(text = "Endereço:")
+                        Text(text = stringResource(R.string.address))
                         Spacer(Modifier.height(5.dp))
 
                         MyTextField(value = address,
                             onValueChange = {},
                             modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text("Digite o endereço") })
+                            placeholder = { Text(stringResource(R.string.add_adress)) })
 
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(Color.White, shape = RoundedCornerShape(10.dp))
-                                .height(200.dp) // Defina uma altura máxima para o LazyColumn
+                                .height(200.dp)
                         ) {
                             items(suggestions) { suggestion ->
                                 Text(text = suggestion,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .clickable {// Limpar sugestões após selecionar
-                                        }
+                                        .clickable {}
                                         .padding(8.dp))
                             }
                         }
@@ -466,16 +452,15 @@ fun CreateGeocacheScreenPreview() {
                         ImageBitmap.imageResource(id = R.drawable.avatar_male_02),
                         ImageBitmap.imageResource(id = R.drawable.avatar_male_03)
                     )
-                    // Mostrar a seleção de imagens somente quando o campo de endereço estiver preenchido
 
-                    Text(text = "Escolha uma imagem:")
+                    Text(text = stringResource(R.string.choose_image))
                     ChooseImage(images = images) { }
 
 
                     Spacer(Modifier.height(16.dp))
 
                     Button(onClick = {}) {
-                        Text(text = "Enviar")
+                        Text(text = stringResource(R.string.submit))
                     }
                 }
             }

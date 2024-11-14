@@ -18,11 +18,13 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
 import pt.ipp.estg.geocaching_cultural.ui.theme.White
 
@@ -62,7 +64,7 @@ fun GeocacheCard(
         )  {
                 Image(
                     painter = BitmapPainter(image),
-                    contentDescription = "Geocache Picture",
+                    contentDescription =  stringResource(R.string.geocache_image),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .clip(RoundedCornerShape(5.dp))

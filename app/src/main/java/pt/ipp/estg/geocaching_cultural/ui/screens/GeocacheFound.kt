@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +35,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.libraries.places.api.Places
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
@@ -46,8 +46,6 @@ import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRe
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
-import pt.ipp.estg.geocaching_cultural.utils_api.fetchGeocacheImage
-import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
 import java.time.LocalDateTime
 
 @Composable
@@ -81,7 +79,7 @@ fun GeocacheFoundScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Geocache Encontrado",
+                        text = stringResource(R.string.geocache_found),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
@@ -92,7 +90,7 @@ fun GeocacheFoundScreen(
                     // Imagem do Geocache
                     Image(
                         painter = BitmapPainter(geocache.image!!),
-                        contentDescription = "Imagem do Local",
+                        contentDescription = stringResource(R.string.geocache_image),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -112,7 +110,7 @@ fun GeocacheFoundScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Parabéns!!!",
+                        text = stringResource(R.string.congratulations),
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFF388E3C),
                         fontWeight = FontWeight.Bold,
@@ -141,7 +139,7 @@ fun GeocacheFoundScreen(
                         colors = ButtonDefaults.buttonColors(Color.Blue)
                     ) {
                         Text(
-                            text = "Home",
+                            text = stringResource(R.string.home),
                             color = Color.White
                         )
                     }
@@ -150,7 +148,7 @@ fun GeocacheFoundScreen(
             }
         }
     } else {
-        Text(text = "Não foi possível carregar o geocache")
+        Text(text = stringResource(R.string.error_try_later))
     }
 }
 
@@ -215,7 +213,7 @@ fun GeocacheFoundScreenPreview() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Geocache Encontrado",
+                    text = stringResource(R.string.geocache_found),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -226,7 +224,7 @@ fun GeocacheFoundScreenPreview() {
                 // Imagem do Geocache
                 Image(
                     painter = BitmapPainter(geocache.image!!),
-                    contentDescription = "Imagem do Local",
+                    contentDescription = stringResource(R.string.geocache_image),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)
@@ -246,7 +244,7 @@ fun GeocacheFoundScreenPreview() {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Parabéns!!!",
+                    text = stringResource(R.string.congratulations),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color(0xFF388E3C),
                     fontWeight = FontWeight.Bold,
@@ -268,14 +266,14 @@ fun GeocacheFoundScreenPreview() {
                     colors = ButtonDefaults.buttonColors(Color.Blue)
                 ) {
                     Text(
-                        text = "Home",
+                        text = stringResource(R.string.home),
                         color = Color.White
                     )
                 }
             }
             Image(
                 painter = BitmapPainter(map),
-                contentDescription = "Imagem do Local",
+                contentDescription =  stringResource(R.string.geocache_image),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)

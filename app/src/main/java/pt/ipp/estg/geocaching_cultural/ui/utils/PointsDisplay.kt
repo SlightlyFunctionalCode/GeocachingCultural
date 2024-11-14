@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,7 +35,7 @@ fun PointsDisplay(points: Int, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Points",
+                text =  stringResource(R.string.points),
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 textAlign = TextAlign.Center
@@ -49,7 +50,7 @@ fun PointsDisplay(points: Int, modifier: Modifier = Modifier) {
                 )
                 Image(
                     painter = painterResource(R.drawable.coin),
-                    contentDescription = "Coins",
+                    contentDescription =  stringResource(R.string.coins),
                     modifier = Modifier.size(24.dp)
                 )
             }

@@ -102,8 +102,7 @@ fun ActiveGeocacheScreen(
             .padding(28.dp)
 
     ) {
-        Column(
-        ) {
+        Column {
             IconSection(context, currentUser.value, geocache, navController)
 
             Column(
@@ -142,47 +141,41 @@ fun IconSection(
             .fillMaxWidth()
     ) {
         if (currentUser != null) {
-            Column() {
-                IconButton({
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse("geo:${currentUser.location.lat},${currentUser.location.lng}")
-                    )
-                    startActivity(context, intent, null)
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.LocationOn,
-                        contentDescription = stringResource(R.string.open_map_icon),
-                        tint = Purple,
-                        modifier = Modifier
-                            .size(56.dp)
-                    )
-                }
-            }
-        }
-
-        Column() {
             IconButton({
-                navController.navigate("explorarScreen/${geocache.type}")
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("geo:${currentUser.location.lat},${currentUser.location.lng}")
+                )
+                startActivity(context, intent, null)
             }) {
-                Image(
-                    painter = when (geocache.type) {
-                        GeocacheType.GASTRONOMIA -> painterResource(R.drawable.gastronomia)
-                        GeocacheType.CULTURAL -> painterResource(R.drawable.cultural)
-                        GeocacheType.HISTORICO -> painterResource(R.drawable.historico)
-                    },
-                    contentDescription = stringResource(R.string.category_selected),
+                Icon(
+                    imageVector = Icons.Filled.LocationOn,
+                    contentDescription = stringResource(R.string.open_map_icon),
+                    tint = Purple,
                     modifier = Modifier
                         .size(56.dp)
                 )
             }
         }
 
+        IconButton({
+            navController.navigate("explorarScreen/${geocache.type}")
+        }) {
+            Image(
+                painter = when (geocache.type) {
+                    GeocacheType.GASTRONOMIA -> painterResource(R.drawable.gastronomia)
+                    GeocacheType.CULTURAL -> painterResource(R.drawable.cultural)
+                    GeocacheType.HISTORICO -> painterResource(R.drawable.historico)
+                },
+                contentDescription = stringResource(R.string.category_selected),
+                modifier = Modifier
+                    .size(56.dp)
+            )
+        }
+
         /*TODO abrir uma dica random */
-        Column() {
-            IconButton({}) {
-                Text(text = "?", fontSize = 44.sp, color = Purple)
-            }
+        IconButton({}) {
+            Text(text = "?", fontSize = 44.sp, color = Purple)
         }
     }
 }
@@ -300,8 +293,8 @@ fun ProgressBar(questionNumber: Number) {
 }
 
 @Composable
-fun ShowHint(hintNumber: Number, hint: Hint, modifier: Modifier = Modifier) {
-    Column() {
+fun ShowHint(hintNumber: Number, hint: Hint) {
+    Column {
         VerticalSpacer()
         Text("${stringResource(R.string.hint)} $hintNumber", color = LightGray, fontSize = 14.sp)
         Box(
@@ -359,7 +352,7 @@ fun ActiveGeocachePreview() {
                         .padding(28.dp)
 
                 ) {
-                    Column() {
+                    Column {
                         IconSection(context, user, geocache, navController)
 
                         Column(
@@ -383,14 +376,20 @@ fun ActiveGeocachePreview() {
                                     Modifier
                                         .height(28.dp)
                                         .fillMaxWidth()
-                                        .background(color = White, shape = RoundedCornerShape(10.dp))
+                                        .background(
+                                            color = White,
+                                            shape = RoundedCornerShape(10.dp)
+                                        )
                                         .padding(4.dp)
                                 ) {
                                     Spacer(
                                         Modifier
                                             .fillMaxHeight()
-                                            .fillMaxWidth(3/4.toFloat())
-                                            .background(color = Black, shape = RoundedCornerShape(10.dp))
+                                            .fillMaxWidth(3 / 4.toFloat())
+                                            .background(
+                                                color = Black,
+                                                shape = RoundedCornerShape(10.dp)
+                                            )
                                             .zIndex(1000f)
                                     )
                                 }

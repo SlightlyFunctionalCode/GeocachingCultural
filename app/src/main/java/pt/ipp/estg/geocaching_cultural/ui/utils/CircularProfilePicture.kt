@@ -38,7 +38,7 @@ fun CircularProfilePicture(
             }
         } else {
             GlideImage(
-                imageModel = { profileImageUrl }, // loading a network image using an URL.
+                imageModel = { profileImageUrl },
                 imageOptions = ImageOptions(
                     contentScale = ContentScale.Crop, alignment = Alignment.Center
                 ),
