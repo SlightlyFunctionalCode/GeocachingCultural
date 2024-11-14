@@ -42,6 +42,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -345,8 +346,15 @@ fun MyScaffoldContent(
             )
         }
         composable("logout") {
-            usersViewsModels.saveCurrentUserId(-1)
-            navController.navigate("aboutUsScreen")
+            LaunchedEffect(Unit) {
+                usersViewsModels.saveCurrentUserId(-1)
+                navController.navigate("aboutUsScreen") {
+                    // Optional: Clear back stack to prevent navigating back to logged-in screens
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
         }
     }
 }
