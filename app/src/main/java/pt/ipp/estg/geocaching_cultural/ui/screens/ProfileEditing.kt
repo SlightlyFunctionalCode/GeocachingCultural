@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
@@ -191,6 +192,35 @@ private fun updateUser(
 @Composable
 fun ProfileEditingPreview() {
     val navController = rememberNavController()
+
+    var answerName = ""
+    var answerEmail = ""
+
+    var buttonState = false
+
+    var isEmailValid = true
+    var isNameValid = true
+
+    var supportingTextName = ""
+    var supportingTextEmail = ""
+
+    val snackbarHostState = SnackbarHostState()
+    var updateSuccessful = false
+
+    val context = LocalContext.current
+
+    val currentUser = User(
+        1,
+        name = "admin",
+        email = "admin@ad.ad",
+        password = "admin123",
+        points = 100,
+        profileImageUrl = "",
+        profilePictureDefault = R.drawable.avatar_male_01,
+        isWalking = true,
+        location = Location(0.0, 0.0),
+    )
+
     Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
@@ -198,7 +228,96 @@ fun ProfileEditingPreview() {
                 .background(color = Yellow)
         ) {
             item {
-                // ProfileEditingScreen(navController)
+                Column(modifier = Modifier.padding(28.dp)) {
+                    Title(text = stringResource(R.string.update_profile))
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        VerticalSpacer()
+                        ProfilePicture(
+                            currentUser.profileImageUrl,
+                            currentUser.profilePictureDefault
+                        )
+                        MyTextButton(
+                            text = stringResource(R.string.change_profile_pic),
+                            onClick = { navController.navigate("chooseProfilePicScreen") })
+
+                        Column(Modifier.fillMaxWidth()) {
+                            VerticalSpacer()
+                            MyTextField(
+                                label = { Text(stringResource(R.string.name_label)) },
+                                value = answerName,
+                                onValueChange = {
+                                    answerName = it
+                                    isNameValid = it.isNotBlank()
+                                },
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Person,
+                                        contentDescription = stringResource(R.string.name_icon)
+                                    )
+                                },
+                                isError = !isNameValid,
+                                supportingText = { Text(text = supportingTextName, color = Pink) },
+                                modifier = Modifier
+                            )
+                            supportingTextName =
+                                if (!isNameValid) stringResource(R.string.name_error_message) else ""
+
+                            MyTextField(
+                                label = { Text(stringResource(R.string.email_label)) },
+                                value = answerEmail,
+                                onValueChange = {
+                                    answerEmail = it
+                                    isEmailValid =
+                                        android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                                },
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Filled.Email,
+                                        contentDescription = stringResource(R.string.email_icon)
+                                    )
+                                },
+                                isError = !isEmailValid,
+                                supportingText = { Text(text = supportingTextEmail, color = Pink) },
+                                modifier = Modifier
+                            )
+
+                            supportingTextEmail =
+                                if (!isEmailValid) stringResource(R.string.email_error_message) else ""
+
+                            SmallVerticalSpacer()
+                            MyTextButton(text = stringResource(R.string.change_password))
+
+                            buttonState = isNameValid &&
+                                    isEmailValid &&
+                                    answerName != "" &&
+                                    answerEmail != ""
+
+                            VerticalSpacer()
+                            MyTextButton(
+                                text = stringResource(R.string.submit),
+                                enabled = buttonState && !updateSuccessful,
+                                onClick = {
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            LaunchedEffect(updateSuccessful) {
+                                if (updateSuccessful) {
+                                    snackbarHostState.showSnackbar(context.getString(R.string.profile_updated_message))
+                                    navController.navigate("profileScreen")
+                                    updateSuccessful = false
+                                }
+                            }
+
+                            SnackbarHost(
+                                hostState = snackbarHostState,
+                            )
+                        }
+                    }
+                }
             }
         }
     }

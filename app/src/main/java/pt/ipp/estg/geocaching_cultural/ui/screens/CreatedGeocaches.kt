@@ -76,25 +76,14 @@ fun CreatedGeocachesPreview() {
     // Simulação dos dados do ViewModel diretamente dentro do Preview
     val currentUserId = MutableLiveData(1)
     val userId = 1
-    var avatar = ImageBitmap.imageResource(id = R.drawable.avatar_male_01)
-    val user = User(
-        1,
-        name = "admin",
-        email = "admin@ad.ad",
-        password = "admin123",
-        points = 100,
-        profileImageUrl = "avatar",
-        profilePictureDefault = 1,
-        isWalking = true,
-        location = Location(0.0, 0.0),
-    )
+    val avatar = ImageBitmap.imageResource(id = R.drawable.mercadona)
     val geocache1 =
         Geocache(
             1,
             Location(0.0, 0.0),
             GeocacheType.HISTORICO,
+            "name",
             "Address 1",
-            "ImageURL1",
             avatar,
             LocalDateTime.now(),
             userId
@@ -103,11 +92,16 @@ fun CreatedGeocachesPreview() {
         2,
         Location(0.0, 0.0),
         GeocacheType.HISTORICO,
+        "name",
         "Address 1",
-        "ImageURL1",
         avatar,
         LocalDateTime.now(),
         userId
+    )
+
+    val geocachesCreated = listOf(
+        geocache1,
+        geocache2
     )
 
     Geocaching_CulturalTheme {
@@ -117,27 +111,23 @@ fun CreatedGeocachesPreview() {
                 .background(color = Yellow)
         ) {
             item {
-                    val geocachesCreated = listOf(geocache1,
-                            geocache2)
-                    Column(Modifier.padding(top = 28.dp, start = 28.dp, end = 28.dp, bottom = 0.dp)) {
-                        Title(text = "Geocaches Criados")
+                Column(Modifier.padding(top = 28.dp, start = 28.dp, end = 28.dp, bottom = 0.dp)) {
+                    Title(text = "Geocaches Criados")
 
-                        if (geocachesCreated != null) {
-                            Column {
-                                geocachesCreated.forEach { geocache ->
-                                    VerticalSpacer()
+                    Column {
+                        geocachesCreated.forEach { geocache ->
+                            VerticalSpacer()
 
-                                    GeocacheCard(
-                                        title = geocache.name,
-                                        description = geocache.address,
-                                        image = geocache.image!!, // Usa o estado da imagem atualizado
-                                        modifier = Modifier.clickable { navController.navigate("createdGeocacheDetailsScreen/${geocache.geocacheId}") }
-                                    )
-                                }
-                            }
+                            GeocacheCard(
+                                title = geocache.name,
+                                description = geocache.address,
+                                image = geocache.image!!, // Usa o estado da imagem atualizado
+                                modifier = Modifier.clickable { navController.navigate("createdGeocacheDetailsScreen/${geocache.geocacheId}") }
+                            )
                         }
                     }
                 }
             }
         }
     }
+}

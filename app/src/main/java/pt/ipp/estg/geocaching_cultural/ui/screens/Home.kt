@@ -18,7 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -28,10 +30,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
+import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
@@ -116,6 +120,7 @@ fun Closest5Geocaches(
     closest5Geocaches: List<Pair<GeocacheWithHintsAndChallenges, Double>>?,
     navController: NavHostController,
 ) {
+
     Column(modifier = Modifier.fillMaxWidth()) {
 
         if (closest5Geocaches.isNullOrEmpty()) {
@@ -163,15 +168,88 @@ fun Closest5Geocaches(
 @Composable
 fun PrincipalPreview() {
     val navController = rememberNavController()
+
+    val userId = 1
+    val avatar = ImageBitmap.imageResource(id = R.drawable.avatar_male_01)
+    val address = "Porto, Portugal"
+
+    val geocache1 =
+        Geocache(
+            1,
+            Location(0.0, 0.0),
+            GeocacheType.HISTORICO,
+            "Address 1",
+            "ImageURL1",
+            avatar,
+            LocalDateTime.now(),
+            userId
+        )
+    val geocache2 = Geocache(
+        2,
+        Location(0.0, 0.0),
+        GeocacheType.HISTORICO,
+        "Address 1",
+        "ImageURL1",
+        avatar,
+        LocalDateTime.now(),
+        userId
+    )
+
+    val hint1 = Hint(1, 1, "Description 1")
+    val hint2 = Hint(2, 1, "Description 2")
+
+    val challenge1 = Challenge(1, 1, "Question1", "Answer1", 100)
+    val challenge2 = Challenge(2, 1, "Question2", "Answer2", 100)
+
+    val geocacheWithHintsAndChallenges1 = GeocacheWithHintsAndChallenges(
+        geocache1,
+        listOf(hint1, hint2),
+        listOf(challenge1, challenge2)
+    )
+
+    val geocacheWithHintsAndChallenges2 = GeocacheWithHintsAndChallenges(
+        geocache2,
+        listOf(hint1, hint2),
+        listOf(challenge1, challenge2)
+    )
+
     Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Yellow)
         ) {
+
             item {
-                //  HomeScreen(navController)
+                val closeGeocachesWithHints = listOf(
+                    Pair(geocacheWithHintsAndChallenges1, 12.0),
+                    Pair(geocacheWithHintsAndChallenges2, 10.0)
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(30.dp)
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = address,
+                            fontSize = 14.sp,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            text = stringResource(R.string.closest_geocaches),
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    VerticalSpacer()
+
+                    Closest5Geocaches(closeGeocachesWithHints, navController)
+                }
             }
         }
     }
 }
+

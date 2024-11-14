@@ -213,13 +213,140 @@ fun login(
 fun LoginPreview() {
     val navController = rememberNavController()
 
+    var answerEmail = ""
+    var answerPassword =""
+
+    var buttonState =false
+
+    var isEmailValid = true
+    var isPasswordValid =true
+
+    var supportingTextEmail = ""
+    var supportingTextPassword =""
+
+    val snackbarHostState = SnackbarHostState()
+    var loginError = false
+    val loginSuccessful = false
+
+    val context = LocalContext.current
+
     Geocaching_CulturalTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Yellow)
         ) {
-            //  LoginScreen(navController)
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth(0.65f)
+                        .align(Alignment.Center)
+                ) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.login),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 28.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    item {
+                        VerticalSpacer()
+                        MyTextField(
+                            label = { Text(stringResource(R.string.email_label)) },
+                            value = answerEmail,
+                            onValueChange = {
+                                answerEmail = it
+                                isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                            },
+                            trailingIcon = {
+                                Icon(
+                                    imageVector = Icons.Filled.Email,
+                                    contentDescription = stringResource(R.string.email_icon)
+                                )
+                            },
+                            isError = !isEmailValid,
+                            supportingText = { Text(text = supportingTextEmail, color = Pink) },
+                            modifier = Modifier
+                        )
+
+                        supportingTextEmail =
+                            if (!isEmailValid) stringResource(R.string.email_error_message) else ""
+                    }
+
+                    item { /*TODO: Fazer ser possível ver a password */
+                        VerticalSpacer()
+                        var showPassword by remember { mutableStateOf(false) }
+                        MyTextField(
+                            label = { Text(stringResource(R.string.password_label)) },
+                            value = answerPassword,
+                            onValueChange = {
+                                answerPassword = it
+                                isPasswordValid = it.length >= 6  // Password must be at least 6 characters
+                            },
+                            trailingIcon = {
+                                IconButton(onClick = { showPassword = !showPassword }) {
+                                    Icon(
+                                        imageVector = if (showPassword) ImageVector.vectorResource(R.drawable.visibility) else ImageVector.vectorResource(
+                                            R.drawable.visibility_off
+                                        ),
+                                        contentDescription = if (showPassword) stringResource(R.string.hide_password) else stringResource(
+                                            R.string.show_password
+                                        )
+                                    )
+                                }
+                            },
+                            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                            isError = !isPasswordValid,
+                            supportingText = { Text(text = supportingTextPassword, color = Pink) },
+                            modifier = Modifier
+                        )
+                        supportingTextPassword =
+                            if (!isPasswordValid) stringResource(R.string.password_error_message) else ""
+                    }
+
+                    buttonState = isPasswordValid &&
+                            isEmailValid &&
+                            answerEmail != "" &&
+                            answerPassword != ""
+
+                    item {
+                        VerticalSpacer()
+                        MyTextButton(
+                            text = stringResource(R.string.submit),
+                            enabled = buttonState,
+                            onClick = {
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        LaunchedEffect(loginError) {
+                            if (loginError) {
+                                snackbarHostState.showSnackbar(context.getString(R.string.invalid_credentials_login))
+                                loginError = false
+                            }
+                        }
+
+                        LaunchedEffect(loginSuccessful) {
+                            if (loginSuccessful) {
+                                navController.navigate("homeScreen")
+                            }
+                        }
+
+                        SnackbarHost(
+                            hostState = snackbarHostState,
+                        )
+
+                        LargeVerticalSpacer()
+                    }
+                }
+            }
+        }
         }
     }
-}
+

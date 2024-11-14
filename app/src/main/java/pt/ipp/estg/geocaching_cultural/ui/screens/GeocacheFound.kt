@@ -22,8 +22,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,12 +39,17 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
+import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.utils_api.fetchGeocacheImage
 import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
+import java.time.LocalDateTime
+
 @Composable
 fun GeocacheFoundScreen(
     navController: NavHostController,
@@ -175,5 +182,104 @@ fun GeocacheMap(geocache: Geocache) {
 @Composable
 fun GeocacheFoundScreenPreview() {
     val navController = rememberNavController()
-    //GeocacheFoundScreen(navController)
+    val userId = 1
+    val avatar = ImageBitmap.imageResource(id = R.drawable.mercadona)
+    val map = ImageBitmap.imageResource(id = R.drawable.mapa_localizacao)
+    val geocache =
+        Geocache(
+            1,
+            Location(0.0, 0.0),
+            GeocacheType.HISTORICO,
+            "Address 1",
+            "ImageURL1",
+            avatar,
+            LocalDateTime.now(),
+            userId
+        )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFFFFCC00)),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Geocache Encontrado",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Imagem do Geocache
+                Image(
+                    painter = BitmapPainter(geocache.image!!),
+                    contentDescription = "Imagem do Local",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Nome e localização do local
+                Text(
+                    text = geocache.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Parabéns!!!",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF388E3C),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = "Ganhou 5 pontos",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Black,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = {
+                    },
+                    colors = ButtonDefaults.buttonColors(Color.Blue)
+                ) {
+                    Text(
+                        text = "Home",
+                        color = Color.White
+                    )
+                }
+            }
+            Image(
+                painter = BitmapPainter(map),
+                contentDescription = "Imagem do Local",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            )
+        }
+    }
 }

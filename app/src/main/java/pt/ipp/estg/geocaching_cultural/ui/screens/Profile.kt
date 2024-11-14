@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
+import pt.ipp.estg.geocaching_cultural.database.classes.Location
+import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
@@ -92,6 +94,19 @@ fun ProfileScreen(navController: NavHostController, usersViewsModels: UsersViews
 @Composable
 fun ProfilePreview() {
     val navController = rememberNavController()
+
+    val userState = User(
+        1,
+        name = "admin",
+        email = "admin@ad.ad",
+        password = "admin123",
+        points = 100,
+        profileImageUrl = "",
+        profilePictureDefault = R.drawable.avatar_male_01,
+        isWalking = true,
+        location = Location(0.0, 0.0),
+    )
+
     Geocaching_CulturalTheme {
         LazyColumn(
             modifier = Modifier
@@ -99,7 +114,52 @@ fun ProfilePreview() {
                 .background(color = Yellow)
         ) {
             item {
-                //  ProfileScreen(navController)
+                userState.let { user ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(28.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Title(text = stringResource(R.string.profile), modifier = Modifier.weight(1.25f))
+                            HorizontalSpacer()
+                            PointsDisplay(points = user.points, modifier = Modifier.weight(1f))
+                        }
+
+                        VerticalSpacer()
+                        ProfilePicture(user.profileImageUrl, user.profilePictureDefault)
+
+
+                        Column(Modifier.fillMaxWidth()) {
+                            VerticalSpacer()
+                            Text(text = user.name, fontSize = 24.sp)
+
+                            Text(text = user.email, color = LightGray)
+                            SmallVerticalSpacer()
+                            MyTextButton(text = stringResource(R.string.update_profile_info),
+                                { navController.navigate("profileEditingScreen") })
+                        }
+
+
+                        Column(Modifier.fillMaxWidth()) {
+                            VerticalSpacer()
+                            Text(text = stringResource(R.string.extra_actions), fontSize = 24.sp, color = Pink)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                MyTextButton(
+                                    text = stringResource(R.string.delete_profile),
+                                    onClick = {
+                                    }
+                                )
+                                SmallHorizontalSpacer()
+                                Text(
+                                    text = stringResource(R.string.irreversible_action),
+                                    color = Pink,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
