@@ -46,6 +46,7 @@ import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
+import pt.ipp.estg.geocaching_cultural.database.classes.enums.getLocalizedName
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
@@ -123,9 +124,9 @@ fun CategoryLabel(
     onCategorySelectedChange: (GeocacheType) -> Unit
 ) {
     val categories = listOf(
-        stringResource(R.string.gastronomy) to R.drawable.gastronomia,
-        stringResource(R.string.cultural) to R.drawable.cultural,
-        stringResource(R.string.historic) to R.drawable.historico
+        "GASTRONOMIA" to R.drawable.gastronomia,
+        "CULTURAL" to R.drawable.cultural,
+        "HISTORICO" to R.drawable.historico
     )
 
     var isExpanded by remember { mutableStateOf(false) }
@@ -141,7 +142,7 @@ fun CategoryLabel(
             verticalAlignment = Alignment.CenterVertically
         ) {
             CategoryButton(
-                name = categorySelected.name,
+                name = categorySelected.getLocalizedName(),
                 icon = painterResource(id = categories.find { it.first == categorySelected.name }!!.second),
                 isSelected = true,
                 onClick = {}
@@ -183,6 +184,7 @@ fun CategoryLabel(
         }
     }
 }
+
 
 @Composable
 fun CategoryButton(name: String, icon: Painter, isSelected: Boolean, onClick: () -> Unit) {
