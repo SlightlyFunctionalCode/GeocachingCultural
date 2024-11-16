@@ -358,14 +358,13 @@ fun ChooseImage(images: List<ImageBitmap>, onImageSelected: (ImageBitmap) -> Uni
 fun CreateGeocacheScreenPreview() {
     val context= LocalContext.current
 
-    val labelQuestions = remember {
-        mutableStateListOf(
+    val labelQuestions = listOf(
             context.getString(R.string.question_5km),
             context.getString(R.string.question_1km),
             context.getString(R.string.question_500m),
             context.getString(R.string.challenge_question),
         )
-    }
+
     // Estado para a categoria selecionada e localização
     val categorySelected = GeocacheType.HISTORICO
     val hints = listOf("Dica1", "Dica2", "Dica3")
