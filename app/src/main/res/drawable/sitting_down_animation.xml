@@ -3,4 +3,9 @@
     <item android:drawable="@drawable/sitting_down_animation_02" android:duration="150"/>
     <item android:drawable="@drawable/sitting_down_animation_03" android:duration="150"/>
     <item android:drawable="@drawable/sitting_down_animation_04" android:duration="150"/>
+    <item android:drawable="@drawable/sitting_down_animation_05" android:duration="150"/>
+    <item android:drawable="@drawable/sitting_down_animation_06" android:duration="150"/>
+    <item android:drawable="@drawable/sitting_down_animation_07" android:duration="150"/>
+    <item android:drawable="@drawable/sitting_down_animation_08" android:duration="150"/>
+    <item android:drawable="@drawable/sitting_down_animation_09" android:duration="150"/>
 </animation-list>
