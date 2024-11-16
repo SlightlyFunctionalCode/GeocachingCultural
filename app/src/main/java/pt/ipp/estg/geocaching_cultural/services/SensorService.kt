@@ -18,7 +18,8 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
     private val accelerometer =
         sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private var isWalking = false
-    private val accelerationThreshold: Float = 0.5f // Adjust for sensitivity
+    private val accelerationThreshold: Float = 10f // Adjust for sensitivity
+    private val linearAccelerationThreshold: Float = 0.5f // Adjust for sensitivity
     private val noMovementTimeout = 1000L // 2 seconds
     private var lastMovementTime = System.currentTimeMillis()
 
@@ -31,7 +32,7 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
                 handleLinearAcceleration(event)
             } else if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
                 // Fallback if linear accelerometer isn't available
-                handleLinearAcceleration(event)
+                handleAcceleration(event)
             }
             updateWalkingState(viewsModels)
         }
@@ -46,6 +47,16 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
         val (x, y, z) = event.values
         val magnitude = sqrt(x * x + y * y + z * z)
 
+        if (magnitude > linearAccelerationThreshold && isPeakDetected(magnitude)) {
+            isWalking = true
+            lastMovementTime = System.currentTimeMillis() // Reset timeout
+        }
+    }
+
+    private fun handleAcceleration(event: SensorEvent) {
+        val (x, y, z) = event.values
+        val magnitude = sqrt(x * x + y * y + z * z)
+        
         if (magnitude > accelerationThreshold && isPeakDetected(magnitude)) {
             isWalking = true
             lastMovementTime = System.currentTimeMillis() // Reset timeout
@@ -92,7 +103,7 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
      */
     fun startSensorUpdates(context: Context) {
         // Register the appropriate sensor based on availability
-        if (linearAccelerometer != null) {
+        if (linearAccelerometer == null) {
             sensorManager.registerListener(sensorEventListener, linearAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
         } else if (accelerometer != null) {
             sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
