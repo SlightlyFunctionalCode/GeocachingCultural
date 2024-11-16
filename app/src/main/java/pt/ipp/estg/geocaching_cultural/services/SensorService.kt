@@ -56,7 +56,7 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
     private fun handleAcceleration(event: SensorEvent) {
         val (x, y, z) = event.values
         val magnitude = sqrt(x * x + y * y + z * z)
-        
+
         if (magnitude > accelerationThreshold && isPeakDetected(magnitude)) {
             isWalking = true
             lastMovementTime = System.currentTimeMillis() // Reset timeout
@@ -103,7 +103,7 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
      */
     fun startSensorUpdates(context: Context) {
         // Register the appropriate sensor based on availability
-        if (linearAccelerometer == null) {
+        if (linearAccelerometer != null) {
             sensorManager.registerListener(sensorEventListener, linearAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
         } else if (accelerometer != null) {
             sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
