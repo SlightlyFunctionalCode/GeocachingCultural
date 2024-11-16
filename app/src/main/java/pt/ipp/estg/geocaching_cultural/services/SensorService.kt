@@ -14,6 +14,8 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     private val linearAccelerometer =
         sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+    private val accelerometer =
+        sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     private var isWalking = false
     private val accelerationThreshold: Float = 0.5f // Adjust for sensitivity
     private val noMovementTimeout = 1000L // 2 seconds
@@ -33,9 +35,10 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
 
-    fun isSensorAvailable(): Boolean {
-        return linearAccelerometer != null
+    fun isSensorAvailable( sensor: Sensor?): Boolean {
+        return sensor != null
     }
+
 
 
     /**
@@ -95,7 +98,7 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
      * Starts listening to sensor updates.
      */
     fun startSensorUpdates() {
-        if (isSensorAvailable()) {
+        if (isSensorAvailable(accelerometer) && isSensorAvailable(linearAccelerometer)) {
             linearAccelerometer?.let {
                 sensorManager.registerListener(
                     sensorEventListener,
