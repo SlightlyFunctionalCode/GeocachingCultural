@@ -35,10 +35,13 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
 
-    fun isSensorAvailable( sensor: Sensor?): Boolean {
-        return sensor != null
+    fun isAccelerationSensorAvailable(): Boolean {
+        return accelerometer != null
     }
 
+    fun isLinearAccelerationSensorAvailable(): Boolean {
+        return linearAccelerometer != null
+    }
 
 
     /**
@@ -98,7 +101,13 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
      * Starts listening to sensor updates.
      */
     fun startSensorUpdates() {
-        if (isSensorAvailable(accelerometer) && isSensorAvailable(linearAccelerometer)) {
+        if (isAccelerationSensorAvailable()) {
+            Log.e("SensorService", "Accelerometer is available on this device.")
+        } else {
+            Log.e("SensorService", "Accelerometer is not available on this device.")
+        }
+
+        if (isLinearAccelerationSensorAvailable()) {
             linearAccelerometer?.let {
                 sensorManager.registerListener(
                     sensorEventListener,
