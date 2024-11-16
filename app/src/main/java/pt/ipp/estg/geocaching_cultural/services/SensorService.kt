@@ -12,7 +12,8 @@ import kotlin.math.sqrt
 
 class SensorService(context: Context, viewsModels: UsersViewsModels) {
     private val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    private val linearAccelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+    private val linearAccelerometer =
+        sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
     private var isWalking = false
     private val accelerationThreshold: Float = 0.5f // Adjust for sensitivity
     private val noMovementTimeout = 1000L // 2 seconds
@@ -32,6 +33,11 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
 
+    fun isSensorAvailable(): Boolean {
+        return linearAccelerometer != null
+    }
+
+
     /**
      * Handles linear acceleration sensor events.
      */
@@ -42,7 +48,7 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
         Log.d("SensorService", "Linear acceleration magnitude: $magnitude")
 
         if (magnitude > accelerationThreshold && isPeakDetected(magnitude)) {
-            isWalking =true
+            isWalking = true
             Log.d("SensorService", "Is walking: $isWalking")
             lastMovementTime = System.currentTimeMillis() // Reset timeout
         }
@@ -57,7 +63,8 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
     private val peakInterval = 300L // Minimum time between peaks (ms)
     private fun isPeakDetected(magnitude: Float): Boolean {
         val currentTime = System.currentTimeMillis()
-        val isPeak = magnitude > accelerationThreshold && (currentTime - lastPeakTime > peakInterval)
+        val isPeak =
+            magnitude > accelerationThreshold && (currentTime - lastPeakTime > peakInterval)
         if (isPeak) {
             lastPeakTime = currentTime
         }
@@ -88,8 +95,16 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
      * Starts listening to sensor updates.
      */
     fun startSensorUpdates() {
-        linearAccelerometer?.let {
-            sensorManager.registerListener(sensorEventListener, it, SensorManager.SENSOR_DELAY_NORMAL)
+        if (isSensorAvailable()) {
+            linearAccelerometer?.let {
+                sensorManager.registerListener(
+                    sensorEventListener,
+                    it,
+                    SensorManager.SENSOR_DELAY_NORMAL
+                )
+            }
+        } else {
+            Log.e("SensorService", "Linear Accelerometer is not available on this device.")
         }
     }
 
