@@ -20,7 +20,7 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
     private var isWalking = false
     private val accelerationThreshold: Float = 10f // Adjust for sensitivity
     private val linearAccelerationThreshold: Float = 0.5f // Adjust for sensitivity
-    private val noMovementTimeout = 1000L // 2 seconds
+    private val noMovementTimeout = 500L
     private var lastMovementTime = System.currentTimeMillis()
 
     private val updateInterval = 1000L // 1 second for database updates
@@ -31,7 +31,6 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
             if (event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
                 handleLinearAcceleration(event)
             } else if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
-                // Fallback if linear accelerometer isn't available
                 handleAcceleration(event)
             }
             updateWalkingState(viewsModels)
@@ -47,9 +46,9 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
         val (x, y, z) = event.values
         val magnitude = sqrt(x * x + y * y + z * z)
 
-        if (magnitude > linearAccelerationThreshold && isPeakDetected(magnitude)) {
+        if (magnitude > linearAccelerationThreshold && isLinearPeakDetected(magnitude)) {
             isWalking = true
-            lastMovementTime = System.currentTimeMillis() // Reset timeout
+            lastMovementTime = System.currentTimeMillis()
         }
     }
 
@@ -68,15 +67,26 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
      */
     private var lastPeakTime = 0L
     private val peakInterval = 300L // Minimum time between peaks (ms)
-    private fun isPeakDetected(magnitude: Float): Boolean {
+    private fun isLinearPeakDetected(magnitude: Float): Boolean {
         val currentTime = System.currentTimeMillis()
         val isPeak =
-            magnitude > accelerationThreshold && (currentTime - lastPeakTime > peakInterval)
+            magnitude > linearAccelerationThreshold && (currentTime - lastPeakTime > peakInterval)
         if (isPeak) {
             lastPeakTime = currentTime
         }
         return isPeak
     }
+
+    private fun isPeakDetected(magnitude: Float): Boolean {
+        val currentTime = System.currentTimeMillis()
+        val isPeak =
+            magnitude > linearAccelerationThreshold && (currentTime - lastPeakTime > peakInterval)
+        if (isPeak) {
+            lastPeakTime = currentTime
+        }
+        return isPeak
+    }
+
 
     /**
      * Updates the walking state in the database periodically.
@@ -102,7 +112,6 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
      * Starts listening to sensor updates.
      */
     fun startSensorUpdates(context: Context) {
-        // Register the appropriate sensor based on availability
         if (linearAccelerometer != null) {
             sensorManager.registerListener(sensorEventListener, linearAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
         } else if (accelerometer != null) {
