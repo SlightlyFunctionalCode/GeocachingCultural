@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.AppDatabase
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
@@ -78,9 +79,9 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
         locationUpdateService.stopLocationUpdates()
     }
 
-    fun startSensorUpdates() {
+    fun startSensorUpdates(context: Context) {
         // Start location updates when the user is available
-        sensorService.startSensorUpdates()
+        sensorService.startSensorUpdates(context = context)
     }
 
     fun stopSensorUpdates() {

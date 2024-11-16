@@ -7,6 +7,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.util.Log
+import android.widget.Toast
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import kotlin.math.sqrt
 
@@ -28,21 +29,15 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
         override fun onSensorChanged(event: SensorEvent) {
             if (event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
                 handleLinearAcceleration(event)
+            } else if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+                // Fallback if linear accelerometer isn't available
+                handleLinearAcceleration(event)
             }
             updateWalkingState(viewsModels)
         }
 
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
     }
-
-    fun isAccelerationSensorAvailable(): Boolean {
-        return accelerometer != null
-    }
-
-    fun isLinearAccelerationSensorAvailable(): Boolean {
-        return linearAccelerometer != null
-    }
-
 
     /**
      * Handles linear acceleration sensor events.
@@ -51,15 +46,10 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
         val (x, y, z) = event.values
         val magnitude = sqrt(x * x + y * y + z * z)
 
-        Log.d("SensorService", "Linear acceleration magnitude: $magnitude")
-
         if (magnitude > accelerationThreshold && isPeakDetected(magnitude)) {
             isWalking = true
-            Log.d("SensorService", "Is walking: $isWalking")
             lastMovementTime = System.currentTimeMillis() // Reset timeout
         }
-        Log.d("SensorService", "Is walking: $isWalking")
-
     }
 
     /**
@@ -100,23 +90,16 @@ class SensorService(context: Context, viewsModels: UsersViewsModels) {
     /**
      * Starts listening to sensor updates.
      */
-    fun startSensorUpdates() {
-        if (isAccelerationSensorAvailable()) {
-            Log.e("SensorService", "Accelerometer is available on this device.")
+    fun startSensorUpdates(context: Context) {
+        // Register the appropriate sensor based on availability
+        if (linearAccelerometer != null) {
+            sensorManager.registerListener(sensorEventListener, linearAccelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        } else if (accelerometer != null) {
+            sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+            Log.d("SensorService", "Using accelerometer as fallback.")
         } else {
-            Log.e("SensorService", "Accelerometer is not available on this device.")
-        }
-
-        if (isLinearAccelerationSensorAvailable()) {
-            linearAccelerometer?.let {
-                sensorManager.registerListener(
-                    sensorEventListener,
-                    it,
-                    SensorManager.SENSOR_DELAY_NORMAL
-                )
-            }
-        } else {
-            Log.e("SensorService", "Linear Accelerometer is not available on this device.")
+            Log.e("SensorService", "No suitable sensor available. Walking detection cannot be performed.")
+            Toast.makeText(context, "Walking detection is not supported on this device.", Toast.LENGTH_SHORT).show()
         }
     }
 

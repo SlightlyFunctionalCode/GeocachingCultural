@@ -78,7 +78,7 @@ fun ActiveGeocacheScreen(
     // Start location updates when the screen is opened
     LaunchedEffect(Unit) {
         usersViewsModels.startLocationUpdates(context)
-        usersViewsModels.startSensorUpdates()
+        usersViewsModels.startSensorUpdates(context)
     }
 
     // Stop location updates when the screen is exited (using DisposableEffect or other lifecycle management methods)
