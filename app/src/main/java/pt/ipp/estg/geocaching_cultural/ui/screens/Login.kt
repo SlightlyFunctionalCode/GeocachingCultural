@@ -1,5 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
@@ -61,7 +58,6 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
     var supportingTextEmail by remember { mutableStateOf("") }
     var supportingTextPassword by remember { mutableStateOf("") }
 
-    val snackbarHostState = remember { SnackbarHostState() }
     var loginError by remember { mutableStateOf(false) }
     var loginSuccessful by remember { mutableStateOf(false) }
 
@@ -113,7 +109,7 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                     if (!isEmailValid) stringResource(R.string.email_error_message) else ""
             }
 
-            item { /*TODO: Fazer ser possível ver a password */
+            item {
                 VerticalSpacer()
                 var showPassword by remember { mutableStateOf(false) }
                 MyTextField(
@@ -170,7 +166,13 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
 
                 LaunchedEffect(loginError) {
                     if (loginError) {
-                        snackbarHostState.showSnackbar(context.getString(R.string.invalid_credentials_login))
+                        Toast.makeText(
+                            context,
+                            context.getString(
+                                R.string.invalid_credentials_login
+                            ),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         loginError = false
                     }
                 }
@@ -180,10 +182,6 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                         navController.navigate("homeScreen")
                     }
                 }
-
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                )
 
                 LargeVerticalSpacer()
             }
@@ -211,24 +209,14 @@ fun login(
 @Preview
 @Composable
 fun LoginPreview() {
-    val navController = rememberNavController()
-
     var answerEmail = ""
-    var answerPassword =""
-
-    var buttonState =false
+    var answerPassword = ""
 
     var isEmailValid = true
-    var isPasswordValid =true
+    var isPasswordValid = true
 
     var supportingTextEmail = ""
-    var supportingTextPassword =""
-
-    val snackbarHostState = SnackbarHostState()
-    var loginError = false
-    val loginSuccessful = false
-
-    val context = LocalContext.current
+    var supportingTextPassword = ""
 
     Geocaching_CulturalTheme {
         Column(
@@ -261,7 +249,8 @@ fun LoginPreview() {
                             value = answerEmail,
                             onValueChange = {
                                 answerEmail = it
-                                isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                                isEmailValid =
+                                    android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
                             },
                             trailingIcon = {
                                 Icon(
@@ -278,7 +267,7 @@ fun LoginPreview() {
                             if (!isEmailValid) stringResource(R.string.email_error_message) else ""
                     }
 
-                    item { /*TODO: Fazer ser possível ver a password */
+                    item {
                         VerticalSpacer()
                         var showPassword by remember { mutableStateOf(false) }
                         MyTextField(
@@ -286,7 +275,8 @@ fun LoginPreview() {
                             value = answerPassword,
                             onValueChange = {
                                 answerPassword = it
-                                isPasswordValid = it.length >= 6  // Password must be at least 6 characters
+                                isPasswordValid =
+                                    it.length >= 6  // Password must be at least 6 characters
                             },
                             trailingIcon = {
                                 IconButton(onClick = { showPassword = !showPassword }) {
@@ -310,36 +300,14 @@ fun LoginPreview() {
                             if (!isPasswordValid) stringResource(R.string.password_error_message) else ""
                     }
 
-                    buttonState = isPasswordValid &&
-                            isEmailValid &&
-                            answerEmail != "" &&
-                            answerPassword != ""
-
                     item {
                         VerticalSpacer()
                         MyTextButton(
                             text = stringResource(R.string.submit),
-                            enabled = buttonState,
+                            enabled = true,
                             onClick = {
                             },
                             modifier = Modifier.fillMaxWidth()
-                        )
-
-                        LaunchedEffect(loginError) {
-                            if (loginError) {
-                                snackbarHostState.showSnackbar(context.getString(R.string.invalid_credentials_login))
-                                loginError = false
-                            }
-                        }
-
-                        LaunchedEffect(loginSuccessful) {
-                            if (loginSuccessful) {
-                                navController.navigate("homeScreen")
-                            }
-                        }
-
-                        SnackbarHost(
-                            hostState = snackbarHostState,
                         )
 
                         LargeVerticalSpacer()
@@ -347,6 +315,6 @@ fun LoginPreview() {
                 }
             }
         }
-        }
     }
+}
 

@@ -1,5 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +56,6 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
     var supportingTextName by remember { mutableStateOf("") }
     var supportingTextEmail by remember { mutableStateOf("") }
 
-    val snackbarHostState = remember { SnackbarHostState() }
     var updateSuccessful by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -153,15 +151,15 @@ fun ProfileEditingScreen(navController: NavHostController, usersViewsModels: Use
 
                 LaunchedEffect(updateSuccessful) {
                     if (updateSuccessful) {
-                        snackbarHostState.showSnackbar(context.getString(R.string.profile_updated_message))
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.profile_updated_message),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         navController.navigate("profileScreen")
                         updateSuccessful = false
                     }
                 }
-
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                )
             }
         }
     }
@@ -196,18 +194,13 @@ fun ProfileEditingPreview() {
     var answerName = ""
     var answerEmail = ""
 
-    var buttonState = false
-
     var isEmailValid = true
     var isNameValid = true
 
     var supportingTextName = ""
     var supportingTextEmail = ""
 
-    val snackbarHostState = SnackbarHostState()
-    var updateSuccessful = false
-
-    val context = LocalContext.current
+    val updateSuccessful = false
 
     val currentUser = User(
         1,
@@ -290,30 +283,13 @@ fun ProfileEditingPreview() {
                             SmallVerticalSpacer()
                             MyTextButton(text = stringResource(R.string.change_password))
 
-                            buttonState = isNameValid &&
-                                    isEmailValid &&
-                                    answerName != "" &&
-                                    answerEmail != ""
-
                             VerticalSpacer()
                             MyTextButton(
                                 text = stringResource(R.string.submit),
-                                enabled = buttonState && !updateSuccessful,
+                                enabled = !updateSuccessful,
                                 onClick = {
                                 },
                                 modifier = Modifier.fillMaxWidth()
-                            )
-
-                            LaunchedEffect(updateSuccessful) {
-                                if (updateSuccessful) {
-                                    snackbarHostState.showSnackbar(context.getString(R.string.profile_updated_message))
-                                    navController.navigate("profileScreen")
-                                    updateSuccessful = false
-                                }
-                            }
-
-                            SnackbarHost(
-                                hostState = snackbarHostState,
                             )
                         }
                     }

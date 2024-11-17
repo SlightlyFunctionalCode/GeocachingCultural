@@ -22,7 +22,7 @@
     <string name="password_error_message">The password must have at least 6 characters</string>
     <string name="submit">Submit</string>
     <string name="login">Login</string>
-    <string name="invalid_credentials_login">Please check ypur Credentials</string>
+    <string name="invalid_credentials_login">Please check your Credentials</string>
     <string name="footer_app_name" translatable="false">© GeoCultura Explorer Inc 2024</string>
     <string name="app_name_topbar" translatable="false">GeoCultura Explorer</string>
     <string name="slogan">Challenge yourself to explore, learn and create!</string>
@@ -40,12 +40,12 @@
     <string name="default_avatar_pic">Default Profile Picture</string>
     <string name="profile_updated_message">Profile was updated!</string>
     <string name="different_password">Password must be the same</string>
-    <string name="register">Register</string>
+    <string name="register">Sign-Up</string>
     <string name="name_label">Name*</string>
     <string name="name_icon">Name Icon</string>
     <string name="name_error_message">The name is required</string>
     <string name="open_login_icons">Open Login Icons</string>
-    <string name="successful_register">Successful Register</string>
+    <string name="successful_register">Successful Sign-Up</string>
     <string name="trophy_icon">Trophy Icon</string>
     <string name="closest_geocaches">Closest Geocaches to Me</string>
     <string name="error_try_later">We\'re sorry, a problem occured on our end.\\nPlease try again later!</string>
@@ -93,4 +93,5 @@
     <string name="add_adress">Insert adress</string>
     <string name="points">Points:</string>
     <string name="coins">Coins</string>
+    <string name="more_geocaches">+ More Geocaches</string>
 </resources>

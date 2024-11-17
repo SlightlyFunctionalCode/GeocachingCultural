@@ -1,5 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,7 +76,6 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
 
     var supportingTextProfilePicUrlValid by remember { mutableStateOf("") }
 
-    val snackbarHostState = remember { SnackbarHostState() }
     var updateSuccessful by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
@@ -188,15 +186,15 @@ fun ChooseProfilePicScreen(navController: NavHostController, usersViewsModels: U
 
             LaunchedEffect(updateSuccessful) {
                 if (updateSuccessful) {
-                    snackbarHostState.showSnackbar(context.getString(R.string.profile_updated_message))
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.profile_updated_message),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     navController.navigate("profileScreen")
                     updateSuccessful = false
                 }
             }
-
-            SnackbarHost(
-                hostState = snackbarHostState,
-            )
         }
     }
 }

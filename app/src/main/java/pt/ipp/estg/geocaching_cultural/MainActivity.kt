@@ -64,33 +64,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private val SensorPermissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        // Check the results for both FINE and COARSE location permissions
-        when {
-            permissions[Manifest.permission.ACTIVITY_RECOGNITION] == true -> {
-                // Precise location access granted
-                Log.d("Permissions", "ACTIVITY_RECOGNITION granted")
-                // Start location-related tasks here
-            }
-
-            else -> {
-                // No location access granted
-                Log.d("Permissions", "No sensor permissions granted")
-                // Handle lack of permissions gracefully
-            }
-        }
-    }
-
-    private fun requestSensorPermissions() {
-        locationPermissionRequest.launch(
-            arrayOf(
-                Manifest.permission.ACTIVITY_RECOGNITION,
-            )
-        )
-    }
-
     @ExperimentalMaterial3Api
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,25 +102,11 @@ class MainActivity : ComponentActivity() {
                     }
 
                     requestLocationPermissions()
-                    requestSensorPermissions()
                 }
             }
         }
     }
 }
-
-@Composable
-fun DisplayUser(user: User) {
-    Column {
-        Text(text = "Id: ${user.userId}")
-        Text(text = "Nome: ${user.name}")
-        Text(text = "Location: ${user.location.lat},${user.location.lng})")
-        Text(text = "Points: ${user.points}")
-        Text(text = "Email: ${user.email}")
-        Text(text = "Password: ${user.password}")
-    }
-}
-
 
 
 

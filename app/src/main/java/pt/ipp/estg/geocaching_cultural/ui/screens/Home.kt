@@ -154,7 +154,7 @@ fun Closest5Geocaches(
         }
 
         MyTextButton(
-            "+ Mais Geocaches", onClick = {
+            stringResource(R.string.more_geocaches), onClick = {
                 navController.navigate("explorarScreen/${GeocacheType.HISTORICO.name}")
             },
             modifier = Modifier

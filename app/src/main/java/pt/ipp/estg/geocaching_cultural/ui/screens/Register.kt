@@ -1,5 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -14,12 +15,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,7 +41,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
@@ -82,7 +79,6 @@ fun RegisterScreen(
     val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
-        val snackbarHostState = remember { SnackbarHostState() }
         var registrationSuccessful by remember { mutableStateOf(false) }
 
         LazyColumn(
@@ -284,15 +280,15 @@ fun RegisterScreen(
 
                 LaunchedEffect(registrationSuccessful) {
                     if (registrationSuccessful) {
-                        snackbarHostState.showSnackbar(context.getString(R.string.successful_register))
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.successful_register),
+                            Toast.LENGTH_SHORT
+                        ).show()
                         navController.navigate("loginScreen")
                         registrationSuccessful = false
                     }
                 }
-
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                )
 
                 LargeVerticalSpacer()
             }
@@ -325,8 +321,6 @@ fun register(
 @Preview
 @Composable
 fun RegisterPreview() {
-    val navController = rememberNavController()
-
     Geocaching_CulturalTheme {
         Column(
             modifier = Modifier
@@ -334,7 +328,7 @@ fun RegisterPreview() {
                 .background(color = Yellow)
         ) {
             var answerName by remember { mutableStateOf("") }
-            var answerEmail by remember { mutableStateOf(  "") }
+            var answerEmail by remember { mutableStateOf("") }
             var answerPassword by remember { mutableStateOf("") }
             var answerConfirmPassword by remember { mutableStateOf("") }
 
@@ -499,7 +493,6 @@ fun RegisterPreview() {
                             }
                     }
 
-                    /* TODO: add firebase autentication */
                     item {
                         VerticalSpacer()
                         Row {
