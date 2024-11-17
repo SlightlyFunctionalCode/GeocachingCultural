@@ -57,7 +57,8 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(usersViewsModels.isUpdatingLocation) {
+        // Start location updates when the screen is opened
         usersViewsModels.startLocationUpdates(context)
     }
 

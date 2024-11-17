@@ -49,6 +49,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
@@ -76,18 +77,19 @@ fun ActiveGeocacheScreen(
 ) {
     val context = LocalContext.current
     // Start location updates when the screen is opened
-    LaunchedEffect(Unit) {
+    LaunchedEffect(usersViewsModels.isUpdatingLocation) {
+        // Start location updates when the screen is opened
         usersViewsModels.startLocationUpdates(context)
         usersViewsModels.startSensorUpdates(context)
     }
 
-    // Stop location updates when the screen is exited (using DisposableEffect or other lifecycle management methods)
     DisposableEffect(Unit) {
         onDispose {
             usersViewsModels.stopLocationUpdates()
             usersViewsModels.stopSensorUpdates()
         }
     }
+
 
     val geocache =
         Geocache(0, Location(0.0, 0.0), GeocacheType.CULTURAL, "", "", null, LocalDateTime.now(), 0)

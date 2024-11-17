@@ -1,7 +1,7 @@
 package pt.ipp.estg.geocaching_cultural.services
 
-
 import android.Manifest
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
@@ -9,6 +9,8 @@ import android.content.res.Resources.NotFoundException
 import android.location.Address
 import android.location.Geocoder
 import android.os.Looper
+import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -98,30 +100,46 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
         override fun onLocationResult(locationResult: LocationResult) {
             val currentLocation: android.location.Location? = locationResult.lastLocation
 
+            Log.d(
+                "Location",
+                "${currentLocation?.latitude ?: 0} - ${currentLocation?.longitude ?: 0} "
+            )
             // Now handle the location update as needed
             if (currentLocation != null) {
-                updateUserLocation(currentLocation.latitude, currentLocation.longitude)
+                Log.e("Location", "To Update")
+                updateUserLocation(
+                    application.applicationContext,
+                    currentLocation.latitude,
+                    currentLocation.longitude
+                )
             }
         }
 
         private fun updateUserLocation(
+            context: Context,
             currentLatitude: Double,
             currentLongitude: Double
         ) {
-            val user = viewsModels.currentUser.value ?: throw NotFoundException()
+            val user = viewsModels.currentUser.value
 
-            val updatedUser = user.copy(
-                location = Location(
-                    lat = currentLatitude,
-                    lng = currentLongitude,
+            if (user != null) {
+                val updatedUser = user.copy(
+                    location = Location(
+                        lat = currentLatitude,
+                        lng = currentLongitude,
+                    )
                 )
-            )
+                viewsModels.updateUser(updatedUser)
+            } else {
+                Toast.makeText(context, "There was an error updating Location", Toast.LENGTH_SHORT)
+                    .show()
+            }
 
-            viewsModels.updateUser(updatedUser)
         }
     }
 
     fun startLocationUpdates(context: Context) {
+        Log.e("Location", "Started Location Update")
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -130,6 +148,7 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
+            Log.e("Location", "Start Location Update Error")
             return
         }
 
@@ -137,10 +156,13 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
             locationRequest,
             locationCallback,
             Looper.getMainLooper()
+
+
         )
     }
 
     fun stopLocationUpdates() {
+        Log.e("Location", "Stopped Location Update")
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 }

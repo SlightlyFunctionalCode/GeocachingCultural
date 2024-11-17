@@ -26,6 +26,7 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
     private val _currentUser = MediatorLiveData<User>()
     private val locationUpdateService: LocationUpdateService
     private val sensorService: SensorService
+    var isUpdatingLocation = false
 
     val currentUserId: LiveData<Int> get() = _currentUserId
     val currentUser: LiveData<User> get() = _currentUser
@@ -70,13 +71,17 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
     }
 
     fun startLocationUpdates(context: Context) {
-        // Start location updates when the user is available
-        locationUpdateService.startLocationUpdates(context)
+        if (!isUpdatingLocation) {
+            locationUpdateService.startLocationUpdates(context)
+            isUpdatingLocation = true
+        }
     }
 
     fun stopLocationUpdates() {
-        // Stop location updates when no longer needed
-        locationUpdateService.stopLocationUpdates()
+        if (isUpdatingLocation) {
+            locationUpdateService.stopLocationUpdates()
+            isUpdatingLocation = false
+        }
     }
 
     fun startSensorUpdates(context: Context) {
