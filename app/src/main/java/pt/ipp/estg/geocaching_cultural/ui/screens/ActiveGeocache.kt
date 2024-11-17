@@ -60,6 +60,7 @@ import pt.ipp.estg.geocaching_cultural.database.classes.User
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
+import pt.ipp.estg.geocaching_cultural.services.EnableLocation
 import pt.ipp.estg.geocaching_cultural.ui.theme.Black
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.LightGray
@@ -76,9 +77,18 @@ fun ActiveGeocacheScreen(
     geocacheViewsModels: GeocacheViewsModels
 ) {
     val context = LocalContext.current
-    // Start location updates when the screen is opened
+
+    EnableLocation(
+        context = context,
+        locationUpdateService = usersViewsModels.locationUpdateService,
+        onSuccess = {
+            if (!usersViewsModels.isUpdatingLocation) {
+                usersViewsModels.startLocationUpdates(context)
+            }
+        }
+    )
+
     LaunchedEffect(usersViewsModels.isUpdatingLocation) {
-        // Start location updates when the screen is opened
         usersViewsModels.startLocationUpdates(context)
         usersViewsModels.startSensorUpdates(context)
     }

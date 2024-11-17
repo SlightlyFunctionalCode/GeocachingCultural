@@ -51,6 +51,7 @@ import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.getLocalizedName
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
+import pt.ipp.estg.geocaching_cultural.services.EnableLocation
 import pt.ipp.estg.geocaching_cultural.services.LocationUpdateService
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
@@ -60,19 +61,28 @@ import java.util.Locale
 fun ExplorerScreen(
     navController: NavHostController,
     geocacheViewsModels: GeocacheViewsModels? = null,
-    usersViewsModels: UsersViewsModels? = null,
+    usersViewsModels: UsersViewsModels,
     geocacheType: GeocacheType? = null
 ) {
     val context = LocalContext.current
 
-    LaunchedEffect(usersViewsModels?.isUpdatingLocation) {
-        // Start location updates when the screen is opened
-        usersViewsModels?.startLocationUpdates(context)
+    EnableLocation(
+        context = context,
+        locationUpdateService = usersViewsModels.locationUpdateService,
+        onSuccess = {
+            if (!usersViewsModels.isUpdatingLocation) {
+                usersViewsModels.startLocationUpdates(context)
+            }
+        }
+    )
+
+    LaunchedEffect(usersViewsModels.isUpdatingLocation) {
+        usersViewsModels.startLocationUpdates(context)
     }
 
     DisposableEffect(Unit) {
         onDispose {
-            usersViewsModels?.stopLocationUpdates()
+            usersViewsModels.stopLocationUpdates()
         }
     }
 
@@ -264,7 +274,7 @@ fun ExplorarPreview() {
                 .background(color = Yellow)
         ) {
             item {
-                ExplorerScreen(navController)
+                //ExplorerScreen(navController)
             }
         }
     }

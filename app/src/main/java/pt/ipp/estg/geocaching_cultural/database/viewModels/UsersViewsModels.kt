@@ -24,7 +24,7 @@ import pt.ipp.estg.geocaching_cultural.services.SensorService
 class UsersViewsModels(application: Application) : AndroidViewModel(application) {
     private val _currentUserId = MutableLiveData<Int>()
     private val _currentUser = MediatorLiveData<User>()
-    private val locationUpdateService: LocationUpdateService
+     val locationUpdateService: LocationUpdateService
     private val sensorService: SensorService
     var isUpdatingLocation = false
 

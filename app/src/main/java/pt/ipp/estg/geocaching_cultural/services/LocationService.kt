@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.location.Address
@@ -11,16 +12,24 @@ import android.location.Geocoder
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
+import com.google.android.gms.location.SettingsClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -95,18 +104,12 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
         .setMinUpdateIntervalMillis(2500) // Fastest update every 5 seconds
         .build()
 
-
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val currentLocation: android.location.Location? = locationResult.lastLocation
-
-            Log.d(
-                "Location",
-                "${currentLocation?.latitude ?: 0} - ${currentLocation?.longitude ?: 0} "
-            )
+            
             // Now handle the location update as needed
             if (currentLocation != null) {
-                Log.e("Location", "To Update")
                 updateUserLocation(
                     application.applicationContext,
                     currentLocation.latitude,
@@ -139,7 +142,6 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
     }
 
     fun startLocationUpdates(context: Context) {
-        Log.e("Location", "Started Location Update")
         if (ActivityCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -148,7 +150,6 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            Log.e("Location", "Start Location Update Error")
             return
         }
 
@@ -162,8 +163,77 @@ class LocationUpdateService(application: Application, viewsModels: UsersViewsMod
     }
 
     fun stopLocationUpdates() {
-        Log.e("Location", "Stopped Location Update")
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    fun checkLocationSettings(
+        context: Context,
+        onSuccess: () -> Unit,
+        onFailure: (ResolvableApiException?) -> Unit
+    ) {
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest)
+
+        val client: SettingsClient = LocationServices.getSettingsClient(context)
+        val task = client.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+            onSuccess()
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                onFailure(exception)
+            } else {
+                onFailure(null)
+            }
+        }
+    }
+
+
+}
+
+@Composable
+fun EnableLocation(
+    context: Context,
+    locationUpdateService: LocationUpdateService,
+    onSuccess: () -> Unit
+) {
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                onSuccess()
+            } else {
+                Toast.makeText(context, "Location services are required.", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+
+    LaunchedEffect(Unit) {
+        locationUpdateService.checkLocationSettings(
+            context = context,
+            onSuccess = {
+                // If the location is already enabled, proceed
+                onSuccess()
+            },
+            onFailure = { resolvableException ->
+                resolvableException?.let {
+                    try {
+                        val intentSenderRequest =
+                            IntentSenderRequest.Builder(it.resolution).build()
+                        launcher.launch(intentSenderRequest)
+                    } catch (sendEx: IntentSender.SendIntentException) {
+                        Log.e("EnableLocation", "Error launching location dialog", sendEx)
+                    }
+                } ?: run {
+                    Toast.makeText(
+                        context,
+                        "Unable to resolve location settings.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        )
     }
 }
 
