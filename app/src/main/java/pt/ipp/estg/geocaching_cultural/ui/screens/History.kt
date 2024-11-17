@@ -50,6 +50,10 @@ fun HistoryScreen(navController: NavHostController, usersViewsModels: UsersViews
         Title(text = stringResource(R.string.geocache_history))
 
         if (geocachesFound != null) {
+            if(geocachesFound.geocachesFound.isEmpty()){
+                Text(stringResource(R.string.no_found_geocaches))
+            }
+
             Column {
                 geocachesFound.geocachesFound.forEach { geocache ->
                     Spacer(Modifier.padding(15.dp))
@@ -61,8 +65,8 @@ fun HistoryScreen(navController: NavHostController, usersViewsModels: UsersViews
                     )
                 }
             }
-        } else {
-            Text(stringResource(R.string.loading_history))
+        } else{
+            Text(stringResource(R.string.no_found_geocaches))
         }
     }
 }

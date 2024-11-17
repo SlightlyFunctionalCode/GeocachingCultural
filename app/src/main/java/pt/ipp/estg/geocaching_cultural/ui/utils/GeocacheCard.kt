@@ -43,40 +43,44 @@ fun GeocacheCard(
             .fillMaxHeight(0.50f)
             .background(shape = RoundedCornerShape(10.dp), color = White)
     ) {
-        if (points != null) {
-            Text(
-                text = "+$points",
-                textAlign = TextAlign.Center,
-                color = LightGray,
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .zIndex(1000f)
-                    .background(shape = RoundedCornerShape(10.dp), color = White)
-                    .padding(horizontal = 10.dp)
 
-            )
-        }
         Column(
             modifier = modifier
                 .fillMaxSize(0.85f)
                 .background(shape = RoundedCornerShape(10.dp), color = White)
-                .padding(25.dp)
-        )  {
-                Image(
-                    painter = BitmapPainter(image),
-                    contentDescription =  stringResource(R.string.geocache_image),
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(5.dp))
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.75f)
-                        .clip(RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp))
-                )
-            Column(Modifier.padding(28.dp)) {
-                Text(text = title, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+                .padding(vertical = 25.dp)
+        ) {
+            Box(
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                if (points != null) {
+                    Text(
+                        text = "+$points",
+                        textAlign = TextAlign.Center,
+                        color = LightGray,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .zIndex(1000f)
+                            .background(shape = RoundedCornerShape(10.dp), color = White)
+                            .padding(horizontal = 10.dp)
 
-                Text(text = description, color = LightGray)
+                    )
+                    Image(
+                        painter = BitmapPainter(image),
+                        contentDescription = stringResource(R.string.geocache_image),
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.75f)
+                            .clip(RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp))
+                    )
+                }
             }
+            VerticalSpacer()
+            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 28.sp)
+
+            Text(text = description, color = LightGray)
         }
     }
 }

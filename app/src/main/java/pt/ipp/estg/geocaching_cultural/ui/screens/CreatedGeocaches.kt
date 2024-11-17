@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -39,6 +40,9 @@ fun CreatedGeocachesScreen(navController: NavHostController, usersViewsModels: U
         Title(text = stringResource(R.string.created_geocaches))
 
         if (geocachesCreated != null) {
+            if(geocachesCreated.geocachesCreated.isEmpty()){
+                Text(stringResource(R.string.no_created_geocaches))
+            }
             Column {
                 geocachesCreated.geocachesCreated.forEach { geocache ->
                     VerticalSpacer()
@@ -51,6 +55,8 @@ fun CreatedGeocachesScreen(navController: NavHostController, usersViewsModels: U
                     )
                 }
             }
+        }else{
+            Text(stringResource(R.string.no_created_geocaches))
         }
     }
 }

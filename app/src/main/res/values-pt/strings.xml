@@ -92,4 +92,6 @@
     <string name="points">Pontos:</string>
     <string name="coins">Moedas</string>
     <string name="more_geocaches">+ Mais Geocaches</string>
+    <string name="no_created_geocaches">Não existem Geocaches Criados!</string>
+    <string name="no_found_geocaches">Ainda não encontraste nenhum geocache! Sente-te à vontade para procurar um.</string>
 </resources>

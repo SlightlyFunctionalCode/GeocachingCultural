@@ -11,7 +11,7 @@ fun Title(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
         fontWeight = FontWeight.Bold,
-        fontSize = 56.sp,
+        fontSize = 52.sp,
         lineHeight = 46.sp,
         modifier = modifier
     )

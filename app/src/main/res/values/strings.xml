@@ -94,4 +94,6 @@
     <string name="points">Points:</string>
     <string name="coins">Coins</string>
     <string name="more_geocaches">+ More Geocaches</string>
+    <string name="no_created_geocaches">There\'s no created Geocaches!</string>
+    <string name="no_found_geocaches">You have yet to find a geocache! Feel free to initiate one.</string>
 </resources>

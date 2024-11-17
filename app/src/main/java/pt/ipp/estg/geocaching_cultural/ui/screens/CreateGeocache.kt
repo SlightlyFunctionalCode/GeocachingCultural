@@ -292,6 +292,14 @@ fun LocationField(
         Text(text = stringResource(R.string.address))
         Spacer(Modifier.height(5.dp))
 
+        MyTextField(value = address, onValueChange = {
+            isEditing.value = true
+            onAddressChange(it)
+            fetchAddressSuggestions(it, placesClient) { newSuggestion ->
+                suggestions.value = newSuggestion
+            }
+        }, modifier = Modifier.fillMaxWidth())
+
         // Exibe sugestões de auto-complete
         if (isEditing.value && suggestions.value.isNotEmpty()) {
             LazyColumn(
@@ -305,7 +313,7 @@ fun LocationField(
                         .fillMaxWidth()
                         .clickable {
                             onAddressSelected(suggestion)
-                            suggestions.value = emptyList() // Limpar sugestões após selecionar
+                            suggestions.value = emptyList()
                         }
                         .padding(8.dp))
                 }
@@ -356,14 +364,14 @@ fun ChooseImage(images: List<ImageBitmap>, onImageSelected: (ImageBitmap) -> Uni
 @Preview
 @Composable
 fun CreateGeocacheScreenPreview() {
-    val context= LocalContext.current
+    val context = LocalContext.current
 
     val labelQuestions = listOf(
-            context.getString(R.string.question_5km),
-            context.getString(R.string.question_1km),
-            context.getString(R.string.question_500m),
-            context.getString(R.string.challenge_question),
-        )
+        context.getString(R.string.question_5km),
+        context.getString(R.string.question_1km),
+        context.getString(R.string.question_500m),
+        context.getString(R.string.challenge_question),
+    )
 
     // Estado para a categoria selecionada e localização
     val categorySelected = GeocacheType.HISTORICO
