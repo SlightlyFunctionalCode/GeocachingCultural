@@ -104,6 +104,7 @@ fun CreateGeocacheScreen(
 
     var buttonState by remember { mutableStateOf(false) }
 
+    /*TODO: Verificar se existe um geocache para o local que está-se a tentar criar um novo*/
     Column(
         modifier = Modifier
             .fillMaxSize()
