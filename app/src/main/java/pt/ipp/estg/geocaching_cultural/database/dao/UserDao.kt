@@ -3,7 +3,7 @@ package pt.ipp.estg.geocaching_cultural.database.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import pt.ipp.estg.geocaching_cultural.database.classes.User
-import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.classes.ChallengedGeocache
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesCreated
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesFound
 
@@ -19,7 +19,7 @@ interface UserDao {
     suspend fun deleteUser(user: User)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUserGeocacheFound(userGeocacheFound: UserGeocacheFoundCrossRef)
+    suspend fun insertChallengedGeocache(userGeocacheFound: ChallengedGeocache)
 
     @Query(
         "SELECT * FROM User U " +

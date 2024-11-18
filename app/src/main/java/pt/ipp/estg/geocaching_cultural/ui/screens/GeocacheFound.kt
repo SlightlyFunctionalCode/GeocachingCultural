@@ -24,7 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,10 +41,12 @@ import com.google.maps.android.compose.rememberMarkerState
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
-import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.classes.ChallengedGeocache
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
 import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
+import pt.ipp.estg.geocaching_cultural.ui.theme.White
+import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import java.time.LocalDateTime
 
 @Composable
@@ -55,22 +56,30 @@ fun GeocacheFoundScreen(
     geocacheViewsModels: GeocacheViewsModels
 ) {
     val userId by usersViewsModels.currentUserId.observeAsState()
-    val geocacheId = 2 // Esse ID deve vir de uma fonte dinâmica em vez de ser estático
-    val geocacheFound = UserGeocacheFoundCrossRef(userId!!, 1)
-    val geocache = geocacheViewsModels.getGeocache(geocacheFound.geocacheId).observeAsState().value
+    val geocacheId = 1 // Esse ID deve vir de uma fonte dinâmica em vez de ser estático
 
+    val geocacheCrossRef = ChallengedGeocache(userId!!, geocacheId, 312)
+    usersViewsModels.insertChallengedGeocache(geocacheCrossRef) /* TODO: isto deve ser feito quando um geocache é encontrado quando estiver implementado retirar daqui*/
+
+    val foundGeocache =
+        geocacheViewsModels.getChallengedGeocache(geocacheId, userId!!).observeAsState().value
+
+    val geocache =
+        geocacheViewsModels.getGeocache(foundGeocache?.challengedGeocacheId ?: 1)
+            .observeAsState().value
 
     if (geocache != null) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFFFFCC00)),
+                .background(color = Yellow),
             contentAlignment = Alignment.Center
         ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .padding(16.dp),
+                colors = CardDefaults.cardColors(containerColor = White),
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(8.dp)
             ) {
@@ -118,7 +127,7 @@ fun GeocacheFoundScreen(
                     )
 
                     Text(
-                        text = "Ganhou 5 pontos",
+                        text = "Ganhou ${foundGeocache?.points} pontos",
                         style = MaterialTheme.typography.bodyLarge,
                         color = Color.Black,
                         textAlign = TextAlign.Center
@@ -128,10 +137,11 @@ fun GeocacheFoundScreen(
 
                     Button(
                         onClick = {
-                            usersViewsModels.insertUserGeocacheFound(
-                                UserGeocacheFoundCrossRef(
+                            usersViewsModels.insertChallengedGeocache(
+                                ChallengedGeocache(
                                     userId!!,
-                                    geocacheId
+                                    geocacheId,
+                                    232
                                 )
                             )
                             navController.navigate("homeScreen")
@@ -273,7 +283,7 @@ fun GeocacheFoundScreenPreview() {
             }
             Image(
                 painter = BitmapPainter(map),
-                contentDescription =  stringResource(R.string.geocache_image),
+                contentDescription = stringResource(R.string.geocache_image),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)

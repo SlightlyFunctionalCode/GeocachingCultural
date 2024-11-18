@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocaching_cultural.database.AppDatabase
 import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
+import pt.ipp.estg.geocaching_cultural.database.classes.ChallengedGeocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
@@ -92,6 +93,13 @@ class GeocacheViewsModels(application: Application) : AndroidViewModel(applicati
 
     fun getGeocache(geocacheId: Int): LiveData<Geocache> {
         return repository.getGeocache(geocacheId)
+    }
+
+    fun getChallengedGeocache(
+        challengedGeocacheId: Int,
+        userId: Int
+    ): LiveData<ChallengedGeocache> {
+        return repository.getChallengedGeocache(challengedGeocacheId, userId)
     }
 
     fun getGeocacheWithHintsAndChallenges(geocacheId: Int): LiveData<GeocacheWithHintsAndChallenges> {

@@ -1,5 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,60 +13,75 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.android.libraries.places.api.Places
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
-import pt.ipp.estg.geocaching_cultural.database.classes.User
-import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.classes.ChallengedGeocache
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
+import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.GeocacheCard
 import pt.ipp.estg.geocaching_cultural.ui.utils.Title
-import pt.ipp.estg.geocaching_cultural.utils_api.fetchGeocacheImage
-import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
 import java.time.LocalDateTime
 
 @Composable
-fun HistoryScreen(navController: NavHostController, usersViewsModels: UsersViewsModels) {
+fun HistoryScreen(
+    navController: NavHostController,
+    usersViewsModels: UsersViewsModels,
+    geocacheViewsModels: GeocacheViewsModels
+) {
 
     val user by usersViewsModels.currentUserId.observeAsState()
 
-    val geocacheFound = UserGeocacheFoundCrossRef(user!!, 1)
-    usersViewsModels.insertUserGeocacheFound(geocacheFound) /* TODO: isto deve ser feito quando um geocache é encontrado quando estiver implementado retirar daqui*/
+    val geocacheCrossRef = ChallengedGeocache(user!!, 1, 123)
+    usersViewsModels.insertChallengedGeocache(geocacheCrossRef) /* TODO: isto deve ser feito quando um geocache é encontrado quando estiver implementado retirar daqui*/
 
     val geocachesFound =
-        user?.let { usersViewsModels.getUserWithGeocachesFound(it).observeAsState() }?.value
+        usersViewsModels.getUserWithGeocachesFound(user!!).observeAsState()
 
     Column(Modifier.padding(28.dp)) {
         Title(text = stringResource(R.string.geocache_history))
 
-        if (geocachesFound != null) {
-            if(geocachesFound.geocachesFound.isEmpty()){
+        if ( geocachesFound.value != null) {
+            Log.e("Geocache", geocachesFound.value!!.geocachesFound.isEmpty().toString())
+            Log.e("Geocache", geocachesFound.value!!.geocachesFound.count().toString())
+
+            if (geocachesFound.value!!.geocachesFound.isEmpty()) {
                 Text(stringResource(R.string.no_found_geocaches))
             }
 
             Column {
-                geocachesFound.geocachesFound.forEach { geocache ->
+                geocachesFound.value!!.geocachesFound.forEach { geocacheFound ->
+
+                    val geocache =
+                        geocacheViewsModels.getGeocache(
+                            geocacheFound.challengedGeocacheId,
+                        ).observeAsState()
+
+                    if (geocache.value == null) {
+                        Text(stringResource(R.string.error_try_later))
+                    }
+
                     Spacer(Modifier.padding(15.dp))
-                    GeocacheCard(
-                        title = geocache.name,
-                        description = geocache.address,
-                        points = 52, // valor fixo ou dinâmico
-                        image = geocache.image!!
-                    )
+                    geocache.value?.let {
+                        GeocacheCard(
+                            title = it.name,
+                            description = geocache.value!!.address,
+                            points = geocacheFound.points,
+                            image = geocache.value!!.image!!
+                        )
+                    }
                 }
             }
-        } else{
+        } else {
             Text(stringResource(R.string.no_found_geocaches))
         }
     }

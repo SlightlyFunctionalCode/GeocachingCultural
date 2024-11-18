@@ -7,7 +7,7 @@ import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
 import pt.ipp.estg.geocaching_cultural.database.classes.Notification
 import pt.ipp.estg.geocaching_cultural.database.classes.User
-import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.classes.ChallengedGeocache
 import pt.ipp.estg.geocaching_cultural.database.classes.converters.ImageBitMapConverter
 import pt.ipp.estg.geocaching_cultural.database.classes.converters.LocalDateTimeConverter
 import pt.ipp.estg.geocaching_cultural.database.dao.GeocacheDao
@@ -20,8 +20,8 @@ import pt.ipp.estg.geocaching_cultural.database.dao.UserDao
         Challenge::class,
         Hint::class,
         Notification::class,
-        UserGeocacheFoundCrossRef::class],
-    version = 9
+        ChallengedGeocache::class],
+    version = 10
 )
 @TypeConverters(LocalDateTimeConverter::class, ImageBitMapConverter::class)
 abstract class AppDatabase : RoomDatabase() {

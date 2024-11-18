@@ -48,7 +48,7 @@
     <string name="successful_register">Successful Sign-Up</string>
     <string name="trophy_icon">Trophy Icon</string>
     <string name="closest_geocaches">Closest Geocaches to Me</string>
-    <string name="error_try_later">We\'re sorry, a problem occured on our end.\\nPlease try again later!</string>
+    <string name="error_try_later">We\'re sorry, a problem occured on our end. Please try again later!</string>
     <string name="no_geocaches_in_10km">We\'re sorry, there\'s no geocaches in a 10Km radius!</string>
     <string name="no_hint">No hints available</string>
     <string name="update_profile_info">Update Profile Info</string>
@@ -67,7 +67,7 @@
     <string name="show_categories_icon">Show Categories Icon</string>
     <string name="geocache_not_found">Geocache Not Found</string>
     <string name="go_back">Back</string>
-    <string name="not_found_message">Unfortunately, you didn\'t get the challenge question right. \\You didn\'t get any points this time, but you can try again!</string>
+    <string name="not_found_message">We\'re sorry, a problem occured on our end. Please try again later!</string>
     <string name="question_5km">Question for 5Km</string>
     <string name="question_1km">Question for 1Km</string>
     <string name="question_500m">Question for 500m</string>

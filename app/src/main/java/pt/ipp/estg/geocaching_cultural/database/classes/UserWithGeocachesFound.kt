@@ -6,8 +6,8 @@ data class UserWithGeocachesFound(
     @Embedded val user: User,
     @Relation(
         parentColumn = "userId",
-        entityColumn = "geocacheId",
-        associateBy = Junction(UserGeocacheFoundCrossRef::class)
+        entityColumn = "challengedGeocacheId",
+        associateBy = Junction(ChallengedGeocache::class)
     )
-    val geocachesFound: List<Geocache>
+    val geocachesFound: List<ChallengedGeocache>
 )

@@ -3,6 +3,7 @@ package pt.ipp.estg.geocaching_cultural.database.repositories
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
+import pt.ipp.estg.geocaching_cultural.database.classes.ChallengedGeocache
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
 import pt.ipp.estg.geocaching_cultural.database.classes.GeocacheWithHintsAndChallenges
 import pt.ipp.estg.geocaching_cultural.database.classes.Hint
@@ -51,6 +52,13 @@ class GeocacheRepository(val geocacheDao: GeocacheDao) {
 
     fun getGeocache(geocacheId: Int): LiveData<Geocache> {
         return geocacheDao.getGeocache(geocacheId)
+    }
+
+    fun getChallengedGeocache(
+        challengedGeocacheId: Int,
+        userId: Int
+    ): LiveData<ChallengedGeocache> {
+        return geocacheDao.getChallengedGeocache(challengedGeocacheId, userId)
     }
 
     fun getGeocacheWithHintsAndChallenges(geocacheId: Int): LiveData<GeocacheWithHintsAndChallenges> {

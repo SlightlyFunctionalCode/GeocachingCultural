@@ -2,7 +2,7 @@ package pt.ipp.estg.geocaching_cultural.database.repositories
 
 import androidx.lifecycle.LiveData
 import pt.ipp.estg.geocaching_cultural.database.classes.User
-import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.classes.ChallengedGeocache
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesCreated
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesFound
 import pt.ipp.estg.geocaching_cultural.database.dao.UserDao
@@ -47,7 +47,7 @@ class UserRepository(val userDao: UserDao /*val restAPI: BookAPI*/) {
         userDao.deleteUser(user)
     }
 
-    suspend fun insertUserGeocacheFound(userGeocacheFound: UserGeocacheFoundCrossRef) {
-        userDao.insertUserGeocacheFound(userGeocacheFound)
+    suspend fun insertChallengedGeocache(challengedGeocache: ChallengedGeocache) {
+        userDao.insertChallengedGeocache(challengedGeocache)
     }
 }

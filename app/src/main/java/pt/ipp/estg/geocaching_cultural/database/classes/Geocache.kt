@@ -15,9 +15,5 @@ data class Geocache(
     val image: ImageBitmap?,
     val createdAt: LocalDateTime,
     val createdBy: Int,
-){
-    override fun toString(): String {
-        return "Geocache(id=$geocacheId, name=$name, type=$type, createdAt=$createdAt, createdBy=$createdBy)"
-    }
-}
+)
 

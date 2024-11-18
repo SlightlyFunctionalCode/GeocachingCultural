@@ -312,7 +312,13 @@ fun MyScaffoldContent(
                 usersViewsModels
             )
         }
-        composable("historyScreen") { HistoryScreen(navController, usersViewsModels) }
+        composable("historyScreen") {
+            HistoryScreen(
+                navController,
+                usersViewsModels,
+                geocacheViewsModels
+            )
+        }
         composable("activeGeocacheScreen") {
             ActiveGeocacheScreen(
                 navController,

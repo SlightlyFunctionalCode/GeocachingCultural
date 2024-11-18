@@ -14,7 +14,7 @@ import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.AppDatabase
 import pt.ipp.estg.geocaching_cultural.database.classes.Location
 import pt.ipp.estg.geocaching_cultural.database.classes.User
-import pt.ipp.estg.geocaching_cultural.database.classes.UserGeocacheFoundCrossRef
+import pt.ipp.estg.geocaching_cultural.database.classes.ChallengedGeocache
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesCreated
 import pt.ipp.estg.geocaching_cultural.database.classes.UserWithGeocachesFound
 import pt.ipp.estg.geocaching_cultural.database.repositories.UserRepository
@@ -119,9 +119,9 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun insertUserGeocacheFound(userGeocacheFound: UserGeocacheFoundCrossRef) {
+    fun insertChallengedGeocache(challengedGeocache: ChallengedGeocache) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertUserGeocacheFound(userGeocacheFound)
+            repository.insertChallengedGeocache(challengedGeocache)
         }
     }
 
