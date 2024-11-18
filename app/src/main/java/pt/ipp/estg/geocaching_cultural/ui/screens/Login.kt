@@ -40,6 +40,7 @@ import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
+import pt.ipp.estg.geocaching_cultural.ui.utils.ExternalLogin
 import pt.ipp.estg.geocaching_cultural.ui.utils.LargeVerticalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
@@ -135,6 +136,11 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
                 )
                 supportingTextPassword =
                     if (!isPasswordValid) stringResource(R.string.password_error_message) else ""
+            }
+
+            item {
+                VerticalSpacer()
+                ExternalLogin()
             }
 
             buttonState = isPasswordValid &&

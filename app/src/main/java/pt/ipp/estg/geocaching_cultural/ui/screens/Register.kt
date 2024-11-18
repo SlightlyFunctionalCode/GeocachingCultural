@@ -48,6 +48,7 @@ import pt.ipp.estg.geocaching_cultural.database.viewModels.UsersViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.theme.Pink
 import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
+import pt.ipp.estg.geocaching_cultural.ui.utils.ExternalLogin
 import pt.ipp.estg.geocaching_cultural.ui.utils.LargeVerticalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
@@ -223,29 +224,7 @@ fun RegisterScreen(
             /* TODO: add firebase autentication */
             item {
                 VerticalSpacer()
-                Row {
-                    IconButton({}) {
-                        Image(
-                            painter = painterResource(id = R.drawable.facebook),
-                            contentDescription = stringResource(R.string.open_login_icons),
-                            modifier = Modifier.size(54.dp)
-                        )
-                    }
-                    IconButton({}) {
-                        Image(
-                            painter = painterResource(id = R.drawable.facebook),
-                            contentDescription = stringResource(R.string.open_login_icons),
-                            modifier = Modifier.size(54.dp)
-                        )
-                    }
-                    IconButton({}) {
-                        Image(
-                            painter = painterResource(id = R.drawable.facebook),
-                            contentDescription = stringResource(R.string.open_login_icons),
-                            modifier = Modifier.size(54.dp)
-                        )
-                    }
-                }
+                ExternalLogin()
             }
 
             buttonState = isNameValid &&
