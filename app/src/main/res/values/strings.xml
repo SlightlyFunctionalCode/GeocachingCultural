@@ -100,4 +100,9 @@
     <string name="confirm_delete_message">Are you sure you want to delete your Account? This is an irreversible action!</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="name_geocache">Name</string>
+    <string name="hint_invalid">The field hint is required</string>
+    <string name="question_invalid">The field question is required</string>
+    <string name="answer_invalid">The field answer is required</string>
+    <string name="address_invalid">The field answer is required</string>
 </resources>

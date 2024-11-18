@@ -98,4 +98,9 @@
     <string name="confirm_delete_message">Tens a certeza que queres eliminar a tua conta? Isto é uma ação irreversível!</string>
     <string name="confirm">Confirmar</string>
     <string name="cancel">Cancelar</string>
+    <string name="name_geocache">Nome</string>
+    <string name="hint_invalid">A dica é obrigatório</string>
+    <string name="question_invalid">A pergunta é obrigatória</string>
+    <string name="answer_invalid">A resposta é obrigatória</string>
+    <string name="address_invalid">O endereço é obrigatório</string>
 </resources>
