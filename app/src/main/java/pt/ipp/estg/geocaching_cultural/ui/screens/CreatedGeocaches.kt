@@ -40,7 +40,7 @@ fun CreatedGeocachesScreen(navController: NavHostController, usersViewsModels: U
         Title(text = stringResource(R.string.created_geocaches))
 
         if (geocachesCreated != null) {
-            if(geocachesCreated.geocachesCreated.isEmpty()){
+            if (geocachesCreated.geocachesCreated.isEmpty()) {
                 Text(stringResource(R.string.no_created_geocaches))
             }
             Column {
@@ -55,7 +55,7 @@ fun CreatedGeocachesScreen(navController: NavHostController, usersViewsModels: U
                     )
                 }
             }
-        }else{
+        } else {
             Text(stringResource(R.string.no_created_geocaches))
         }
     }

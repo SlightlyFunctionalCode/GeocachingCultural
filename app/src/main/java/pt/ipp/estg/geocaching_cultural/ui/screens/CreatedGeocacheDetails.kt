@@ -3,6 +3,7 @@ package pt.ipp.estg.geocaching_cultural.ui.screens
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -68,97 +69,105 @@ fun CreatedGeocacheDetailsScreen(
 
     val context = LocalContext.current
 
-    if (geocache != null) {
-        data class QuestionAndAnswer(val label: String, val question: String, val answer: String)
+    Column(Modifier.padding(top = 28.dp, start = 28.dp, end = 28.dp, bottom = 0.dp)) {
 
-        val questions = remember {
-            mutableStateListOf(
-                QuestionAndAnswer(
-                    context.getString(R.string.question_5km),
-                    geocache!!.challenges[0].question,
-                    geocache!!.challenges[0].correctAnswer
-                ),
-                QuestionAndAnswer(
-                    context.getString(R.string.question_1km),
-                    geocache!!.challenges[1].question,
-                    geocache!!.challenges[1].correctAnswer
-                ),
-                QuestionAndAnswer(
-                    context.getString(R.string.question_500m),
-                    geocache!!.challenges[2].question,
-                    geocache!!.challenges[2].correctAnswer
-                ),
-                QuestionAndAnswer(
-                    context.getString(R.string.challenge_question),
-                    geocache!!.challenges[3].question,
-                    geocache!!.challenges[3].correctAnswer
-                )
+        if (geocache != null) {
+            data class QuestionAndAnswer(
+                val label: String,
+                val question: String,
+                val answer: String
             )
-        }
 
-        val geocacheType = remember { mutableStateOf(geocache!!.geocache.type) }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1000.dp)
-        ) {
-            item {
-                Title(text = stringResource(R.string.geocache_details))
-                Column {
-                    VerticalSpacer()
-
-                    Text(
-                        text = stringResource(R.string.hints),
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
+            val questions = remember {
+                mutableStateListOf(
+                    QuestionAndAnswer(
+                        context.getString(R.string.question_5km),
+                        geocache!!.challenges[0].question,
+                        geocache!!.challenges[0].correctAnswer
+                    ),
+                    QuestionAndAnswer(
+                        context.getString(R.string.question_1km),
+                        geocache!!.challenges[1].question,
+                        geocache!!.challenges[1].correctAnswer
+                    ),
+                    QuestionAndAnswer(
+                        context.getString(R.string.question_500m),
+                        geocache!!.challenges[2].question,
+                        geocache!!.challenges[2].correctAnswer
+                    ),
+                    QuestionAndAnswer(
+                        context.getString(R.string.challenge_question),
+                        geocache!!.challenges[3].question,
+                        geocache!!.challenges[3].correctAnswer
                     )
-                    geocache!!.hints.forEachIndexed { index, hint ->
-                        HintItem("${stringResource(R.string.hint)} ${index + 1}", hint.hint)
-                        SmallVerticalSpacer()
-                    }
+                )
+            }
 
-                    VerticalSpacer()
+            val geocacheType = remember { mutableStateOf(geocache!!.geocache.type) }
 
-                    Text(
-                        text = stringResource(R.string.challenges),
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    for (questionAndAnswer in questions) {
-                        QuestionItem(
-                            questionAndAnswer.label,
-                            questionAndAnswer.question,
-                            questionAndAnswer.answer
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1000.dp)
+            ) {
+                item {
+                    Title(text = stringResource(R.string.geocache_details))
+                    Column {
+                        VerticalSpacer()
+
+                        Text(
+                            text = stringResource(R.string.hints),
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold
                         )
-                        SmallVerticalSpacer()
-                    }
+                        geocache!!.hints.forEachIndexed { index, hint ->
+                            HintItem("${stringResource(R.string.hint)} ${index + 1}", hint.hint)
+                            SmallVerticalSpacer()
+                        }
 
+                        VerticalSpacer()
+
+                        Text(
+                            text = stringResource(R.string.challenges),
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        for (questionAndAnswer in questions) {
+                            QuestionItem(
+                                questionAndAnswer.label,
+                                questionAndAnswer.question,
+                                questionAndAnswer.answer
+                            )
+                            SmallVerticalSpacer()
+                        }
+
+                        VerticalSpacer()
+                    }
+                }
+                item {
+                    Text(
+                        text = stringResource(R.string.location),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    SmallHorizontalSpacer()
+                    LocationItem(geocache!!.geocache.address)
+
+                    VerticalSpacer()
+
+                    Text(
+                        text = stringResource(R.string.geocache_type),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    SmallHorizontalSpacer()
+                    CategoryItem(geocacheType.value)
                     VerticalSpacer()
                 }
             }
-            item {
-                Text(
-                    text = stringResource(R.string.location),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                SmallHorizontalSpacer()
-                LocationItem(geocache!!.geocache.address)
-
-                VerticalSpacer()
-
-                Text(
-                    text = stringResource(R.string.geocache_type),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                SmallHorizontalSpacer()
-                CategoryItem(geocacheType.value)
-            }
+        } else {
+            Text(stringResource(R.string.loading_geocache_info))
         }
-    } else {
-        Text(stringResource(R.string.loading_geocache_info))
     }
 }
 
@@ -244,8 +253,14 @@ fun CategoryItem(category: GeocacheType) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                imageVector = Icons.Filled.Menu,
-                contentDescription = stringResource(R.string.show_categories_icon)
+                painter = when (category) {
+                    GeocacheType.GASTRONOMIA -> painterResource(R.drawable.gastronomia)
+                    GeocacheType.CULTURAL -> painterResource(R.drawable.cultural)
+                    GeocacheType.HISTORICO -> painterResource(R.drawable.historico)
+                },
+                contentDescription = stringResource(R.string.show_categories_icon),
+                modifier = Modifier
+                    .size(24.dp)
             )
             SmallHorizontalSpacer()
             Text(text = category.name)

@@ -63,19 +63,18 @@ fun GeocacheCard(
                             .zIndex(1000f)
                             .background(shape = RoundedCornerShape(10.dp), color = White)
                             .padding(horizontal = 10.dp)
-
-                    )
-                    Image(
-                        painter = BitmapPainter(image),
-                        contentDescription = stringResource(R.string.geocache_image),
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(5.dp))
-                            .fillMaxWidth()
-                            .fillMaxHeight(0.75f)
-                            .clip(RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp))
                     )
                 }
+                Image(
+                    painter = BitmapPainter(image),
+                    contentDescription = stringResource(R.string.geocache_image),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(5.dp))
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.75f)
+                        .clip(RoundedCornerShape(10.dp, 10.dp, 0.dp, 0.dp))
+                )
             }
             VerticalSpacer()
             Text(text = title, fontWeight = FontWeight.Bold, fontSize = 28.sp)
