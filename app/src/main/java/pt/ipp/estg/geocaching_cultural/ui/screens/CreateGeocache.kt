@@ -112,7 +112,12 @@ fun CreateGeocacheScreen(
         Text(text = stringResource(R.string.name_geocache))
         MyTextField(value = name, onValueChange = { name = it; isNameValid = it.isNotBlank() },
             isError = !isNameValid,
-            supportingText = { Text(text = if (!isNameValid) stringResource(R.string.name_error_message) else "", color = Pink) })
+            supportingText = {
+                Text(
+                    text = if (!isNameValid) stringResource(R.string.name_error_message) else "",
+                    color = Pink
+                )
+            })
 
         hints.forEachIndexed { index, hint ->
             LabelHint(text = "${stringResource(R.string.hint)} ${index + 1}",
@@ -120,8 +125,12 @@ fun CreateGeocacheScreen(
                 onRemoveClick = { hints.removeAt(index) },
                 onValueChange = { hints[index] = it; isHintValid = it.isNotBlank() },
                 isError = !isHintValid,
-                supportingText = { Text(text =
-                if (!isHintValid) stringResource(R.string.hint_invalid) else "", color = Pink)
+                supportingText = {
+                    Text(
+                        text =
+                        if (!isHintValid) stringResource(R.string.hint_invalid) else "",
+                        color = Pink
+                    )
                 })
             Spacer(Modifier.padding(5.dp))
         }
@@ -139,9 +148,19 @@ fun CreateGeocacheScreen(
                 onAnswerChange = { answers[index] = it },
                 isErrorQuestion = !isQuestionValid,
                 isErrorAnswer = !isAnswerValid,
-                supportingTextQuestion = { Text(text = if (!isQuestionValid) stringResource(R.string.question_invalid) else "", color = Pink) },
-                supportingTextAnswer = { Text(text = if (!isAnswerValid) stringResource(R.string.answer_invalid) else "", color = Pink) }
-                )
+                supportingTextQuestion = {
+                    Text(
+                        text = if (!isQuestionValid) stringResource(R.string.question_invalid) else "",
+                        color = Pink
+                    )
+                },
+                supportingTextAnswer = {
+                    Text(
+                        text = if (!isAnswerValid) stringResource(R.string.answer_invalid) else "",
+                        color = Pink
+                    )
+                }
+            )
             Spacer(Modifier.padding(5.dp))
         }
         Text(stringResource(R.string.geocache_type))
@@ -164,7 +183,12 @@ fun CreateGeocacheScreen(
                 longitude = place.latLng?.longitude ?: 0.0
             },
             isError = !isAddressValid,
-            supportingText = { Text(text = if (!isAddressValid) stringResource(R.string.address_invalid) else "", color = Pink) }
+            supportingText = {
+                Text(
+                    text = if (!isAddressValid) stringResource(R.string.address_invalid) else "",
+                    color = Pink
+                )
+            }
         )
 
         Spacer(Modifier.height(16.dp))
@@ -177,60 +201,68 @@ fun CreateGeocacheScreen(
             }
         }
 
+        var isHintsEmpty = hints.any { it == "" }
+        var isQuestionsEmpty = hints.any { it == "" }
+        var isAnswersEmpty = hints.any { it == "" }
+
         buttonState = isNameValid &&
                 isHintValid &&
                 isQuestionValid &&
                 isAnswerValid &&
-                isAddressValid
-
+                isAddressValid &&
+                name != "" &&
+                !isHintsEmpty &&
+                !isQuestionsEmpty &&
+                !isAnswersEmpty &&
+                address != ""
         Spacer(Modifier.height(16.dp))
 
         MyTextButton(text = stringResource(R.string.submit),
             enabled = buttonState,
             onClick = { // Criar um novo Geocache
-            val geocache = Geocache(
-                geocacheId = 0,
-                address = address,
-                location = Location(
-                    lat = latitude,
-                    lng = longitude,
-                ),
-                type = categorySelected,
-                name = name,
-                image = selectedImage!!,
-                createdAt = LocalDateTime.now(),
-                createdBy = usersViewModel.currentUser.value?.userId ?: 0
-            )
+                val geocache = Geocache(
+                    geocacheId = 0,
+                    address = address,
+                    location = Location(
+                        lat = latitude,
+                        lng = longitude,
+                    ),
+                    type = categorySelected,
+                    name = name,
+                    image = selectedImage!!,
+                    createdAt = LocalDateTime.now(),
+                    createdBy = usersViewModel.currentUser.value?.userId ?: 0
+                )
 
-            var geocacheId = 0
-            geocacheViewsModels.insertGeocache(geocache).observeForever { id ->
-                geocacheId = id.toInt()
+                var geocacheId = 0
+                geocacheViewsModels.insertGeocache(geocache).observeForever { id ->
+                    geocacheId = id.toInt()
 
-                // associar as hints com o geocacheId
-                hints.forEach { hint ->
-                    if (hints.isNotEmpty()) {
-                        val newHint = Hint(0, geocacheId, hint)
-                        geocacheViewsModels.insertHint(newHint)
+                    // associar as hints com o geocacheId
+                    hints.forEach { hint ->
+                        if (hints.isNotEmpty()) {
+                            val newHint = Hint(0, geocacheId, hint)
+                            geocacheViewsModels.insertHint(newHint)
+                        }
+                    }
+
+                    // associar as challenges com o geocacheId
+                    questions.forEachIndexed { index, quest ->
+                        if (questions.isNotEmpty()) {
+                            val newChallenge = Challenge(
+                                challengeId = 0,
+                                geocacheId = geocacheId,
+                                question = quest,
+                                correctAnswer = answers[index],
+                                pointsAwarded = 0
+                            )
+                            geocacheViewsModels.insertChallenge(newChallenge)
+                        }
                     }
                 }
 
-                // associar as challenges com o geocacheId
-                questions.forEachIndexed { index, quest ->
-                    if (questions.isNotEmpty()) {
-                        val newChallenge = Challenge(
-                            challengeId = 0,
-                            geocacheId = geocacheId,
-                            question = quest,
-                            correctAnswer = answers[index],
-                            pointsAwarded = 0
-                        )
-                        geocacheViewsModels.insertChallenge(newChallenge)
-                    }
-                }
-            }
-
-            navController.navigate("homeScreen")
-        })
+                navController.navigate("homeScreen")
+            })
     }
 }
 
@@ -253,7 +285,12 @@ fun LabelHint(
         Spacer(Modifier.padding(5.dp))
         // Exibe o botão de remoção apenas se a dica for removível
         Row(verticalAlignment = Alignment.CenterVertically) {
-            MyTextField(value = hint, onValueChange = onValueChange, isError = isError, supportingText = supportingText)
+            MyTextField(
+                value = hint,
+                onValueChange = onValueChange,
+                isError = isError,
+                supportingText = supportingText
+            )
             if (isRemovable) {
                 Spacer(Modifier.width(8.dp))
                 IconButton(onClick = onRemoveClick) {
@@ -284,7 +321,12 @@ fun LabelQuestion(
     Column {
         Text(text = "$text:")
         Spacer(Modifier.padding(5.dp))
-        MyTextField(value = quest, onValueChange = onQuestChange, isError = isErrorQuestion, supportingText = supportingTextQuestion)
+        MyTextField(
+            value = quest,
+            onValueChange = onQuestChange,
+            isError = isErrorQuestion,
+            supportingText = supportingTextQuestion
+        )
         Spacer(Modifier.padding(5.dp))
         Text(stringResource(R.string.add_answer))
         Spacer(Modifier.padding(5.dp))
@@ -318,13 +360,14 @@ fun LocationField(
         Text(text = stringResource(R.string.address))
         Spacer(Modifier.height(5.dp))
 
-        MyTextField(value = address, onValueChange = {
-            isEditing.value = true
-            onAddressChange(it)
-            fetchPlaceSuggestions(it, placesClient) { newSuggestions ->
-                suggestions.value = newSuggestions
-            }
-        }, modifier = Modifier.fillMaxWidth(),
+        MyTextField(
+            value = address, onValueChange = {
+                isEditing.value = true
+                onAddressChange(it)
+                fetchPlaceSuggestions(it, placesClient) { newSuggestions ->
+                    suggestions.value = newSuggestions
+                }
+            }, modifier = Modifier.fillMaxWidth(),
             isError = isError,
             supportingText = supportingText
         )
