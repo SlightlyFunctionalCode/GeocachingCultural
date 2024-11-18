@@ -80,7 +80,7 @@
     <string name="loading_geocache_info">Loading Geocache Data...</string>
     <string name="answer_question">Answer:</string>
     <string name="hint_icon">Hint Icon</string>
-    <string name="address">Adress:</string>
+    <string name="address">Address:</string>
     <string name="location_icon">Location Icon</string>
     <string name="add_hint">Add Hint</string>
     <string name="choose_image">Choose an Image:</string>
@@ -90,7 +90,7 @@
     <string name="congratulations">Congratulations!!!</string>
     <string name="answer_label">Answer</string>
     <string name="add_answer">Please introduce an answer:</string>
-    <string name="add_adress">Insert adress</string>
+    <string name="add_place">Insert place</string>
     <string name="points">Points:</string>
     <string name="coins">Coins</string>
     <string name="more_geocaches">+ More Geocaches</string>

@@ -88,7 +88,7 @@
     <string name="congratulations">Parabéns!!!</string>
     <string name="answer_label">Resposta</string>
     <string name="add_answer">Por favor introduza uma resposta:</string>
-    <string name="add_adress">Introduza a morada</string>
+    <string name="add_place">Introduza um local</string>
     <string name="points">Pontos:</string>
     <string name="coins">Moedas</string>
     <string name="more_geocaches">+ Mais Geocaches</string>

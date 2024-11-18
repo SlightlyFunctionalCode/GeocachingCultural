@@ -1,6 +1,5 @@
 package pt.ipp.estg.geocaching_cultural.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,11 +45,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.google.android.libraries.places.api.Places
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.google.android.libraries.places.api.model.AutocompletePrediction
+import com.google.android.libraries.places.api.model.Place
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.Challenge
 import pt.ipp.estg.geocaching_cultural.database.classes.Geocache
@@ -66,9 +63,9 @@ import pt.ipp.estg.geocaching_cultural.ui.theme.Yellow
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
 import java.time.LocalDateTime
-import pt.ipp.estg.geocaching_cultural.utils_api.fetchAddressSuggestions
-import pt.ipp.estg.geocaching_cultural.utils_api.fetchCoordinatesFromAddress
 import pt.ipp.estg.geocaching_cultural.utils_api.fetchGeocachesImages
+import pt.ipp.estg.geocaching_cultural.utils_api.fetchPlaceDetails
+import pt.ipp.estg.geocaching_cultural.utils_api.fetchPlaceSuggestions
 import pt.ipp.estg.geocaching_cultural.utils_api.getApiKey
 
 @Composable
@@ -158,31 +155,17 @@ fun CreateGeocacheScreen(
         Spacer(Modifier.height(16.dp))
 
         // Campo para Localização
-        LocationField(address = address,
+        LocationField(
+            address = address,
             onAddressChange = { address = it; isAddressValid = it.isNotBlank() },
-            onAddressSelected = { selectedAddress ->
-                address = selectedAddress
-                val apiKey = getApiKey(context)
-                CoroutineScope(Dispatchers.Main).launch {
-                    if (apiKey != null) {
-                        val coordinates = fetchCoordinatesFromAddress(selectedAddress, apiKey)
-
-                        if (coordinates?.first != null && coordinates.second != null) {
-                            latitude = coordinates.first!!
-                            longitude = coordinates.second!!
-                        } else {
-                            Log.e(
-                                "Geocoding", "Falha ao obter coordenadas para o endereço fornecido"
-                            )
-                        }
-                    } else {
-                        Log.e("Geocoding", "Chave de API não encontrada")
-                    }
-                }
+            onPlaceSelected = { place ->
+                address = place.address ?: ""
+                latitude = place.latLng?.latitude ?: 0.0
+                longitude = place.latLng?.longitude ?: 0.0
             },
             isError = !isAddressValid,
-            supportingText = { Text(text = if (!isAddressValid) stringResource(R.string.address_invalid) else "", color = Pink) })
-
+            supportingText = { Text(text = if (!isAddressValid) stringResource(R.string.address_invalid) else "", color = Pink) }
+        )
 
         Spacer(Modifier.height(16.dp))
         val images = fetchGeocachesImages(latitude, longitude, context)
@@ -319,7 +302,7 @@ fun LabelQuestion(
 fun LocationField(
     address: String,
     onAddressChange: (String) -> Unit,
-    onAddressSelected: (String) -> Unit,
+    onPlaceSelected: (Place) -> Unit,
     isError: Boolean = false,
     supportingText: @Composable () -> Unit = {},
 ) {
@@ -328,7 +311,7 @@ fun LocationField(
     getApiKey(context)?.let { Places.initialize(context, it) }
 
     val placesClient = remember { Places.createClient(context) }
-    val suggestions = remember { mutableStateOf<List<String>>(emptyList()) }
+    val suggestions = remember { mutableStateOf<List<AutocompletePrediction>>(emptyList()) }
     val isEditing = remember { mutableStateOf(false) }
 
     Column {
@@ -338,8 +321,8 @@ fun LocationField(
         MyTextField(value = address, onValueChange = {
             isEditing.value = true
             onAddressChange(it)
-            fetchAddressSuggestions(it, placesClient) { newSuggestion ->
-                suggestions.value = newSuggestion
+            fetchPlaceSuggestions(it, placesClient) { newSuggestions ->
+                suggestions.value = newSuggestions
             }
         }, modifier = Modifier.fillMaxWidth(),
             isError = isError,
@@ -355,10 +338,13 @@ fun LocationField(
                     .height(200.dp)
             ) {
                 items(suggestions.value) { suggestion ->
-                    Text(text = suggestion, modifier = Modifier
+                    Text(text = suggestion.getFullText(null).toString(), modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            onAddressSelected(suggestion)
+                            // Buscar os detalhes do local selecionado
+                            fetchPlaceDetails(suggestion.placeId, placesClient) { place ->
+                                onPlaceSelected(place)
+                            }
                             suggestions.value = emptyList()
                         }
                         .padding(8.dp))
@@ -481,7 +467,7 @@ fun CreateGeocacheScreenPreview() {
                         MyTextField(value = address,
                             onValueChange = {},
                             modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text(stringResource(R.string.add_adress)) })
+                            placeholder = { Text(stringResource(R.string.add_place)) })
 
                         LazyColumn(
                             modifier = Modifier
