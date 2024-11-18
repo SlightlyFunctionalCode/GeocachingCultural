@@ -94,4 +94,8 @@
     <string name="more_geocaches">+ Mais Geocaches</string>
     <string name="no_created_geocaches">Não existem Geocaches Criados!</string>
     <string name="no_found_geocaches">Ainda não encontraste nenhum geocache! Sente-te à vontade para procurar um.</string>
+    <string name="confirm_delete">Confirmar a Eliminação</string>
+    <string name="confirm_delete_message">Tens a certeza que queres eliminar a tua conta? Isto é uma ação irreversível!</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
 </resources>

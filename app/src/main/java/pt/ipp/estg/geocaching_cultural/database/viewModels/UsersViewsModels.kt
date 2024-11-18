@@ -141,14 +141,19 @@ class UsersViewsModels(application: Application) : AndroidViewModel(application)
     }
 
     // Save and update the current user ID in both LiveData and SharedPreferences
-    fun saveCurrentUserId(userId: Int) {
+    fun saveCurrentUserId(userId: Int, onComplete: (() -> Unit)? = null) {
         _currentUserId.postValue(userId)  // Use postValue for thread-safety
         saveCurrentUserIdToPreferences(userId) // Save to SharedPreferences
 
         viewModelScope.launch(Dispatchers.IO) {
             _currentUser.postValue(repository.getUser(userId).value)
+            // Invoke the callback after completion
+            withContext(Dispatchers.Main) {
+                onComplete?.invoke()
+            }
         }
     }
+
 
     // Helper functions for SharedPreferences
     private fun saveCurrentUserIdToPreferences(userId: Int) {

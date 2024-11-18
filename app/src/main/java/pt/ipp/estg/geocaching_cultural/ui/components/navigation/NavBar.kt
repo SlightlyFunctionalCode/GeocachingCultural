@@ -344,13 +344,11 @@ fun MyScaffoldContent(
         }
         composable("logout") {
             LaunchedEffect(Unit) {
-                usersViewsModels.saveCurrentUserId(-1)
-
-                delay(2000)
-
-                navController.navigate("aboutUsScreen") {
-                    popUpTo(navController.graph.startDestinationId) {
-                        inclusive = true
+                usersViewsModels.saveCurrentUserId(-1) {
+                    navController.navigate("aboutUsScreen") {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
                     }
                 }
             }
