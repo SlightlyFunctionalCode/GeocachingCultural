@@ -63,10 +63,6 @@ fun LoginScreen(navController: NavHostController, usersViewsModels: UsersViewsMo
 
     val context = LocalContext.current
 
-    if (usersViewsModels.currentUserId.value != -1) {
-        navController.navigate("homeScreen")
-    }
-
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,

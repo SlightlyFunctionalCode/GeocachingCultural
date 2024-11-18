@@ -2,7 +2,6 @@ package pt.ipp.estg.geocaching_cultural.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import pt.ipp.estg.geocaching_cultural.R
-import pt.ipp.estg.geocaching_cultural.database.viewModels.GeocacheViewsModels
 import pt.ipp.estg.geocaching_cultural.ui.theme.Geocaching_CulturalTheme
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextButton
 import pt.ipp.estg.geocaching_cultural.ui.utils.MyTextField
@@ -37,10 +35,14 @@ import pt.ipp.estg.geocaching_cultural.ui.utils.SmallVerticalSpacer
 import pt.ipp.estg.geocaching_cultural.ui.utils.VerticalSpacer
 
 @Composable
-fun AboutUsScreen(navController: NavHostController) {
+fun AboutUsScreen(navController: NavHostController, currentUserId: Int?) {
     var answerEmail by remember { mutableStateOf("") }
     var isEmailValid by remember { mutableStateOf(true) }
     var supportingTextEmail by remember { mutableStateOf("") }
+
+    if (currentUserId != null && currentUserId != -1) {
+        navController.navigate("homeScreen")
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -118,7 +120,7 @@ fun HomePreview() {
                 .fillMaxSize()
                 .background(color = Yellow)
         ) {
-            AboutUsScreen(navController)
+            AboutUsScreen(navController, 1)
         }
     }
 }

@@ -48,7 +48,7 @@ fun ProfileScreen(navController: NavHostController, usersViewsModels: UsersViews
             ) {
                 Title(text = stringResource(R.string.profile), modifier = Modifier.weight(1.25f))
                 HorizontalSpacer()
-                PointsDisplay(points = user.points, modifier = Modifier.weight(1f))
+                PointsDisplay(points = user.points, modifier = Modifier.weight(0.75f))
             }
 
             VerticalSpacer()
@@ -70,6 +70,8 @@ fun ProfileScreen(navController: NavHostController, usersViewsModels: UsersViews
                 VerticalSpacer()
                 Text(text = stringResource(R.string.extra_actions), fontSize = 24.sp, color = Pink)
                 Row(verticalAlignment = Alignment.CenterVertically) {
+
+                    /*TODO: Abrir um popup de alerta */
                     MyTextButton(
                         text = stringResource(R.string.delete_profile),
                         onClick = {

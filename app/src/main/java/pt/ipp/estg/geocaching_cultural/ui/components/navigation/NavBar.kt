@@ -1,7 +1,6 @@
 package pt.ipp.estg.geocaching_cultural.ui.components.navigation
 
 import android.content.Context
-import android.graphics.drawable.VectorDrawable
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
@@ -43,7 +41,6 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -52,14 +49,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -71,8 +64,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pt.ipp.estg.geocaching_cultural.R
 import pt.ipp.estg.geocaching_cultural.database.classes.enums.GeocacheType
@@ -274,7 +266,12 @@ fun MyScaffoldContent(
     geocacheViewsModels: GeocacheViewsModels
 ) {
     NavHost(navController = navController, startDestination = "aboutUsScreen") {
-        composable("aboutUsScreen") { AboutUsScreen(navController) }
+        composable("aboutUsScreen") {
+            AboutUsScreen(
+                navController,
+                usersViewsModels.currentUserId.value
+            )
+        }
         composable("loginScreen") { LoginScreen(navController, usersViewsModels) }
         composable("registerScreen/{parameter}") { backStackEntry ->
             val parameter = backStackEntry.arguments?.getString("parameter")
@@ -348,8 +345,10 @@ fun MyScaffoldContent(
         composable("logout") {
             LaunchedEffect(Unit) {
                 usersViewsModels.saveCurrentUserId(-1)
+
+                delay(2000)
+
                 navController.navigate("aboutUsScreen") {
-                    // Optional: Clear back stack to prevent navigating back to logged-in screens
                     popUpTo(navController.graph.startDestinationId) {
                         inclusive = true
                     }
